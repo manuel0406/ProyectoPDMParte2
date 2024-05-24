@@ -15,7 +15,8 @@ import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
 public class MiNegocioOpcionesActivity extends Activity {
     TextView texto1;
     String idNegocioRecuperado;
-    int idNegocio;
+    int idNegocio = -1;
+    String name;
     ControlBD helper;
     Restaurant negocio;
 
@@ -31,26 +32,33 @@ public class MiNegocioOpcionesActivity extends Activity {
         //Recuperamos id de Negocio
         Intent intent = getIntent();
         idNegocio = intent.getIntExtra("idNegocio", 5);
+        name = intent.getStringExtra("name");
+        Toast.makeText(this, "" + idNegocio, Toast.LENGTH_SHORT).show();
+        texto1.setText("Negocio: " + name);
 
+        /*
         helper.abrir();
         negocio = helper.verNegocio(idNegocio);
         helper.cerrar();
 
         if (negocio != null) {
             texto1.setText("Negocio: " + negocio.getNombre());
-        }
+        }*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        texto1.setText("idNegocio: " + name);
+
+        /*
         helper.abrir();
         negocio = helper.verNegocio(idNegocio);
         helper.cerrar();
 
         if (negocio != null) {
-            texto1.setText("Negocio: " + negocio.getNombre());
-        }
+            texto1.setText("Negocio: " + idNegocio);
+        }*/
     }
 
     public void irActualizarNegocio(View v) {

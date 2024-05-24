@@ -88,7 +88,6 @@ public class ControladorSevicio {
     }
 
 
-
     //Bryan
     public static int obtenerIdUbicacion(String url, Context ctx) {
         int idUbicacion = -1;
@@ -104,125 +103,6 @@ public class ControladorSevicio {
         }
         return idUbicacion;
     }
-
-    public static void obtenerNegociosDesdeServicio(final String url, final Context ctx, final OnNegociosObtenidosListener listener) {
-        new AsyncTask<Void, Void, ArrayList<Restaurant>>() {
-            @Override
-            protected ArrayList<Restaurant> doInBackground(Void... voids) {
-                ArrayList<Restaurant> listaNegocios = new ArrayList<>();
-                try {
-                    HttpParams parametros = new BasicHttpParams();
-                    HttpConnectionParams.setConnectionTimeout(parametros, 3000);
-                    HttpConnectionParams.setSoTimeout(parametros, 5000);
-                    HttpClient cliente = new DefaultHttpClient(parametros);
-                    HttpGet httpGet = new HttpGet(url);
-                    HttpResponse httpRespuesta = cliente.execute(httpGet);
-                    StatusLine estado = httpRespuesta.getStatusLine();
-                    int codigoEstado = estado.getStatusCode();
-
-                    if (codigoEstado == 200) {
-                        HttpEntity entidad = httpRespuesta.getEntity();
-                        String respuesta = EntityUtils.toString(entidad);
-
-                        if (!respuesta.isEmpty()) {
-                            JSONArray jsonArray = new JSONArray(respuesta);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Restaurant restaurant = new Restaurant();
-                                restaurant.setIdNegocio(jsonObject.getInt("idNegocio"));
-                                restaurant.setIdUbicacion(jsonObject.getInt("idUbicacion"));
-                                restaurant.setIdAdministrador(jsonObject.getInt("idAdministrador"));
-                                restaurant.setNombre(jsonObject.getString("nombre"));
-                                restaurant.setTelefono(jsonObject.getString("telefono"));
-                                restaurant.setHorarioApertura(jsonObject.getString("horarioApertura"));
-                                restaurant.setHorarioCierre(jsonObject.getString("horarioCierre"));
-                                restaurant.setDescripcionUbicacion(jsonObject.getString("descripcionUbicacion"));
-                                listaNegocios.add(restaurant);
-                            }
-                        } else {
-                            Log.e("Error", "Respuesta vacía del servidor");
-                        }
-                    } else {
-                        Log.e("Error", "Error en la conexión: Código de estado " + codigoEstado);
-                    }
-                } catch (Exception e) {
-                    Log.e("Error", "Error en la conexión", e);
-                }
-                return listaNegocios;
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<Restaurant> listaNegocios) {
-                super.onPostExecute(listaNegocios);
-                if (listener != null) {
-                    listener.onNegociosObtenidos(listaNegocios);
-                }
-            }
-        }.execute();
-    }
-
-    public interface OnNegociosObtenidosListener {
-        void onNegociosObtenidos(ArrayList<Restaurant> listaNegocios);
-    }
-
-
-
-    public static String obtenerRespuestaPeticionCadena(String url, Context ctx) {
-        String respuesta = "";
-        // Estableciendo tiempo de espera del servicio
-        HttpParams parametros = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(parametros, 3000);
-        HttpConnectionParams.setSoTimeout(parametros, 5000);
-        // Creando objetos de conexion
-        HttpClient cliente = new DefaultHttpClient(parametros);
-        HttpGet httpGet = new HttpGet(url);
-        try {
-            HttpResponse httpRespuesta = cliente.execute(httpGet);
-            StatusLine estado = httpRespuesta.getStatusLine();
-            int codigoEstado = estado.getStatusCode();
-            if (codigoEstado == 200) {
-                HttpEntity entidad = httpRespuesta.getEntity();
-                respuesta = EntityUtils.toString(entidad);
-            }
-        } catch (Exception e) {
-            Toast.makeText(ctx, "Error en la conexion", Toast.LENGTH_LONG).show();
-            // Desplegando el error en el LogCat
-            Log.v("Error de Conexion", e.toString());
-        }
-        return respuesta;
-    }
-
-
-    public static ArrayList<Restaurant> obtenerNegociosPorAdmin(String url, Context ctx) {
-        ArrayList<Restaurant> negocios = new ArrayList<>();
-        String json = obtenerRespuestaPeticionCadena(url, ctx);
-
-        try {
-            JSONArray jsonArray = new JSONArray(json);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                Restaurant negocio = new Restaurant();
-                negocio.setIdNegocio(jsonObject.getInt("idNegocio"));
-                negocio.setIdUbicacion(jsonObject.getInt("idUbicacion"));
-                negocio.setIdAdministrador(jsonObject.getInt("idAdministrador"));
-                negocio.setNombre(jsonObject.getString("nombre"));
-                negocio.setTelefono(jsonObject.getString("telefono"));
-                negocio.setHorarioApertura(jsonObject.getString("horarioApertura"));
-                negocio.setHorarioCierre(jsonObject.getString("horarioCierre"));
-                negocio.setDescripcionUbicacion(jsonObject.getString("descripcionUbicacion"));
-
-                negocios.add(negocio);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(ctx, "Error al procesar la respuesta", Toast.LENGTH_LONG).show();
-        }
-
-        return negocios;
-    }
-
-
 
     public static void insertar(String peticion, Context ctx) {
 
@@ -243,4 +123,49 @@ public class ControladorSevicio {
             e.printStackTrace();
         }
     }
+
+    public static ArrayList<Restaurant> obtenerRestaurantesDesdeServicio(String url, Context ctx) {
+        ArrayList<Restaurant> restaurantes = new ArrayList<>();
+        // Establecer tiempo de espera del servicio
+        HttpParams parametros = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(parametros, 3000);
+        HttpConnectionParams.setSoTimeout(parametros, 5000);
+        // Crear objetos de conexión
+        HttpClient cliente = new DefaultHttpClient(parametros);
+        HttpGet httpGet = new HttpGet(url);
+        try {
+            // Realizar la petición al servicio
+            HttpResponse httpRespuesta = cliente.execute(httpGet);
+            StatusLine estado = httpRespuesta.getStatusLine();
+            int codigoEstado = estado.getStatusCode();
+            if (codigoEstado == 200) {
+                HttpEntity entidad = httpRespuesta.getEntity();
+                String respuesta = EntityUtils.toString(entidad);
+
+                // Procesar la respuesta para crear la lista de restaurantes
+                JSONArray jsonArray = new JSONArray(respuesta);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Restaurant restaurante = new Restaurant();
+                    restaurante.setIdNegocio(jsonObject.getInt("idNegocio"));
+                    restaurante.setIdUbicacion(jsonObject.getInt("idUbicacion"));
+                    restaurante.setIdAdministrador(jsonObject.getInt("idAdministrador"));
+                    restaurante.setNombre(jsonObject.getString("nombre"));
+                    restaurante.setTelefono(jsonObject.getString("telefono"));
+                    restaurante.setHorarioApertura(jsonObject.getString("horarioApertura"));
+                    restaurante.setHorarioCierre(jsonObject.getString("horarioCierre"));
+                    restaurante.setDescripcionUbicacion(jsonObject.getString("descripcionUbicacion"));
+                    restaurantes.add(restaurante);
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(ctx, "Error en la conexión", Toast.LENGTH_LONG).show();
+            // Desplegar el error en el LogCat
+            Log.e("Error de Conexión", e.toString());
+        }
+        return restaurantes;
+    }
+    
+
+
 }

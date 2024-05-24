@@ -1054,7 +1054,7 @@ public class ControlBD {
         return regInsertados;
     }
 
-    //Modulo negocio - Consultar todos los negocios
+    //Modulo negocio - Consultar todos los negocios (Ya estuvo)
     public ArrayList<Restaurant> obtenernegociosPorAdministrador(int idAdministrador) {
         ArrayList<Restaurant> productos = new ArrayList<>();
 

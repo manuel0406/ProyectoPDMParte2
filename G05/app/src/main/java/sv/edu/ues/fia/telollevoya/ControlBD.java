@@ -1,5 +1,6 @@
 package sv.edu.ues.fia.telollevoya;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +8,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -19,9 +24,13 @@ import java.util.Locale;
 import sv.edu.ues.fia.telollevoya.Reservaciones.DetallePedidoR;
 
 import sv.edu.ues.fia.telollevoya.pago.MetodoPago;
-
+@SuppressLint("NewApi")
 public class ControlBD {
 
+
+    private final String urlDepartamento="https://telollevoya.000webhostapp.com/departamento_insertar.php";
+    private  final  String urlMunicipio="https://telollevoya.000webhostapp.com/municipio_insertar.php";
+    private  final  String urlDistrito="https://telollevoya.000webhostapp.com/distrito_insertar.php";
     private static final String[] camposDepartamento = new String[]{
             "idDepartamento", "nombreDepartamento"
     };
@@ -465,7 +474,21 @@ public class ControlBD {
     }
 
 
+
     public String insertar(Departamento departamento) {
+//        String nombreDepartamentoCodificado = "",idDepartamentoCodificado="";
+//        try {
+//            idDepartamentoCodificado=URLEncoder.encode(String.valueOf( departamento.getIdDepartamento()), "UTF-8");
+//            nombreDepartamentoCodificado = URLEncoder.encode(departamento.getNombreDepartamento(), "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlDepartamento +"?IDDEPARTAMENTO="+idDepartamentoCodificado+ "&NOMBREDEPARTAMENTO=" + nombreDepartamentoCodificado;
+//        ControladorSevicio.insertarDepartamento(url, context);
+//        JSONObject datosDepa = new JSONObject();
+
         String regInsertados = "Registros Insertados N°=";
         long contador = 0;
         ContentValues depa = new ContentValues();
@@ -479,6 +502,7 @@ public class ControlBD {
         }
         return regInsertados;
     }
+
 
     public String insertar(Reservacion reservacion) {
         String regInsertados = "Registros insertados N°= ";
@@ -518,6 +542,21 @@ public class ControlBD {
         return regInsertados;
     }
     public String insertar(Municipio municipio) {
+
+//        String nombreMunicipioCodificado = "",idMunicipioCodificado="", idDepartamentoCodificado="";
+//        try {
+//            idMunicipioCodificado=URLEncoder.encode(String.valueOf( municipio.getIdMunicipio()), "UTF-8");
+//            idDepartamentoCodificado=URLEncoder.encode(String.valueOf( municipio.getIdDepartamento()), "UTF-8");
+//            nombreMunicipioCodificado = URLEncoder.encode(municipio.getNombreMunicipio(), "UTF-8");
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlMunicipio +"?IDMUNICIPIO="+idMunicipioCodificado+"&IDDEPARTAMENTO="+idDepartamentoCodificado+ "&NOMBREMUNICIPIO=" + nombreMunicipioCodificado;
+//        ControladorSevicio.insertarDepartamento(url, context);
+//        JSONObject datosDepa = new JSONObject();
 
         String regInsertados = "Registro insetado N°= ";
         long contador = 0;
@@ -605,6 +644,23 @@ public class ControlBD {
     }
 
     public String insertar (Distrito distrito){
+
+
+//        String nombreDistritoCodificado = " ",idMunicipioCodificado= "", idDistritoCodificado="";
+//        try {
+//            idMunicipioCodificado=URLEncoder.encode(String.valueOf( distrito.getIdMunicipio()), "UTF-8");
+//            idDistritoCodificado=URLEncoder.encode(String.valueOf( distrito.getIdDistrito()), "UTF-8");
+//            nombreDistritoCodificado = URLEncoder.encode(distrito.getNombreDistrito(), "UTF-8");
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlDistrito +"?IDDISTRITO="+idDistritoCodificado+"&IDMUNICIPIO="+idMunicipioCodificado+ "&NOMBREDISTRITO=" + nombreDistritoCodificado;
+//        ControladorSevicio.insertarDepartamento(url, context);
+//        JSONObject datosDepa = new JSONObject();
+
         String regInsertados= "Registros insertados N°= ";
         long contador=0;
         ContentValues distri = new ContentValues();
@@ -1330,7 +1386,7 @@ public class ControlBD {
                 1, 1, 1, 1,
                 2, 2, 2, 2,
                 3, 3, 3, 3,
-                4, 4, 4,
+                4, 4, 4, 4,
                 5,
                 6, 6,
                 7, 7, 7, 7, 7, 7,
@@ -1409,7 +1465,7 @@ public class ControlBD {
                 /*34 San Vicente Sur */"San Vicente", "Guadalupe", "Verapaz", "Nuevo Tepetitán", "Tecoluca", "San Cayetano Istepeque",
                 /*35 Usulután norte **/"Santiago de María", "Alegría", "Berlín", "Mercedes Umaña", "Jucuapa", "El Triunfo", "Estanzuelas", "San Buenaventura", "Nueva Guadalupe",
                 /*36 Usulután Este **/"Usulután", "Jucuarán", "San Dionisio", "Concepción Batres", "Santa María", "Ozatlan", "Tecapán", "Santa Elena", "California", "Ereguayquín",
-                /*37 Usulután Oeste **/"Jiquilisco, Puerto El Triunfo", "San Agustín", "San Francisco Javier",
+                /*37 Usulután Oeste **/"Jiquilisco", "Puerto El Triunfo", "San Agustín", "San Francisco Javier",
                 /*38 San Miguel norte **/"Ciudad Barrios", "Sesori", "Nuevo Edén de San Juan", "San Gerardo", "San Luis La Reina", "Carolina", "San Antonio del Mosco", "Chapeltique",
                 /*39 San Miguel Centro **/"San Miguel", "Comacarán", "Uluazapa", "Moncagua", "Quelepa", "Chirilagua",
                 /*40 San Miguel Oeste **/"Chinameca", "Nueva Guadaluoe", "Lolotique", "San Jorge", "San Rael Oriente", "El Tránsito",
@@ -1430,6 +1486,7 @@ public class ControlBD {
             departamento.setIdDepartamento(VDidDepartamento[i]);
             departamento.setNombreDepartamento(VDnombreDepartamento[i]);
             insertar(departamento);
+
         }
         Municipio municipio = new Municipio();
         for (int i = 0; i < 44; i++) {

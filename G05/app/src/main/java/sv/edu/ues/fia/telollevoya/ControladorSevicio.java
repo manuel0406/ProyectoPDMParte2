@@ -1,6 +1,7 @@
 package sv.edu.ues.fia.telollevoya;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,35 +17,40 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ControladorSevicio {
 
-    public static String obtenerRespuestaPeticion(String url, Context ctx) {
-        String respuesta = " ";
-        // Estableciendo tiempo de espera del servicio
+    public static String obtenerRepuestaPeticion(String url, Context ctx) {
+        String respuesta="";
+
+        //Establecimeinto tiempo de espera del servicio
         HttpParams parametros = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(parametros, 3000);
         HttpConnectionParams.setSoTimeout(parametros, 5000);
-        // Creando objetos de conexion
-        HttpClient cliente = new DefaultHttpClient(parametros);
-        HttpGet httpGet = new HttpGet(url);
-        try {
-            HttpResponse httpRespuesta = cliente.execute(httpGet);
-            StatusLine estado = httpRespuesta.getStatusLine();
-            int codigoEstado = estado.getStatusCode();
-            if (codigoEstado == 200) {
-                HttpEntity entidad = httpRespuesta.getEntity();
-                respuesta = EntityUtils.toString(entidad);
+
+        //Creando objetos de conexion
+        HttpClient cliente= new DefaultHttpClient(parametros);
+        HttpGet httpGet= new HttpGet(url);
+        try{
+            HttpResponse httpRespuesta= cliente.execute(httpGet);
+            StatusLine estado= httpRespuesta.getStatusLine();
+            int codigoEstado= estado.getStatusCode();
+            if(codigoEstado==200){
+                HttpEntity entidad= httpRespuesta.getEntity();
+                respuesta= EntityUtils.toString(entidad);
+
             }
-        } catch (Exception e) {
-            Toast.makeText(ctx, "Error en la conexion", Toast.LENGTH_LONG)
-                    .show();
-        // Desplegando el error en el LogCat
+
+        }catch (Exception e){
+            Toast.makeText(ctx,"Error en la conexion" +e, Toast.LENGTH_LONG).show();
+            // Desplegando el error en el LogCat
             Log.v("Error de Conexion", e.toString());
         }
         return respuesta;
     }
+
 
     public static String obtenerRespuestaPost(String url, JSONObject obj, Context ctx) {
         String respuesta = " ";
@@ -78,4 +84,70 @@ public class ControladorSevicio {
         }
         return respuesta;
     }
+
+    /*
+    * Este metodo es que el insertar los datos a las BD pero en segundo plano
+    * por el momento no funcionara
+    * */
+//    public static void insertarDepartamento(final String peticion, final Context ctx){
+//        new AsyncTask<Void, Void, String>() {
+//            @Override
+//            protected String doInBackground(Void... voids) {
+//                return obtenerRespuestaPeticion(peticion, ctx);
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String json) {
+//                try {
+//                    JSONObject resultado = new JSONObject(json);
+//
+//                    Toast.makeText(ctx, "Registro ingresado"+
+//                                    resultado.getJSONArray("resultado").toString(), Toast.LENGTH_LONG)
+//                            .show();
+//                    int respuesta = resultado.getInt("resultado");
+//                    if (respuesta == 1)
+//                        Toast.makeText(ctx, "Registro ingresado",
+//                                        Toast.LENGTH_LONG)
+//                                .show();
+//                    else
+//                        Toast.makeText(ctx, "Error registro duplicado",
+//                                Toast.LENGTH_LONG).show();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }.execute();
+//    }
+
+    public static void insertarReservacion(final String peticion, Context ctx) {
+
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return obtenerRepuestaPeticion(peticion, ctx);
+            }
+
+            @Override
+            protected void onPostExecute(String json) {
+                try {
+                    JSONObject resultado = new JSONObject(json);
+
+                    Toast.makeText(ctx, "Registro ingresado"+
+                                    resultado.getJSONArray("resultado").toString(), Toast.LENGTH_LONG)
+                            .show();
+                    int respuesta = resultado.getInt("resultado");
+                    if (respuesta == 1)
+                        Toast.makeText(ctx, "Registro ingresado",
+                                        Toast.LENGTH_LONG)
+                                .show();
+                    else
+                        Toast.makeText(ctx, "Error registro duplicado",
+                                Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
+    }
+
 }

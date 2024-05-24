@@ -1011,7 +1011,7 @@ public class ControlBD {
 
 
 
-    //Modulo negocio - insertar ubicacion
+    //Modulo negocio - insertar ubicacion (Ya estuvo)
     public int insertarUbicacion1(Restaurant restaurant, String nombreDistrito) {
         //Consiguiendo el idDistrito asociado a nombreDistrito
         int idDistrito = 10;
@@ -1033,7 +1033,7 @@ public class ControlBD {
         return valorInt;
     }
 
-    //Modulo negocio - insertar Negocio
+    //Modulo negocio - insertar Negocio (Ya estuvo)
     public String insertarNegocio(Restaurant restaurant) {
         String regInsertados = "Producto Registrado Correctamente";
         long contador = 0;

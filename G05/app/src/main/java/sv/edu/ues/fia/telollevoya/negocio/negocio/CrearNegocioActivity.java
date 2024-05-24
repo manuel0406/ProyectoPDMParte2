@@ -7,16 +7,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 import android.text.method.DigitsKeyListener;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONObject;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 
+@SuppressLint("NewApi")
 public class CrearNegocioActivity extends Activity {
     Spinner spinnerDepartamento, spinnerMunicipio, spinnerDistrito;
     EditText editUbicacionDescripcion, editNegocioTelefono, editNegocioNombre;
@@ -24,12 +35,17 @@ public class CrearNegocioActivity extends Activity {
     ControlBD helper;
     String horaapertura = "07:00 AM";
     String horacierre = "07:00 AM";
+    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Negocio/insertarNegocio.php";
+    private final String urlHosting2 = "https://telollevoya.000webhostapp.com/Negocio/insertarUbicacion.php";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_negocio);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         helper = new ControlBD(this);
         btnApertura = (Button) findViewById(R.id.btnHoraApertura);
@@ -70,7 +86,67 @@ public class CrearNegocioActivity extends Activity {
         });
     }
 
+
     public void insertarNegocio(View v) {
+        try {
+            // Validación de campos
+            if (editNegocioNombre.getText().toString().isEmpty() ||
+                    editNegocioTelefono.getText().toString().isEmpty() ||
+                    editUbicacionDescripcion.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Obtención de valores
+            String nombre = URLEncoder.encode(editNegocioNombre.getText().toString(), "UTF-8");
+            String telefono = URLEncoder.encode(editNegocioTelefono.getText().toString(), "UTF-8");
+            String distrito = URLEncoder.encode((String) spinnerDistrito.getSelectedItem(), "UTF-8");
+            String descripcion = URLEncoder.encode(editUbicacionDescripcion.getText().toString(), "UTF-8");
+            int idAdministradorRecuperado = getIntent().getIntExtra("idAdministradorRecuperado", 5);
+
+            // Construcción de URL para obtener ID de ubicación
+            StringBuilder urlUbicacionBuilder = new StringBuilder();
+            urlUbicacionBuilder.append(urlHosting2)
+                    .append("?nombredistrito=").append(distrito)
+                    .append("&descripcionubicacion=").append(descripcion);
+            String urlUbicacion = urlUbicacionBuilder.toString();
+
+            int idUbicacion = ControladorSevicio.obtenerIdUbicacion(urlUbicacion, this);
+            Toast.makeText(this, "ID de la Ubicación insertada: " + idUbicacion, Toast.LENGTH_LONG).show();
+
+            // Codificación de horarios
+            String horaApertura = URLEncoder.encode(horaapertura, "UTF-8");
+            String horaCierre = URLEncoder.encode(horacierre, "UTF-8");
+
+            // Construcción de URL para insertar negocio
+            StringBuilder urlNegocioBuilder = new StringBuilder();
+            urlNegocioBuilder.append(urlHostingGratuito)
+                    .append("?idubicacion=").append(idUbicacion)
+                    .append("&idadministrador=1")
+                    .append("&nombrenegocio=").append(nombre)
+                    .append("&telefononegocio=").append(telefono)
+                    .append("&horarioapertura=").append(horaApertura)
+                    .append("&horariocierre=").append(horaCierre);
+            String urlNegocio = urlNegocioBuilder.toString();
+
+            ControladorSevicio.insertar(urlNegocio, this);
+
+            // Navegación a MiNegocioActivity
+            Intent intent = new Intent(this, MiNegocioActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("idAdministrador", String.valueOf(idAdministradorRecuperado));
+            startActivity(intent);
+
+        } catch (UnsupportedEncodingException e) {
+            Toast.makeText(this, "Error en la codificación de los datos", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al insertar el negocio: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+
+    /*public void insertarNegocio(View v) {
         // Verificar si los campos requeridos están vacíos
         if (editNegocioNombre.getText().toString().isEmpty() || editNegocioTelefono.getText().toString().isEmpty() || editUbicacionDescripcion.getText().toString().isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
@@ -105,7 +181,7 @@ public class CrearNegocioActivity extends Activity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("idAdministrador", idAdministrador);
         startActivity(intent);
-    }
+    }*/
 
     public void abrirTimePicker(View v) {
         Calendar cal = Calendar.getInstance();

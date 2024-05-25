@@ -3,6 +3,7 @@ package sv.edu.ues.fia.telollevoya.Reservaciones;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
@@ -37,6 +38,7 @@ public class ReservacionActualizarActivity extends Activity {
         edtIdReservacion= (EditText)findViewById(R.id.edtIdReservacion);
         edtFecha=(EditText) findViewById(R.id.edtFecha);
         edtHora= (EditText)  findViewById(R.id.edtHoraEn);
+        helper = new ControlBD(this);
 
 
         int idReservacion;
@@ -71,6 +73,12 @@ public void actualizarReservacion(View v){
     helper.cerrar();
 
     Toast.makeText(this, estado, Toast.LENGTH_SHORT).show();
+    Intent intent = new Intent(ReservacionActualizarActivity.this, ReservacionesConsultarActivity.class);
+    startActivity(intent);
+}
+public void cancelarActualicacion(View v){
+    Intent intent = new Intent(ReservacionActualizarActivity.this, ReservacionesConsultarActivity.class);
+    startActivity(intent);
 }
 
 public void limpiarTexto(View v){

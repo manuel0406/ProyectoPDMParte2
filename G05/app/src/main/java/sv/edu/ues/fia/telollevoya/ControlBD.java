@@ -1128,7 +1128,7 @@ public class ControlBD {
         return negocio;
     }
 
-    //Modulo negocio - actualizar ubicacion
+    //Modulo negocio - actualizar ubicacion (Ya estuvo)
     public String actualizarUbicacion(Restaurant restaurant, int idUbicacion, String nombreDistrito) {
         String[] id = {String.valueOf(idUbicacion)};
         //Consiguiendo el idDistrito asociado a nombreDistrito
@@ -1147,7 +1147,7 @@ public class ControlBD {
         return "Producto Actualizado Correctamente";
     }
 
-    //Modulo negocio - actualizar Negocio
+    //Modulo negocio - actualizar Negocio (Ya estuvo)
     public String actualizarNegocio(Restaurant restaurant) {
         String[] idNegocio = {String.valueOf(restaurant.getIdNegocio())};
 
@@ -1160,7 +1160,7 @@ public class ControlBD {
         return "Datos del Negocio actualizados";
     }
 
-
+    // (Ya estuvo)
     public String eliminarNegocio(int idNegocio) {
         String regAfectados = "Negocio Eliminado Correctamente";
         int contadorNegocio = 0;

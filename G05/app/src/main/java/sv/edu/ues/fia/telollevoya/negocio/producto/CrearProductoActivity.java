@@ -45,6 +45,8 @@ public class CrearProductoActivity extends AppCompatActivity {
         radioGroupTipo = (RadioGroup) findViewById(R.id.radioGroupTipo);
         editProductoPrecio.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
         idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
+        Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_LONG).show();
+
     }
 
     public void insertarProducto(View v) {

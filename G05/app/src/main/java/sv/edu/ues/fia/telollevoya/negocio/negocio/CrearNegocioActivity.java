@@ -104,6 +104,10 @@ public class CrearNegocioActivity extends Activity {
             String descripcion = URLEncoder.encode(editUbicacionDescripcion.getText().toString(), "UTF-8");
             int idAdministradorRecuperado = getIntent().getIntExtra("idAdministradorRecuperado", 5);
 
+            // Codificación de horarios
+            String horaApertura = URLEncoder.encode(horaapertura, "UTF-8");
+            String horaCierre = URLEncoder.encode(horacierre, "UTF-8");
+
             // Construcción de URL para obtener ID de ubicación
             StringBuilder urlUbicacionBuilder = new StringBuilder();
             urlUbicacionBuilder.append(urlHosting2)
@@ -114,9 +118,7 @@ public class CrearNegocioActivity extends Activity {
             int idUbicacion = ControladorSevicio.obtenerIdUbicacion(urlUbicacion, this);
             Toast.makeText(this, "ID de la Ubicación insertada: " + idUbicacion, Toast.LENGTH_LONG).show();
 
-            // Codificación de horarios
-            String horaApertura = URLEncoder.encode(horaapertura, "UTF-8");
-            String horaCierre = URLEncoder.encode(horacierre, "UTF-8");
+
 
             // Construcción de URL para insertar negocio
             StringBuilder urlNegocioBuilder = new StringBuilder();

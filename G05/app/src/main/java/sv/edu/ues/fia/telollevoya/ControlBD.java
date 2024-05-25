@@ -1106,7 +1106,7 @@ public class ControlBD {
 
     }
 
-    //Modulo Negocio - Consultar un negocio en especifico
+    //Modulo Negocio - Consultar un negocio en especifico (Ya estuvo)
     public Restaurant verNegocio(int idNegocio) {
         Restaurant negocio = null;
 

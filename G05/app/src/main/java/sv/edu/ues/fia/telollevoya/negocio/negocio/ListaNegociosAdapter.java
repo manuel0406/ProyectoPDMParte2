@@ -72,8 +72,11 @@ public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdap
                     Intent intent = new Intent(context, MiNegocioOpcionesActivity.class);
                     int idNegocio = listaNegocios.get(getAdapterPosition()).getIdNegocio();
                     String name = listaNegocios.get(getAdapterPosition()).getNombre();
+                    int idUbicacion = listaNegocios.get(getAdapterPosition()).getIdUbicacion();
+                    intent.putExtra("idUbicacion", idUbicacion);
                     intent.putExtra("idNegocio", idNegocio);
-                    intent.putExtra("name", name);  // Agregar el nombre como extra en el Intent
+                    intent.putExtra("name", name);
+
                     context.startActivity(intent);
                 }
             });

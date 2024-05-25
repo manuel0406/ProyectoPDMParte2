@@ -21,6 +21,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -40,6 +42,8 @@ public class EditarMiNegocioActivity extends Activity {
     Button btnApertura, btnCierre;
     String horaapertura = "07:00 AM";
     String horacierre = "07:00 AM";
+    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php";
+    private final String urlHosting2 = "https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +91,27 @@ public class EditarMiNegocioActivity extends Activity {
 
         Intent intent = getIntent();
         idNegocio = intent.getIntExtra("idNegocio",0);
+        idUbicacion = intent.getIntExtra("idUbicacion", 5);
 
+        Toast.makeText(this, "Id negocio " + idNegocio + " Id ubicacion " + idUbicacion, Toast.LENGTH_SHORT).show();
+
+        // Obtenemos el negocio desde el servicio web
+        String url = "https://telollevoya.000webhostapp.com/Negocio/verNegocio.php?idNegocio=" + idNegocio;
+        ControladorSevicio.obtenerNegocioDesdeServicio(url, this, new ControladorSevicio.OnRestaurantReceivedListener() {
+            @Override
+            public void onRestaurantReceived(Restaurant restaurant) {
+                negocio = restaurant;
+                if (negocio != null) {
+                    editNegocioNombre.setText(negocio.getNombre());
+                    editNegocioTelefono.setText(negocio.getTelefono());
+
+                } else {
+                    Toast.makeText(EditarMiNegocioActivity.this, "Negocio no encontrado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        /*
         //Obtenemos el negocio
         helper.abrir();
         negocio = helper.verNegocio(idNegocio);
@@ -123,36 +147,66 @@ public class EditarMiNegocioActivity extends Activity {
             editNegocioTelefono.setText(negocio.getTelefono());
             idUbicacion = negocio.getIdUbicacion();
             editUbicacionDescripcion.setText(ubicacion.getDescripcion());
-        }
+        }*/
     }
 
     //Actualizando el negocio
-    public void actualizarNegocio(View v){
-        // Verificar si los campos requeridos están vacíos
-        if (editNegocioNombre.getText().toString().isEmpty() || editNegocioTelefono.getText().toString().isEmpty() || editUbicacionDescripcion.getText().toString().isEmpty()) {
+    public void actualizarNegocio(View v) throws UnsupportedEncodingException {
+        // Validación de campos
+        /*
+        if (editNegocioNombre.getText().toString().isEmpty() ||
+                editNegocioTelefono.getText().toString().isEmpty() ||
+                editUbicacionDescripcion.getText().toString().isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
-        }
+        }*/
 
-        String descripcion = editUbicacionDescripcion.getText().toString();
-        String nombre = editNegocioNombre.getText().toString();
-        String telefono = editNegocioTelefono.getText().toString();
-        String distrito = (String) spinnerDistrito.getSelectedItem();
+        // Obtención de valores
+        String nombre = URLEncoder.encode(editNegocioNombre.getText().toString(), "UTF-8");
+        String telefono = URLEncoder.encode(editNegocioTelefono.getText().toString(), "UTF-8");
+        String distrito = URLEncoder.encode((String) spinnerDistrito.getSelectedItem(), "UTF-8");
+        String descripcion = URLEncoder.encode(editUbicacionDescripcion.getText().toString(), "UTF-8");
+        int idAdministradorRecuperado = getIntent().getIntExtra("idAdministradorRecuperado", 5);
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setNombre(nombre);
-        restaurant.setTelefono(telefono);
-        restaurant.setIdNegocio(idNegocio);
-        restaurant.setHorarioApertura(horaapertura);
-        restaurant.setHorarioCierre(horacierre);
-        restaurant.setDescripcionUbicacion(descripcion);
+        // Codificación de horarios
+        String horaApertura = URLEncoder.encode(horaapertura, "UTF-8");
+        String horaCierre = URLEncoder.encode(horacierre, "UTF-8");
 
-        helper.abrir();
-        helper.actualizarUbicacion(restaurant, idUbicacion, distrito);
-        String mensaje = helper.actualizarNegocio(restaurant);
-        helper.cerrar();
-        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
-        onBackPressed();
+        //https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php?idubicacion=1&nombredistrito=Texistepeque&descripcionubicacion=JujutlaJujuye
+
+        // Construcción de URL para obtener ID de ubicación
+        StringBuilder urlUbicacionBuilder = new StringBuilder();
+        urlUbicacionBuilder.append(urlHosting2)
+                .append("?idubicacion=").append(idUbicacion)
+                .append("&nombredistrito=").append(distrito)
+                .append("&descripcionubicacion=").append(descripcion);
+        String urlUbicacion = urlUbicacionBuilder.toString();
+        ControladorSevicio.manejarPeticion(urlUbicacion, this);
+
+
+        //https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php?idNegocio=1&nombreNegocio=pollo
+        // &telefonoNegocio=76768989&horarioApertura=06:00AM&horarioCierre=07:00PM
+
+
+        // Construcción de URL para insertar negocio
+        StringBuilder urlNegocioBuilder = new StringBuilder();
+        urlNegocioBuilder.append(urlHostingGratuito)
+                .append("?idNegocio=").append(idNegocio)
+                .append("&nombreNegocio=").append(nombre)
+                .append("&telefonoNegocio=").append(telefono)
+                .append("&horarioApertura=").append(horaApertura)
+                .append("&horarioCierre=").append(horaCierre);
+        String urlNegocio = urlNegocioBuilder.toString();
+
+        ControladorSevicio.manejarPeticion(urlNegocio, this);
+
+
+        /*String uh = "https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php?idNegocio=1&nombreNegocio=etesech&telefonoNegocio=76768989&horarioApertura=06:00AM&horarioCierre=07:00PM";
+        ControladorSevicio.manejarPeticion(uh, this);
+
+        String eh = "https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php?idubicacion=1&nombredistrito=Texistepeque&descripcionubicacion=etesech";
+        ControladorSevicio.manejarPeticion(eh, this);*/
+
     }
 
 

@@ -4,22 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
-import android.widget.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -42,13 +35,16 @@ public class EditarMiNegocioActivity extends Activity {
     Button btnApertura, btnCierre;
     String horaapertura = "07:00 AM";
     String horacierre = "07:00 AM";
-    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php";
-    private final String urlHosting2 = "https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php";
+    private final String urlNegocio = "https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php";
+    private final String urlUbicacion = "https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_mi_negocio);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         helper = new ControlBD(this);
         btnApertura = (Button) findViewById(R.id.btnHoraApertura);
@@ -93,7 +89,7 @@ public class EditarMiNegocioActivity extends Activity {
         idNegocio = intent.getIntExtra("idNegocio",0);
         idUbicacion = intent.getIntExtra("idUbicacion", 5);
 
-        Toast.makeText(this, "Id negocio " + idNegocio + " Id ubicacion " + idUbicacion, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Id negocio " + idNegocio + " Id ubicacion " + idUbicacion, Toast.LENGTH_SHORT).show();
 
         // Obtenemos el negocio desde el servicio web
         String url = "https://telollevoya.000webhostapp.com/Negocio/verNegocio.php?idNegocio=" + idNegocio;
@@ -152,14 +148,14 @@ public class EditarMiNegocioActivity extends Activity {
 
     //Actualizando el negocio
     public void actualizarNegocio(View v) throws UnsupportedEncodingException {
+        try {
         // Validación de campos
-        /*
         if (editNegocioNombre.getText().toString().isEmpty() ||
                 editNegocioTelefono.getText().toString().isEmpty() ||
                 editUbicacionDescripcion.getText().toString().isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
-        }*/
+        }
 
         // Obtención de valores
         String nombre = URLEncoder.encode(editNegocioNombre.getText().toString(), "UTF-8");
@@ -172,41 +168,37 @@ public class EditarMiNegocioActivity extends Activity {
         String horaApertura = URLEncoder.encode(horaapertura, "UTF-8");
         String horaCierre = URLEncoder.encode(horacierre, "UTF-8");
 
-        //https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php?idubicacion=1&nombredistrito=Texistepeque&descripcionubicacion=JujutlaJujuye
-
         // Construcción de URL para obtener ID de ubicación
         StringBuilder urlUbicacionBuilder = new StringBuilder();
-        urlUbicacionBuilder.append(urlHosting2)
+        urlUbicacionBuilder.append(urlUbicacion)
                 .append("?idubicacion=").append(idUbicacion)
                 .append("&nombredistrito=").append(distrito)
                 .append("&descripcionubicacion=").append(descripcion);
         String urlUbicacion = urlUbicacionBuilder.toString();
-        ControladorSevicio.manejarPeticion(urlUbicacion, this);
-
-
-        //https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php?idNegocio=1&nombreNegocio=pollo
-        // &telefonoNegocio=76768989&horarioApertura=06:00AM&horarioCierre=07:00PM
-
+        ControladorSevicio.actualizarUbicacion(urlUbicacion, this);
 
         // Construcción de URL para insertar negocio
         StringBuilder urlNegocioBuilder = new StringBuilder();
-        urlNegocioBuilder.append(urlHostingGratuito)
+        urlNegocioBuilder.append(urlNegocio)
                 .append("?idNegocio=").append(idNegocio)
                 .append("&nombreNegocio=").append(nombre)
                 .append("&telefonoNegocio=").append(telefono)
                 .append("&horarioApertura=").append(horaApertura)
                 .append("&horarioCierre=").append(horaCierre);
         String urlNegocio = urlNegocioBuilder.toString();
+        ControladorSevicio.genericoNegocio(urlNegocio, this);
 
-        ControladorSevicio.manejarPeticion(urlNegocio, this);
 
-
-        /*String uh = "https://telollevoya.000webhostapp.com/Negocio/actualizarNegocio.php?idNegocio=1&nombreNegocio=etesech&telefonoNegocio=76768989&horarioApertura=06:00AM&horarioCierre=07:00PM";
-        ControladorSevicio.manejarPeticion(uh, this);
-
-        String eh = "https://telollevoya.000webhostapp.com/Negocio/actualizarUbicacion.php?idubicacion=1&nombredistrito=Texistepeque&descripcionubicacion=etesech";
-        ControladorSevicio.manejarPeticion(eh, this);*/
-
+        // Navegación a MiNegocioActivity
+        Intent intent = new Intent(this, MiNegocioActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("idAdministrador", String.valueOf(idAdministradorRecuperado));
+        startActivity(intent);
+        } catch (UnsupportedEncodingException e) {
+            Toast.makeText(this, "Error en la codificación de los datos", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al insertar el negocio: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
 

@@ -2,6 +2,7 @@ package sv.edu.ues.fia.telollevoya.negocio.producto;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.EditText;
@@ -16,7 +17,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 
 public class EditarProductoActivity extends AppCompatActivity {
@@ -27,6 +32,8 @@ public class EditarProductoActivity extends AppCompatActivity {
     RadioButton rbBebida, rbAlimento;
     int id = 4;
     Product producto;
+    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Producto/actualizarProducto.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,10 @@ public class EditarProductoActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Onda rara
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         helper = new ControlBD(EditarProductoActivity.this);
         editProductoNombre = (EditText) findViewById(R.id.editProductoNombre);
@@ -60,9 +71,14 @@ public class EditarProductoActivity extends AppCompatActivity {
             id = (int) savedInstanceState.getSerializable("idProducto");
         }
 
-        helper.abrir();
+
+        Toast.makeText(this, "idproducto " + id, Toast.LENGTH_SHORT).show();
+
+        String url = "https://telollevoya.000webhostapp.com/Producto/verProducto.php?idProducto=" + id;
+        producto = ControladorSevicio.obtenerProducto(url, this);
+        /*helper.abrir();
         producto = helper.verProducto(id);
-        helper.cerrar();
+        helper.cerrar();*/
 
         if (producto != null) {
             editProductoNombre.setText(producto.getNombreProducto());
@@ -77,13 +93,42 @@ public class EditarProductoActivity extends AppCompatActivity {
         }
     }
 
-    public void editarProducto(View v) {
+    public void editarProducto(View v) throws UnsupportedEncodingException {
         // Verificar si los campos requeridos están vacíos
         if (editProductoNombre.getText().toString().isEmpty() || editProductoPrecio.getText().toString().isEmpty() || editProductoDescripción.getText().toString().isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        //https://telollevoya.000webhostapp.com/Producto/actualizarProducto.php?idProducto=1&nombreProducto=Pacaya
+        // &tipoProducto=Comida&descripcionProducto=Amarga&precioProducto=9.99&existenciaProducto=1
+
+
+        // Obtener el texto del RadioButton seleccionado
+        int selectedRadioButtonId = radioGroupTipo.getCheckedRadioButtonId();
+        RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
+
+        String nombre = URLEncoder.encode(editProductoNombre.getText().toString(), "UTF-8");
+        float precio =  Float.parseFloat(editProductoPrecio.getText().toString());
+        String descripcion = URLEncoder.encode(editProductoDescripción.getText().toString(), "UTF-8");
+        //boolean existencia = switchExistencias.isChecked();
+        int existencia = switchExistencias.isChecked() ? 1 : 0;
+        String tipo = URLEncoder.encode(selectedRadioButton.getText().toString(), "UTF-8");
+
+        //https://telollevoya.000webhostapp.com/Producto/actualizarProducto.php?idProducto=1&nombreProducto=Pacaya
+        // &tipoProducto=Comida&descripcionProducto=Amarga&precioProducto=9.99&existenciaProducto=1
+        StringBuilder urlNegocioBuilder = new StringBuilder();
+        urlNegocioBuilder.append(urlHostingGratuito)
+                .append("?idProducto=").append(id)
+                .append("&nombreProducto=").append(nombre)
+                .append("&tipoProducto=").append(tipo)
+                .append("&descripcionProducto=").append(descripcion)
+                .append("&precioProducto=").append(precio)
+                .append("&existenciaProducto=").append(existencia);
+        String urlProducto = urlNegocioBuilder.toString();
+        ControladorSevicio.manejarPeticion(urlProducto, this);
+
+        /*
         String nombre = editProductoNombre.getText().toString();
         float precio = Float.parseFloat(editProductoPrecio.getText().toString());
         String descripcion = editProductoDescripción.getText().toString();
@@ -106,14 +151,20 @@ public class EditarProductoActivity extends AppCompatActivity {
         String mensaje = helper.actualizar(producto);
         helper.cerrar();
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
-        onBackPressed();
+        onBackPressed();*/
     }
 
     public void eliminarProducto(View v) {
+
+
+        String url = "https://telollevoya.000webhostapp.com/Producto/eliminarProducto.php?idProducto=" + id;
+        producto = ControladorSevicio.obtenerProducto(url, this);
+
+        /*
         helper.abrir();
         String mensaje = helper.eliminarProducto(id);
         helper.cerrar();
-        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
-        onBackPressed();
+        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();*/
+        //onBackPressed();
     }
 }

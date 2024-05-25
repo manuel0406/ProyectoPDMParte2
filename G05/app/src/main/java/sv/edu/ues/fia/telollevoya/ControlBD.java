@@ -908,7 +908,7 @@ public class ControlBD {
     }
 
 
-    //Modulo producto - Insertar
+    //Modulo producto - Insertar  (Ya estuvo)
     public String insertar(Product producto) {
         String regInsertados = "Producto Registrado";
         long contador = 0;
@@ -929,7 +929,7 @@ public class ControlBD {
         return regInsertados;
     }
 
-    //Modulo producto - Consultar todos los productos
+    //Modulo producto - Consultar todos los productos (Ya estuvo)
     public ArrayList<Product> obtenerProductosPorIdNegocio(int idNegocio) {
         ArrayList<Product> productos = new ArrayList<>();
 
@@ -960,7 +960,7 @@ public class ControlBD {
         return productos;
     }
 
-    //Modulo producto - Consultar un producto en especifico
+    //Modulo producto - Consultar un producto en especifico (Ya estuvo)
     public Product verProducto(int idProducto) {
         Product producto = null;
 
@@ -982,7 +982,7 @@ public class ControlBD {
         return producto;
     }
 
-    //Modulo producto - Actualizar
+    //Modulo producto - Actualizar (Ya estuvo)
     public String actualizar(Product producto) {
         String[] id = {String.valueOf(producto.getIdProducto())};
 

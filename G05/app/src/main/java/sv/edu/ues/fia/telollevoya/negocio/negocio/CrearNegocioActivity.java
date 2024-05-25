@@ -15,13 +15,7 @@ import java.util.Locale;
 
 import android.text.method.DigitsKeyListener;
 import android.annotation.SuppressLint;
-import android.os.Bundle;
 import android.os.StrictMode;
-import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.json.JSONObject;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
@@ -35,17 +29,17 @@ public class CrearNegocioActivity extends Activity {
     ControlBD helper;
     String horaapertura = "07:00 AM";
     String horacierre = "07:00 AM";
-    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Negocio/insertarNegocio.php";
-    private final String urlHosting2 = "https://telollevoya.000webhostapp.com/Negocio/insertarUbicacion.php";
+    private final String urlNegocio = "https://telollevoya.000webhostapp.com/Negocio/insertarNegocio.php";
+    private final String urlUbicacion = "https://telollevoya.000webhostapp.com/Negocio/insertarUbicacion.php";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_negocio);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                .permitAll().build();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
 
         helper = new ControlBD(this);
         btnApertura = (Button) findViewById(R.id.btnHoraApertura);
@@ -110,28 +104,26 @@ public class CrearNegocioActivity extends Activity {
 
             // Construcción de URL para obtener ID de ubicación
             StringBuilder urlUbicacionBuilder = new StringBuilder();
-            urlUbicacionBuilder.append(urlHosting2)
+            urlUbicacionBuilder.append(urlUbicacion)
                     .append("?nombredistrito=").append(distrito)
                     .append("&descripcionubicacion=").append(descripcion);
             String urlUbicacion = urlUbicacionBuilder.toString();
 
             int idUbicacion = ControladorSevicio.obtenerIdUbicacion(urlUbicacion, this);
-            Toast.makeText(this, "ID de la Ubicación insertada: " + idUbicacion, Toast.LENGTH_LONG).show();
-
-
+            //Toast.makeText(this, "ID de la Ubicación insertada: " + idUbicacion, Toast.LENGTH_LONG).show();
 
             // Construcción de URL para insertar negocio
             StringBuilder urlNegocioBuilder = new StringBuilder();
-            urlNegocioBuilder.append(urlHostingGratuito)
+            urlNegocioBuilder.append(urlNegocio)
                     .append("?idubicacion=").append(idUbicacion)
-                    .append("&idadministrador=1")
+                    .append("&idadministrador=").append(idAdministradorRecuperado)
                     .append("&nombrenegocio=").append(nombre)
                     .append("&telefononegocio=").append(telefono)
                     .append("&horarioapertura=").append(horaApertura)
                     .append("&horariocierre=").append(horaCierre);
             String urlNegocio = urlNegocioBuilder.toString();
 
-            ControladorSevicio.insertar(urlNegocio, this);
+            ControladorSevicio.genericoNegocio(urlNegocio, this);
 
             // Navegación a MiNegocioActivity
             Intent intent = new Intent(this, MiNegocioActivity.class);
@@ -145,45 +137,6 @@ public class CrearNegocioActivity extends Activity {
             Toast.makeText(this, "Error al insertar el negocio: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
-
-
-
-    /*public void insertarNegocio(View v) {
-        // Verificar si los campos requeridos están vacíos
-        if (editNegocioNombre.getText().toString().isEmpty() || editNegocioTelefono.getText().toString().isEmpty() || editUbicacionDescripcion.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String nombre = editNegocioNombre.getText().toString();
-        String telefono = editNegocioTelefono.getText().toString();
-        String distrito = (String) spinnerDistrito.getSelectedItem();
-        String descripcion = editUbicacionDescripcion.getText().toString();
-        int idAdministradorRecuperadoRecuperado = getIntent().getIntExtra("idAdministradorRecuperado", 5);
-
-        //Crea el objeto negocio
-        Restaurant negocio = new Restaurant();
-        negocio.setIdAdministrador(idAdministradorRecuperadoRecuperado);
-        negocio.setNombre(nombre);
-        negocio.setTelefono(telefono);
-        negocio.setHorarioApertura(horaapertura);
-        negocio.setHorarioCierre(horacierre);
-        negocio.setDescripcionUbicacion(descripcion);
-
-        helper.abrir();
-        int mensaje = helper.insertarUbicacion1(negocio, distrito);
-        negocio.setIdUbicacion(mensaje);
-        String mensaje2 = helper.insertarNegocio(negocio);
-        helper.cerrar();
-        Toast.makeText(this, mensaje2, Toast.LENGTH_SHORT).show();
-
-        //Llamamos a mi negocio
-        String idAdministrador = Integer.toString(idAdministradorRecuperadoRecuperado);
-        Intent intent = new Intent(this, MiNegocioActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("idAdministrador", idAdministrador);
-        startActivity(intent);
-    }*/
 
     public void abrirTimePicker(View v) {
         Calendar cal = Calendar.getInstance();

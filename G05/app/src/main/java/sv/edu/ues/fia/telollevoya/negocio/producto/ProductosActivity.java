@@ -64,6 +64,29 @@ public class ProductosActivity extends AppCompatActivity {
         listaProductos.setAdapter(adapter);*/
     }
 
+    /*private class ObtenerProductosTask extends AsyncTask<String, Void, ArrayList<Product>> {
+        private Context context;
+
+        public ObtenerProductosTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected ArrayList<Product> doInBackground(String... urls) {
+            String url = urls[0];
+            return ControladorSevicio.obtenerProductosPorIdNegocio(url, context);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Product> productos) {
+            if (productos != null && !productos.isEmpty()) {
+                ListaProductosAdaptader adapter = new ListaProductosAdaptader(productos);
+                listaProductos.setAdapter(adapter);
+            } else {
+                Toast.makeText(context, "No se encontraron productos", Toast.LENGTH_LONG).show();
+            }
+        }
+    }*/
     private class ObtenerProductosTask extends AsyncTask<String, Void, ArrayList<Product>> {
         private Context context;
 
@@ -87,6 +110,8 @@ public class ProductosActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
     public void irNuevoProducto(View v){
         Intent intent = new Intent(this, CrearProductoActivity.class);

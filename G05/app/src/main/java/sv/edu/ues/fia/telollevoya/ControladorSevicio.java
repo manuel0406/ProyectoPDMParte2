@@ -26,6 +26,8 @@ import java.util.List;
 
 import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
 import sv.edu.ues.fia.telollevoya.negocio.producto.Product;
+import org.json.JSONObject;
+
 
 public class ControladorSevicio {
 
@@ -89,7 +91,7 @@ public class ControladorSevicio {
         }
 
         // Método para manejar la solicitud de obtener productos por ID de negocio
-        public static ArrayList<Product> obtenerProductosPorIdNegocio(String url, Context ctx) {
+        /*public static ArrayList<Product> obtenerProductosPorIdNegocio(String url, Context ctx) {
             ArrayList<Product> productos = new ArrayList<>();
 
             // Realizar la solicitud HTTP GET para obtener productos
@@ -120,7 +122,40 @@ public class ControladorSevicio {
             }
 
             return productos;
+        }*/
+
+
+    public static ArrayList<Product> obtenerProductosPorIdNegocio(String url, Context ctx) {
+        ArrayList<Product> productos = new ArrayList<>();
+        String respuesta = obtenerRespuestaPeticion(url, ctx);
+
+        try {
+            // Verificar si la respuesta es un array JSON
+            JSONArray jsonArray = new JSONArray(respuesta);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                // Crear un objeto Product a partir de los datos JSON
+                Product producto = new Product();
+                producto.setIdProducto(jsonObject.getInt("idProducto"));
+                producto.setIdNegocio(jsonObject.getInt("idNegocio"));
+                producto.setNombreProducto(jsonObject.getString("nombreProducto"));
+                producto.setTipoProducto(jsonObject.getString("tipoProducto"));
+                producto.setDescripcionProducto(jsonObject.getString("descripcionProducto"));
+                producto.setPrecioProducto((float) jsonObject.getDouble("precioProducto"));
+                producto.setExistenciaProducto(jsonObject.getInt("existenciaProducto") == 1);
+
+                // Agregar el producto a la lista
+                productos.add(producto);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("Error arraylist productos", e.toString());
+            return new ArrayList<>(); // Devolver una lista vacía en caso de error
         }
+
+        return productos;
+    }
 
 
 

@@ -2,28 +2,34 @@ package sv.edu.ues.fia.telollevoya.seguridad;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import org.json.*;
+
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.*;
 
 public class rolRegistrarseActivity extends AppCompatActivity {
 
-    ControlBD helper;
+
+    //Enlaces de insersion.
+    private final String urlInsertarCLiente = "https://telollevoya.000webhostapp.com/Seguridad/cliente_insertar.php";
+    private final String urlInsertarAdministrador = "https://telollevoya.000webhostapp.com/Seguridad/administrador_insertar.php";
+    private final String urlInsertarRepartidor = "https://telollevoya.000webhostapp.com/Seguridad/repartidor_insertar.php";
 
     //Variables recuperadas
     String correo, nombre, apellido, contra, sexo, nacimiento;
     ImageView imgCliente, imgAdministrador, imgRepartidor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rol_registrarse);
-        helper = new ControlBD(this);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         //Obtenemos la imagen
         imgCliente = findViewById(R.id.imgCliente);
@@ -41,174 +47,81 @@ public class rolRegistrarseActivity extends AppCompatActivity {
 
     }
 
-    //Se asigna el rol cliente
+    //Se asigna el rol cliente --------------------------------------------------------------------
     public void soyCliente(View v) {
-        String regInsertados;
-        int banderaExistencia = 0;
+        String url, result = "", idCliente= "";
+        JSONObject jsonExtraido;
+        url = urlInsertarCLiente + "?NOMBRECLIENTE=" + nombre + "&CORREOCLIENTE=" + correo + "&CONTRACLIENTE=" + contra + "&APELLIDOSCLIENTE=" + apellido + "&SEXOCLIENTE=" + sexo + "&FECHANACIMIENTOC="+ nacimiento;
+        jsonExtraido = ControladorSevicio.insertarCliente(url, this);
 
-        //Validamos existencia de correo Cliente ya creador
-        helper.abrir();
-        Cliente validadorCliente = helper.consultarCliente(correo);
-        helper.cerrar();
-        if(validadorCliente == null){
-            Toast.makeText(this, "Creando nuevo cliente...", Toast.LENGTH_LONG).show();
-            //Insersion a tabla cliente
-            Cliente cliente = new Cliente();
-            cliente.setNombre(nombre);
-            cliente.setApellido(apellido);
-            cliente.setSexo(sexo);
-            cliente.setCorreo(correo);
-            cliente.setContra(contra);
-            cliente.setNacimiento(nacimiento);
-            helper.abrir();
-            regInsertados = helper.insertar(cliente);
-            validadorCliente = helper.consultarCliente(correo);
-            helper.cerrar();
-        }
-        else{
-            Toast.makeText(this, "¡Ya existe el cliente!", Toast.LENGTH_LONG).show();
-            banderaExistencia = 1;
+        try {
+            Thread.sleep(5000); // Esperar 5 segundos (5000 milisegundos)
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
-        //Validamos existencia de correo Usuario ya creado
-        helper.abrir();
-        Usuario validadorUsuario = helper.consultarUsuario(correo);
-        helper.cerrar();
-        if(validadorUsuario == null){
-            //Insersion a tabla usuario
-            Usuario usuario = new Usuario();
-            usuario.setClave(contra);
-            usuario.setNombreUsuario(correo);
-            helper.abrir();
-            regInsertados = helper.insertar(usuario);
-            helper.cerrar();
-            Toast.makeText(this, "Creando nuevo usuario...", Toast.LENGTH_LONG).show();
+        //Obtenenos el resultado
+        try {
+            idCliente = jsonExtraido.getString("idCliente");
+            result = jsonExtraido.getString("resultado");
 
-        }else{
-            Toast.makeText(this, "¡Ya existe el usuario!", Toast.LENGTH_LONG).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error procesando la respuesta del servidor", Toast.LENGTH_LONG).show();
         }
 
-        Intent intent = getIntent(banderaExistencia, validadorCliente);
-        startActivity(intent);
+        Intent intent;
+        if ("Cliente guardado con exito".equals(result)){
+
+            intent = new Intent(this, registrarUbicacionActivity.class);
+            intent.putExtra("idCliente", idCliente);
+            startActivity(intent);
+        }
     }
 
-    //Validamos para donde nos vamos
-    @NonNull
-    private Intent getIntent(int banderaExistencia, Cliente validadorCliente) {
-        Intent intent;
+    //Se asigna el rol administrador-----------------------------------------------------
+    public void soyAdministrador(View v){
+        String url, resul;
+        url = urlInsertarAdministrador + "?NOMBREADMIN=" + nombre + "&CORREOADMINISTRADOR=" + correo + "&CONTRAADMINISTRADOR=" + contra + "&APELLIDOSADMIN=" + apellido + "&SEXOADMINISTRADOR=" + sexo + "&FECHANACIMIENTO="+ nacimiento;
+        resul = ControladorSevicio.insertarUsuario(url, this);
 
-        if (banderaExistencia == 0){
-            //Me voy a registrar mi Ubicacion
-            intent = new Intent(this, registrarUbicacionActivity.class);
-            intent.putExtra("idCliente", validadorCliente.getIdCliente());
+        try {
+            Thread.sleep(5000); // Esperar 5 segundos (5000 milisegundos)
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        else{
-            //Me voy a iniciar sesion
+
+
+        Intent intent;
+        if ("Administrador guardado con exito".equals(resul)){
+
             intent = new Intent(this, IniciarSesionActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("desdeInicioApp", false);
+            startActivity(intent);
         }
-        return intent;
+
     }
 
-    //Se asigna el rol administrador
-    public void soyAdministrador(View v){
-        String regInsertados;
-
-        //Validamos existencia de correo Administrador ya creado
-        helper.abrir();
-        Administrador validadorAdministrador = helper.consultarAdministrador(correo);
-        helper.cerrar();
-        if(validadorAdministrador == null){
-            //Insersion a tabla cliente
-            Administrador administrador = new Administrador();
-            administrador.setNombre(nombre);
-            administrador.setApellido(apellido);
-            administrador.setSexo(sexo);
-            administrador.setCorreo(correo);
-            administrador.setContra(contra);
-            administrador.setNacimiento(nacimiento);
-            helper.abrir();
-            regInsertados = helper.insertar(administrador);
-            helper.cerrar();
-            Toast.makeText(this, "Creando nuevo administrador...", Toast.LENGTH_LONG).show();
-
-        } else{
-            Toast.makeText(this, "¡Ya existe el administrador!", Toast.LENGTH_LONG).show();
-        }
-
-        //Validamos existencia de correo Usuario ya creado
-        helper.abrir();
-        Usuario validadorUsuario = helper.consultarUsuario(correo);
-        helper.cerrar();
-        if(validadorUsuario == null){
-            //Insersion a tabla usuario
-            Usuario usuario = new Usuario();
-            usuario.setClave(contra);
-            usuario.setNombreUsuario(correo);
-            helper.abrir();
-            regInsertados = helper.insertar(usuario);
-            helper.cerrar();
-            Toast.makeText(this, "Creando nuevo usuario...", Toast.LENGTH_LONG).show();
-
-        }else{
-            Toast.makeText(this, "¡Ya existe el usuario!", Toast.LENGTH_LONG).show();
-        }
-
-        //Me voy a iniciar sesion
-        Intent intent = new Intent(this, IniciarSesionActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("desdeInicioApp", false);
-        startActivity(intent);
-    }
-
-    //Se asigna el rol repartidor
+    //Se asigna el rol repartidor ---------------------------------------------------------------
     public void soyRepartidor(View v){
-        String regInsertados;
+        String url, resul;
+        url = urlInsertarRepartidor + "?NOMBREREPARTIDOR=" + nombre + "&CORREOREPARTIDOR=" + correo + "&CONTRAREPARTIDOR=" + contra + "&APELLIDOREPARTIDOR=" + apellido + "&SEXOREPARTIDOR=" + sexo + "&FECHANACIMIENTOR=" + nacimiento;
+        resul = ControladorSevicio.insertarUsuario(url, this);
 
-        //Validamos existencia de correo Reprtidor ya creado
-        helper.abrir();
-        Repartidor validadorRepartidor = helper.consultarRepartidor(correo);
-        helper.cerrar();
-        if(validadorRepartidor == null){
-            //Insersion a tabla cliente
-            Repartidor repartidor = new Repartidor();
-            repartidor.setNombre(nombre);
-            repartidor.setApellido(apellido);
-            repartidor.setSexo(sexo);
-            repartidor.setCorreo(correo);
-            repartidor.setContra(contra);
-            repartidor.setNacimiento(nacimiento);
-            helper.abrir();
-            regInsertados = helper.insertar(repartidor);
-            helper.cerrar();
-            Toast.makeText(this, "Creando nuevo repartidor...", Toast.LENGTH_LONG).show();
-        } else{
-            Toast.makeText(this, "¡Ya existe el repartidor!", Toast.LENGTH_LONG).show();
+        try {
+            Thread.sleep(5000); // Esperar 5 segundos (5000 milisegundos)
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
-        //Validamos existencia de correo Usuario ya creado
-        helper.abrir();
-        Usuario validadorUsuario = helper.consultarUsuario(correo);
-        helper.cerrar();
-        if(validadorUsuario == null){
-            //Insersion a tabla usuario
-            Usuario usuario = new Usuario();
-            usuario.setClave(contra);
-            usuario.setNombreUsuario(correo);
-            helper.abrir();
-            regInsertados = helper.insertar(usuario);
-            helper.cerrar();
-            Toast.makeText(this, "Creando nuevo usuario...", Toast.LENGTH_LONG).show();
+        Intent intent;
+        if ("Repartidor guardado con exito".equals(resul)){
 
-        }else{
-            Toast.makeText(this, "¡Ya existe el usuario!", Toast.LENGTH_LONG).show();
+            intent = new Intent(this, IniciarSesionActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("desdeInicioApp", false);
+            startActivity(intent);
         }
-
-        //Me voy a iniciar sesion
-        Intent intent = new Intent(this, IniciarSesionActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("desdeInicioApp", false);
-        startActivity(intent);
     }
 }

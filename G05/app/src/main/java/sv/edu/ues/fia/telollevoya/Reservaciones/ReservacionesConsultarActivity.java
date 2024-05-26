@@ -1,9 +1,12 @@
 package sv.edu.ues.fia.telollevoya.Reservaciones;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,24 +22,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Reservacion;
-
+@SuppressLint("NewApi")
 public class ReservacionesConsultarActivity extends Activity {
-
+    List<Reservacion> listaReservaciones;
     RecyclerView recyclerView;
     ArrayList<Reservacion> reservacion;
     ControlBD db;
     MyAdapter adapter;
-    String idCliente;
-
+    int idCliente;
+    String urlReservaciones="https://telollevoya.000webhostapp.com/Reservaciones/reservacion_query.php";
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_reservaciones_consultar);
+        Intent intent= getIntent();
+
+
+       // idCliente="1";
+
         db= new ControlBD(this);
-        //Reservacion reservacion1= reservacion.get()
+
+
+                StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        listaReservaciones = new ArrayList<Reservacion>();
 
         recyclerView= findViewById(R.id.recycolerView);
         reservacion = obtenerReservaciones();
@@ -45,33 +62,47 @@ public class ReservacionesConsultarActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         displaydata();
 
-        Intent intent= getIntent();
-        idCliente= intent.getStringExtra("idCliente");
 
 
 
 
     }
     private ArrayList<Reservacion> obtenerReservaciones() {
-        ArrayList<Reservacion> reservaciones = new ArrayList<>();
         db.abrir();
-        reservaciones=db.consultaReservacion();
+        idCliente= db.consultaUsuario();
         db.cerrar();
+       String url = urlReservaciones + "?IDCLIENTE="+ idCliente;
+        String reservacion = ControladorSevicio.obtenerRepuestaPeticion(url,this); //ControladorServicio.obtenerRespuestaPeticion(url, this);
+
+        Log.v("UrlConsulta",url);
+        Log.v("UrlConsulta",reservacion);
+
+        try {
+            listaReservaciones.addAll(ControladorSevicio.obtenerReservaciones(reservacion, this));
+            //actualizarListView();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Reservacion> reservaciones = new ArrayList<>();
+//        db.abrir();
+//        reservaciones=db.consultaReservacion();
+//        db.cerrar();
        /*
         reservaciones.add(new Reservacion(1, "Negocio 1", " 12/02/24"));
         reservaciones.add(new Reservacion(2, "Negocio 2", ""));
         reservaciones.add(new Reservacion(3, "Negocio 3", " "));
         */
-        return reservaciones;
+        return (ArrayList<Reservacion>) listaReservaciones;
     }
     private void displaydata(){
         //Cursor cursor= db.query();
     }
 
     public void cambiarPantalla(View v){
-        Toast.makeText(this, idCliente,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, idCliente,Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ReservacionesConsultarActivity.this, ReservacionInsertarActivity.class);
-        intent.putExtra("idCliente", idCliente);
+       // intent.putExtra("idCliente", idCliente);
         startActivity(intent);
     }
 }

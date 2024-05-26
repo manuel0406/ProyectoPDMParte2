@@ -22,8 +22,8 @@ public class Usuario {
         return idUsuario;
     }
 
-    public void setIdUsuario(String idCliente) {
-        this.idUsuario = idCliente;
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getRol() {

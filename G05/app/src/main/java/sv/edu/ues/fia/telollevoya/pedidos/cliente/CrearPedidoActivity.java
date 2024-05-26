@@ -66,7 +66,9 @@ public class CrearPedidoActivity extends AppCompatActivity {
         detallesListView = findViewById(R.id.detalles_listView);
         totPagarTextView = findViewById(R.id.tot_pagar_textView);
         controlBD = new ControlBD(CrearPedidoActivity.this);
-        idCliente = getIntent().getIntExtra("idCliente", idCliente);
+        controlBD.abrir();
+        idCliente = controlBD.consultaUsuario();
+        controlBD.cerrar();
         Bundle objetoRecibido = getIntent().getExtras();
         if (objetoRecibido != null | !objetoRecibido.isEmpty()) {
             detallePedidosList = (ArrayList) objetoRecibido.getSerializable("detalles");

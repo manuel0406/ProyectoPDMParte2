@@ -53,7 +53,6 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     ArrayList<DetallePedido> detallesPedidosList;
     ProductoCardAdapter adapter;
     ControlBD db;
-    private int idCliente;
     private final String URL_SERVICIO_PRODUCTOS = "https://telollevoya.000webhostapp.com/Pedidos/productos_negocio.php?negocio=";
     private final String URL_SERVICIO_HORA = "https://telollevoya.000webhostapp.com/Pedidos/hora.php";
 
@@ -78,7 +77,6 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         productos = new ArrayList<>();
         detallesPedidosList = new ArrayList<>();
         getProductosPorNegocio();
-        idCliente = getIntent().getIntExtra("idCliente", idCliente);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -147,7 +145,6 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         extras.putSerializable("detalles",detallesPedidosList);
         Intent intent = new Intent(SeleccionarProductoActivity.this, CrearPedidoActivity.class);
         intent.putExtras(extras);
-        intent.putExtra("idCliente", idCliente);
         this.startActivityForResult(intent, 1);
     }
 
@@ -201,8 +198,8 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     public int getHoraActual(){
         String json = ControladorSevicio.obtenerRespuestaPeticion(URL_SERVICIO_HORA,getApplicationContext());
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            return jsonObject.getInt("hora");
+            JSONArray jsonArray = new JSONArray(json);
+            return jsonArray.getJSONObject(0).getInt("hora");
         } catch (Exception e) {
             e.printStackTrace();
         }

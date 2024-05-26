@@ -56,10 +56,9 @@ public class MisPedidosActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         //Aqui recibe el idCliente desde la pantalla iniciar sesión
-        Intent intent = getIntent();
-        idClienteStr = intent.getStringExtra("idCliente");
-        idCliente = Integer.parseInt(idClienteStr);
-
+//        Intent intent = getIntent();
+//        idClienteStr = intent.getStringExtra("idCliente");
+//        idCliente = Integer.parseInt(idClienteStr);
         controlBD = new ControlBD(MisPedidosActivity.this);
         pedidosRelizadosList = new ArrayList<>();
         pedidosActivosList = new ArrayList<>();
@@ -75,11 +74,9 @@ public class MisPedidosActivity extends Activity {
 
     public void getPedidos(){
         try {
-           // String enviado = getIntent().getExtras().getString("idCliente");
-           // if (enviado != null) {
-                idCliente = 3;
-//                controlBD.abrir();
-//                List<Pedido> pedidos = controlBD.getPedidos(idCliente);
+            controlBD.abrir();
+                idCliente = controlBD.consultaUsuario();
+                controlBD.cerrar();
                 String url = URL_PEDIDOS_CLIENTE_SERVICIO + idCliente;
                 String json = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
                 try{

@@ -170,9 +170,9 @@ public class ControladorSevicio {
 //                    Log.v("idReservacionC",String.valueOf( idReservacion));
 
                     if (respuesta == 1) {
-                        Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
 //                        idReservacion = 0; // Reiniciar idReservacion en caso de error
                     }
                     // Llamar al método de callback con el ID de la reservación

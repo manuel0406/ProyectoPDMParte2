@@ -32,7 +32,7 @@ public class ReservacionesConsultarActivity extends Activity {
     ArrayList<Reservacion> reservacion;
     ControlBD db;
     MyAdapter adapter;
-    String idCliente;
+    int idCliente;
     String urlReservaciones="https://telollevoya.000webhostapp.com/Reservaciones/reservacion_query.php";
     @SuppressLint("NewApi")
     @Override
@@ -41,14 +41,14 @@ public class ReservacionesConsultarActivity extends Activity {
 
         setContentView(R.layout.activity_reservaciones_consultar);
         Intent intent= getIntent();
-        idCliente= intent.getStringExtra("idCliente");
 
-        idCliente="1";
+
+       // idCliente="1";
 
         db= new ControlBD(this);
-        //Reservacion reservacion1= reservacion.get()
 
-        StrictMode.ThreadPolicy policy = new
+
+                StrictMode.ThreadPolicy policy = new
                 StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -68,6 +68,9 @@ public class ReservacionesConsultarActivity extends Activity {
 
     }
     private ArrayList<Reservacion> obtenerReservaciones() {
+        db.abrir();
+        idCliente= db.consultaUsuario();
+        db.cerrar();
        String url = urlReservaciones + "?IDCLIENTE="+ idCliente;
         String reservacion = ControladorSevicio.obtenerRepuestaPeticion(url,this); //ControladorServicio.obtenerRespuestaPeticion(url, this);
 
@@ -82,9 +85,9 @@ public class ReservacionesConsultarActivity extends Activity {
         }
 
         ArrayList<Reservacion> reservaciones = new ArrayList<>();
-        db.abrir();
-        reservaciones=db.consultaReservacion();
-        db.cerrar();
+//        db.abrir();
+//        reservaciones=db.consultaReservacion();
+//        db.cerrar();
        /*
         reservaciones.add(new Reservacion(1, "Negocio 1", " 12/02/24"));
         reservaciones.add(new Reservacion(2, "Negocio 2", ""));
@@ -97,9 +100,9 @@ public class ReservacionesConsultarActivity extends Activity {
     }
 
     public void cambiarPantalla(View v){
-        Toast.makeText(this, idCliente,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, idCliente,Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ReservacionesConsultarActivity.this, ReservacionInsertarActivity.class);
-        intent.putExtra("idCliente", idCliente);
+       // intent.putExtra("idCliente", idCliente);
         startActivity(intent);
     }
 }

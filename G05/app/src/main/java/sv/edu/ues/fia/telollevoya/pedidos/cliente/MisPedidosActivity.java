@@ -87,9 +87,9 @@ public class MisPedidosActivity extends Activity {
 
     public void irReservacionesConsultar(View v){
 
-        Toast.makeText(this, idClienteStr,Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, idClienteStr,Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MisPedidosActivity.this, ReservacionesConsultarActivity.class);
-        intent.putExtra("idCliente", idClienteStr);
+        //intent.putExtra("idCliente", idClienteStr);
 
         startActivity(intent);
     }

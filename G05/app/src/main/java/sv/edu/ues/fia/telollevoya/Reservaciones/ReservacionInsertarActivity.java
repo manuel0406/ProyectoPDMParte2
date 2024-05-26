@@ -68,7 +68,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
     double total, precio,cantidad;
     double pagoMinimo=0;
     private  int dia, mes, ano, hora, minutos;
-    String idCliente;
+    int idCliente;
     ScrollView scrollView;
     private int contadorElementos = 0;
     int idReservacionR;
@@ -111,9 +111,10 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         edtAnticipo= (EditText) findViewById(R.id.editTextAnticipo);
 
 
-        Intent intent= getIntent();
-        idCliente= intent.getStringExtra("idCliente");
-        Toast.makeText(this, idCliente,Toast.LENGTH_SHORT).show();
+     helper.abrir();
+        idCliente= helper.consultaUsuario();
+        helper.cerrar();
+        Toast.makeText(this, String.valueOf(idCliente),Toast.LENGTH_SHORT).show();
 
 
 
@@ -197,7 +198,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         if (Anticipo >= pagoMinimo && Anticipo <= totalReservacion){
 
             Reservacion reservacion= new Reservacion();
-            reservacion.setIdCliente(Integer.parseInt(idCliente));
+            reservacion.setIdCliente(idCliente);
             reservacion.setDescripcionReservacion(descripcionRe);
             reservacion.setAnticipoReservacion(Anticipo);
             reservacion.setMontoPediente(totalReservacion-Anticipo);

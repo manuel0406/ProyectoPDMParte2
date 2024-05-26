@@ -23,6 +23,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.*;
 
 public class ControladorSevicio {
 
@@ -66,8 +71,7 @@ public class ControladorSevicio {
             HttpClient cliente = new DefaultHttpClient(parametros);
             HttpPost httpPost = new HttpPost(url);
             httpPost.setHeader("content-type", "application/json");
-            StringEntity nuevaEntidad = new
-                    StringEntity(obj.toString());
+            StringEntity nuevaEntidad = new StringEntity(obj.toString());
             httpPost.setEntity(nuevaEntidad);
             Log.v("Peticion", url);
             Log.v("POST", httpPost.toString());
@@ -222,4 +226,112 @@ public class ControladorSevicio {
 
 
 
+    //********************************************************************************************
+    //***                        INSERSICION DE USUARIO EN 000WEBHOST                          ***
+    //********************************************************************************************
+    public static String insertarUsuario(String peticion, Context ctx) {
+        String resp="";
+        String json = obtenerRepuestaPeticion(peticion, ctx);
+
+        try {
+            JSONObject resultado = new JSONObject(json);
+
+            // Obtén el valor de "resultado" como una cadena
+            String respuesta = resultado.getString("resultado");
+            Toast.makeText(ctx, respuesta, Toast.LENGTH_LONG).show();
+            resp = respuesta;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error procesando la respuesta del servidor", Toast.LENGTH_LONG).show();
+        }
+        return resp;
+    }
+
+    //********************************************************************************************
+    //***                        INSERSICION DE USUARIO EN 000WEBHOST                          ***
+    //********************************************************************************************
+    public static JSONObject insertarCliente(String peticion, Context ctx) {
+        JSONObject resp = null;
+        String json = obtenerRepuestaPeticion(peticion, ctx);
+
+        try {
+            JSONObject resultado = new JSONObject(json);
+
+            // Obtén el valor de "resultado" como una cadena
+            String respuesta = resultado.getString("resultado");
+            Toast.makeText(ctx, respuesta, Toast.LENGTH_LONG).show();
+            resp = resultado;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error procesando la respuesta del servidor", Toast.LENGTH_LONG).show();
+        }
+        return resp;
+    }
+
+    //********************************************************************************************
+    //***                        CONSULTAR USUARIO EN 000WEBHOST                               ***
+    //********************************************************************************************
+    public static String obtenerRespuestaPeticion(String urlString, Context ctx) {
+        String respuesta = "";
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+
+        try {
+            // Crear la URL
+            URL url = new URL(urlString);
+
+            // Abrir la conexión
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setConnectTimeout(3000); // Tiempo de espera de conexión
+            urlConnection.setReadTimeout(5000);    // Tiempo de espera de lectura
+
+            // Conectar a la URL
+            urlConnection.connect();
+
+            // Obtener el código de respuesta
+            int responseCode = urlConnection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Leer la respuesta del InputStream
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuilder buffer = new StringBuilder();
+                if (inputStream == null) {
+                    // No hay nada que hacer
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String linea;
+                while ((linea = reader.readLine()) != null) {
+                    buffer.append(linea).append("\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // La respuesta está vacía
+                    return null;
+                }
+                respuesta = buffer.toString();
+            } else {
+                Toast.makeText(ctx, "Error en la conexion: " + responseCode, Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(ctx, "Error en la conexion", Toast.LENGTH_LONG).show();
+            Log.v("Error de Conexion", e.toString());
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Log.e("Error cerrando stream", e.toString());
+                }
+            }
+        }
+        return respuesta;
+    }
 }

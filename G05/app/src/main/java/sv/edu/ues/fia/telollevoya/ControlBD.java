@@ -8,11 +8,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
@@ -97,7 +92,7 @@ public class ControlBD {
             "idUbicacion", "idDistrito", "descripcionUbicacion"
     };
     private static final String[] camposUsuario = new String[]{
-            "idUsuario", "nombreUsuario", "clave"
+            "idUsuario", "nombreUsuario", "clave", "rol", "estado"
     };
 
 
@@ -268,7 +263,9 @@ public class ControlBD {
                 db.execSQL("CREATE TABLE Usuario (\n" +
                         "   idUsuario INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                         "   nombreUsuario VARCHAR(30),\n" +
-                        "   clave CHAR(5)\n" +
+                        "   clave CHAR(5),\n" +
+                        "   rol CHAR(14),\n" +
+                        "   estado CHAR(7)\n" +
                         ");");
 
 //                -- Trigger para ACCESOUSUARIO
@@ -298,23 +295,6 @@ public class ControlBD {
                         "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDNEGOCIO no existente en NEGOCIO')\n" +
                         "    END;\n" +
                         "END;");
-                //Trigger para DETALLEPEDIDO
-//                db.execSQL("CREATE TRIGGER fk_detallep_contiene_pedido\n" +
-//                        "BEFORE INSERT ON DetallePedido\n" +
-//                        "FOR EACH ROW\n" +
-//                        "BEGIN\n" +
-//                        "    SELECT CASE WHEN ((SELECT idPedido FROM Pedido WHERE idPedido = NEW.idPedido) IS NULL)\n" +
-//                        "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDPEDIDO no existente en PEDIDO')\n" +
-//                        "    END;\n" +
-//                        "END;");
-//                db.execSQL("CREATE TRIGGER fk_detallep_posee_reservac\n" +
-//                        "BEFORE INSERT ON DetallePedido\n" +
-//                        "FOR EACH ROW\n" +
-//                        "BEGIN\n" +
-//                        "    SELECT CASE WHEN ((SELECT idReservacion FROM Reservacion WHERE idReservacion = NEW.idReservacion) IS NULL)\n" +
-//                        "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDRESERVACION no existente en RESERVACION')\n" +
-//                        "    END;\n" +
-//                        "END;");
                 //Trigger para DISTRITO
                 db.execSQL("CREATE TRIGGER fk_distrito_engloba_municipi\n" +
                         "BEFORE INSERT ON Distrito\n" +
@@ -360,14 +340,6 @@ public class ControlBD {
                         "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDUBICACION no existente en UBICACION')\n" +
                         "    END;\n" +
                         "END;");
-//                db.execSQL("CREATE TRIGGER fk_pedido_entrega_repartid\n" +
-//                        "BEFORE INSERT ON Pedido\n" +
-//                        "FOR EACH ROW\n" +
-//                        "BEGIN\n" +
-//                        "    SELECT CASE WHEN ((SELECT idRepartidor FROM Repartidor WHERE idRepartidor = NEW.idRepartidor) IS NULL)\n" +
-//                        "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDREPARTIDOR no existente en REPARTIDOR')\n" +
-//                        "    END;\n" +
-//                        "END;");
                 db.execSQL("CREATE TRIGGER fk_pedido_genera_factura\n" +
                         "BEFORE INSERT ON Pedido\n" +
                         "FOR EACH ROW\n" +
@@ -448,9 +420,6 @@ public class ControlBD {
                         "        THEN RAISE(ABORT, 'El ID de negocio no existe en la tabla NEGOCIO')\n" +
                         "    END;\n" +
                         "END;");
-
-
-
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -1549,12 +1518,18 @@ public class ControlBD {
         return regInsertados;
     }
 
+    //********************************************************************************************
+    //***                        INSERSICION DE USUARIO EN SQLITE                              ***
+    //********************************************************************************************
     public String insertar(Usuario usuario) {
         String regInsertados = "Registros insertados N°= ";
         long contador;
         ContentValues user = new ContentValues();
+        user.put("idUsuario", usuario.getIdUsuario() );
         user.put("nombreUsuario", usuario.getNombreUsuario());
         user.put("clave", usuario.getClave());
+        user.put("rol", usuario.getRol());
+        user.put("estado", usuario.getEstado());
 
         contador = db.insert("Usuario", null, user);
         if (contador == -1 || contador == 0) {
@@ -1564,6 +1539,8 @@ public class ControlBD {
         }
         return regInsertados;
     }
+
+    //********************************************************************************************
 
     public String insertar(Administrador administrador) {
         String regInsertados = "Registros insertados N°= ";

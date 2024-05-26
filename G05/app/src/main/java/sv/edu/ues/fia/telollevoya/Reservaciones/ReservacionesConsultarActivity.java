@@ -43,6 +43,7 @@ public class ReservacionesConsultarActivity extends Activity {
         Intent intent= getIntent();
         idCliente= intent.getStringExtra("idCliente");
 
+        idCliente="1";
 
         db= new ControlBD(this);
         //Reservacion reservacion1= reservacion.get()

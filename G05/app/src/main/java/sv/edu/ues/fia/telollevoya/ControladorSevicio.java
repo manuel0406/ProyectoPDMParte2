@@ -184,6 +184,27 @@ public class ControladorSevicio {
             }
         }.execute();
     }
+    public static void updateReservacion(String peticion, Context ctx) {
+        String json = obtenerRespuestaPeticion(peticion, ctx);
+        try {
+            JSONObject resultado = new JSONObject(json);
+            int respuesta = resultado.getInt("resultado");
+//                    idReservacion = resultado.getInt("idReservacion");
+//                    Log.v("idReservacionC",String.valueOf( idReservacion));
+
+            if (respuesta == 1) {
+                Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+//                        idReservacion = 0; // Reiniciar idReservacion en caso de error
+            }
+            // Llamar al método de callback con el ID de la reservación
+            //  listener.onReservacionInserted(idReservacion);
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+    }
 
     public interface ReservacionInsertListener {
         void onReservacionInserted(int idReservacion);
@@ -222,6 +243,7 @@ public class ControladorSevicio {
             }
         }.execute();
     }
+
 
 
 

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
 
 public class MiNegocioActivity extends Activity {
     RecyclerView listaNegocios;
@@ -47,6 +48,25 @@ public class MiNegocioActivity extends Activity {
         listaNegocios.setAdapter(adapter);
 
         cargarNegocios(); // Primera carga de datos
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //                          METODO PARA CERRAR SESION
+    //----------------------------------------------------------------------------------------------
+    public void cerrarSesion(View v) {
+
+        //Limpio base de usuarios disponibles
+        helper = new ControlBD(this);
+        helper.abrir();
+        helper.LimpiarUsuario();
+        helper.cerrar();
+        Toast.makeText(this, "Vuelve pronto", Toast.LENGTH_SHORT).show();
+
+        // Crear un Intent para iniciar sesion "Iniciar Sesion"
+        Intent intent = new Intent(this, IniciarSesionActivity.class);
+        intent.putExtra("desdeInicioApp", false);
+        startActivity(intent);
+        finish();
     }
 
     @Override

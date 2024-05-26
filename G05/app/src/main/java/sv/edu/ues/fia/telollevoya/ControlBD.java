@@ -1844,5 +1844,9 @@ public class ControlBD {
         }
     }
 
+
+    public void LimpiarUsuario() {
+        db.execSQL("DELETE FROM Usuario");
+    }
 }
 

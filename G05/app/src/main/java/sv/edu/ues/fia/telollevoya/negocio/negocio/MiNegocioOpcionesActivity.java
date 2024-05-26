@@ -16,7 +16,7 @@ import sv.edu.ues.fia.telollevoya.negocio.producto.ProductosActivity;
 public class MiNegocioOpcionesActivity extends Activity {
     TextView texto1;
     String idNegocioRecuperado;
-    int idNegocio = -1, idUbicacion;
+    int idNegocio = -1, idUbicacion,idAdmin;
     String name;
     ControlBD helper;
 
@@ -35,8 +35,13 @@ public class MiNegocioOpcionesActivity extends Activity {
         Intent intent = getIntent();
         idNegocio = intent.getIntExtra("idNegocio", 5);
         idUbicacion = intent.getIntExtra("idUbicacion", 5);
+        idAdmin = intent.getIntExtra("idAdministrador", 1);
         name = intent.getStringExtra("name");
         texto1.setText("Negocio: " + name);
+
+        //Toast.makeText(this, "id Admin " + idAdmin, Toast.LENGTH_LONG).show();
+
+
     }
 
     @Override
@@ -49,6 +54,7 @@ public class MiNegocioOpcionesActivity extends Activity {
         Intent intent = new Intent(this, EditarMiNegocioActivity.class);
         intent.putExtra("idNegocio", idNegocio);
         intent.putExtra("idUbicacion", idUbicacion);
+        intent.putExtra("idAdministrador", idAdmin);
         startActivity(intent);
     }
 

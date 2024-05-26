@@ -16,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
@@ -87,7 +89,18 @@ public class ProductosActivity extends AppCompatActivity {
             } else {
                 adapter.setProductos(new ArrayList<>());
                 if (!firstLoad) { // Mostrar el Toast solo si no es la primera carga
-                    Toast.makeText(context, "No tienes ningun producto", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(context, "No tienes ningun producto", Toast.LENGTH_LONG).show();
+                    View rootView = findViewById(android.R.id.content);
+
+                    Snackbar.make(rootView, "No tienes productos en este negocio. Añade un producto para comenzar.", Snackbar.LENGTH_LONG)
+                            .setDuration(4000) // Duración de 3 segundos en milisegundos
+                            .setAction("Añadir", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    irNuevoProducto(v);
+                                    // Acción a realizar cuando se pulsa el botón "Añadir"
+                                }
+                            }).show();
                 }
             }
         }

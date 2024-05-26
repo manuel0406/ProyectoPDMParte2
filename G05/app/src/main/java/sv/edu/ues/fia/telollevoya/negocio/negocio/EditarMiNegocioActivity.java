@@ -30,7 +30,7 @@ public class EditarMiNegocioActivity extends Activity {
     Distrito distrito;
     Departamento departamento;
     Municipio municipio;
-    int idUbicacion, idNegocio;
+    int idUbicacion, idNegocio, idAdmin;
     ControlBD helper;
     Button btnApertura, btnCierre;
     String horaapertura = "07:00 AM";
@@ -88,8 +88,10 @@ public class EditarMiNegocioActivity extends Activity {
         Intent intent = getIntent();
         idNegocio = intent.getIntExtra("idNegocio",0);
         idUbicacion = intent.getIntExtra("idUbicacion", 5);
+        idAdmin = intent.getIntExtra("idAdministrador", 1);
 
-        //Toast.makeText(this, "Id negocio " + idNegocio + " Id ubicacion " + idUbicacion, Toast.LENGTH_SHORT).show();
+
+        //Toast.makeText(this, "Id admin " + idAdmin, Toast.LENGTH_SHORT).show();
 
         // Obtenemos el negocio desde el servicio web
         String url = "https://telollevoya.000webhostapp.com/Negocio/verNegocio.php?idNegocio=" + idNegocio;
@@ -162,7 +164,6 @@ public class EditarMiNegocioActivity extends Activity {
         String telefono = URLEncoder.encode(editNegocioTelefono.getText().toString(), "UTF-8");
         String distrito = URLEncoder.encode((String) spinnerDistrito.getSelectedItem(), "UTF-8");
         String descripcion = URLEncoder.encode(editUbicacionDescripcion.getText().toString(), "UTF-8");
-        int idAdministradorRecuperado = getIntent().getIntExtra("idAdministradorRecuperado", 5);
 
         // Codificación de horarios
         String horaApertura = URLEncoder.encode(horaapertura, "UTF-8");
@@ -177,7 +178,7 @@ public class EditarMiNegocioActivity extends Activity {
         String urlUbicacion = urlUbicacionBuilder.toString();
         ControladorSevicio.actualizarUbicacion(urlUbicacion, this);
 
-        // Construcción de URL para insertar negocio
+        // Construcción de URL para editar negocio
         StringBuilder urlNegocioBuilder = new StringBuilder();
         urlNegocioBuilder.append(urlNegocio)
                 .append("?idNegocio=").append(idNegocio)
@@ -192,7 +193,8 @@ public class EditarMiNegocioActivity extends Activity {
         // Navegación a MiNegocioActivity
         Intent intent = new Intent(this, MiNegocioActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("idAdministrador", String.valueOf(idAdministradorRecuperado));
+        intent.putExtra("idAdministrador", String.valueOf(idAdmin));
+
         startActivity(intent);
         } catch (UnsupportedEncodingException e) {
             Toast.makeText(this, "Error en la codificación de los datos", Toast.LENGTH_SHORT).show();

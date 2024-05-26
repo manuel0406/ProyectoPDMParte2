@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
@@ -32,7 +34,11 @@ public class MiNegocioActivity extends Activity {
         Intent intent = getIntent();
         idAdministrador = intent.getStringExtra("idAdministrador");
         idAdmin = Integer.parseInt(idAdministrador);
-        idAdmin = 12; // Aseguramos que idAdmin tenga un valor, aunque este valor es estático
+        //Toast.makeText(this, "Administrador id " + idAdminXD, Toast.LENGTH_LONG).show();
+
+
+
+        //idAdmin = 12; // Aseguramos que idAdmin tenga un valor, aunque este valor es estático
 
         listaNegocios = findViewById(R.id.rvListaNegocios);
         listaNegocios.setLayoutManager(new LinearLayoutManager(this));
@@ -53,6 +59,9 @@ public class MiNegocioActivity extends Activity {
     }
 
     private void cargarNegocios() {
+        Intent intent = getIntent();
+        idAdministrador = intent.getStringExtra("idAdministrador");
+        idAdmin = Integer.parseInt(idAdministrador);
         String url = "https://telollevoya.000webhostapp.com/Negocio/obtener_negocios_por_administrador.php?idAdministrador=" + idAdmin;
         new ObtenerRestaurantesTask(this).execute(url);
     }
@@ -77,7 +86,18 @@ public class MiNegocioActivity extends Activity {
             } else {
                 adapter.setNegocios(new ArrayList<>());
                 if (!primeraCarga) { // Mostrar Toast solo después de la primera carga
-                    Toast.makeText(context, "No tienes ningun restaurante", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(context, "No tienes negocios asociados. Añade un negocio para comenzar.", Toast.LENGTH_LONG).show();
+                    View rootView = findViewById(android.R.id.content);
+
+                    Snackbar.make(rootView, "No tienes negocios asociados. Añade un negocio para comenzar.", Snackbar.LENGTH_LONG)
+                            .setDuration(4000) // Duración de 3 segundos en milisegundos
+                            .setAction("Añadir", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    irNuevoNegocio(v);
+                                    // Acción a realizar cuando se pulsa el botón "Añadir"
+                                }
+                            }).show();
                 }
             }
         }

@@ -36,11 +36,7 @@ public class MiNegocioActivity extends Activity {
         Intent intent = getIntent();
         idAdministrador = intent.getStringExtra("idAdministrador");
         idAdmin = Integer.parseInt(idAdministrador);
-        //Toast.makeText(this, "Administrador id " + idAdminXD, Toast.LENGTH_LONG).show();
-
-
-
-        //idAdmin = 12; // Aseguramos que idAdmin tenga un valor, aunque este valor es estático
+        // idAdmin = 12; // Aseguramos que idAdmin tenga un valor, aunque este valor es estático
 
         listaNegocios = findViewById(R.id.rvListaNegocios);
         listaNegocios.setLayoutManager(new LinearLayoutManager(this));
@@ -55,8 +51,7 @@ public class MiNegocioActivity extends Activity {
     //                          METODO PARA CERRAR SESION
     //----------------------------------------------------------------------------------------------
     public void cerrarSesion(View v) {
-
-        //Limpio base de usuarios disponibles
+        // Limpio base de usuarios disponibles
         helper = new ControlBD(this);
         helper.abrir();
         helper.LimpiarUsuario();
@@ -89,6 +84,7 @@ public class MiNegocioActivity extends Activity {
 
     private class ObtenerRestaurantesTask extends AsyncTask<String, Void, ArrayList<Restaurant>> {
         private Context context;
+        private boolean errorServidor = false; // Flag para detectar errores del servidor
 
         public ObtenerRestaurantesTask(Context context) {
             this.context = context;
@@ -97,26 +93,34 @@ public class MiNegocioActivity extends Activity {
         @Override
         protected ArrayList<Restaurant> doInBackground(String... urls) {
             String url = urls[0];
-            return ControladorSevicio.obtenerRestaurantesDesdeServicio(url, context);
+            try {
+                return ControladorSevicio.obtenerRestaurantesDesdeServicio(url, context);
+            } catch (Exception e) {
+                errorServidor = true; // Indicar que ocurrió un error
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(ArrayList<Restaurant> listaRestaurantes) {
+            if (errorServidor) {
+                Toast.makeText(context, "Error del servidor. La aplicación se cerrará.", Toast.LENGTH_LONG).show();
+                finishAndRemoveTask(); // Cerrar la aplicación
+                return;
+            }
+
             if (listaRestaurantes != null && !listaRestaurantes.isEmpty()) {
                 adapter.setNegocios(listaRestaurantes);
             } else {
                 adapter.setNegocios(new ArrayList<>());
-                if (!primeraCarga) { // Mostrar Toast solo después de la primera carga
-                    //Toast.makeText(context, "No tienes negocios asociados. Añade un negocio para comenzar.", Toast.LENGTH_LONG).show();
+                if (!primeraCarga) { // Mostrar Snackbar solo después de la primera carga
                     View rootView = findViewById(android.R.id.content);
-
                     Snackbar.make(rootView, "No tienes negocios asociados. Añade un negocio para comenzar.", Snackbar.LENGTH_LONG)
-                            .setDuration(4000) // Duración de 3 segundos en milisegundos
+                            .setDuration(4000) // Duración de 4 segundos
                             .setAction("Añadir", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     irNuevoNegocio(v);
-                                    // Acción a realizar cuando se pulsa el botón "Añadir"
                                 }
                             }).show();
                 }

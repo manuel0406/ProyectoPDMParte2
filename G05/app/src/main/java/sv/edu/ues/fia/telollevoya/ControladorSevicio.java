@@ -115,6 +115,36 @@ public class ControladorSevicio {
         }
     }
 
+    public static List<Producto> obtenerProductos(String json, Context ctx) {
+
+        List<Producto> listaProductos= new ArrayList<Producto>();
+        try {
+            JSONArray productoJSON = new JSONArray(json);
+
+            for (int i = 0; i < productoJSON.length(); i++) {
+
+                JSONObject obj = productoJSON.getJSONObject(i);
+                Producto producto= new Producto();
+                producto.setId(obj.getInt("IDPRODUCTO"));
+                producto.setIdNegocio(obj.getInt("IDNEGOCIO"));
+                producto.setNombre(obj.getString("NOMBREPRODUCTO"));
+                producto.setTipo( obj.getString("TIPOPRODUCTO"));
+                producto.setDescripcion(obj.getString("DESCRIPCIONPRODUCTO"));
+                producto.setPrecio(Float.parseFloat( obj.getString("PRECIOPRODUCTO")));
+                producto.setExistencia(obj.getString("EXISTENCIAPRODUCTO").equals("1"));
+
+
+
+                listaProductos.add(producto);
+            }
+            return listaProductos;
+        } catch (Exception e) { Toast.makeText(ctx, "Error en parseOO de JSON",
+                            Toast.LENGTH_LONG)
+                    .show();
+            return null;
+        }
+    }
+
     /*
     * Este metodo es que el insertar los datos a las BD pero en segundo plano
     * por el momento no funcionara
@@ -128,22 +158,21 @@ public class ControladorSevicio {
 
             @Override
             protected void onPostExecute(String json) {
+
                 try {
                     JSONObject resultado = new JSONObject(json);
-
-                    Toast.makeText(ctx, "Registro ingresado"+
-                                    resultado.getJSONArray("resultado").toString(), Toast.LENGTH_LONG)
-                            .show();
                     int respuesta = resultado.getInt("resultado");
-                    if (respuesta == 1)
-                        Toast.makeText(ctx, "Registro ingresado",
-                                        Toast.LENGTH_LONG)
-                                .show();
-                    else
-                        Toast.makeText(ctx, "Error registro duplicado",
-                                Toast.LENGTH_LONG).show();
-                    // Llamar al método de callback con el ID de la reservación
+//                    idReservacion = resultado.getInt("idReservacion");
+//                    Log.v("idReservacionC",String.valueOf( idReservacion));
 
+                    if (respuesta == 1) {
+                        Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+//                        idReservacion = 0; // Reiniciar idReservacion en caso de error
+                    }
+                    // Llamar al método de callback con el ID de la reservación
+                  //  listener.onReservacionInserted(idReservacion);
                 } catch (JSONException e) {
                     e.printStackTrace();
 

@@ -67,7 +67,7 @@ public class ReservacionesConsultarActivity extends Activity {
 
     }
     private ArrayList<Reservacion> obtenerReservaciones() {
-       String url = urlReservaciones + "?IDCLIENTE="+Integer.parseInt( idCliente);
+       String url = urlReservaciones + "?IDCLIENTE="+ idCliente;
         String reservacion = ControladorSevicio.obtenerRepuestaPeticion(url,this); //ControladorServicio.obtenerRespuestaPeticion(url, this);
 
         Log.v("UrlConsulta",url);

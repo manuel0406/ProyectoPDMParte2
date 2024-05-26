@@ -30,17 +30,21 @@ public class ListaProductosAdaptader extends RecyclerView.Adapter<ListaProductos
 
     @Override
     public void onBindViewHolder(@NonNull ListaProductosAdaptader.ProductosViewHolder holder, int position) {
-        holder.txtProductoID.setText("ID Producto: " + listaProductos.get(position).getIdProducto());
-        holder.txtNegocioID.setText("ID Negocio: " + listaProductos.get(position).getIdNegocio());
-        holder.txtNombre.setText("Producto: " + listaProductos.get(position).getNombreProducto());
-        holder.txtPrecio.setText("Precio: $" + String.valueOf(listaProductos.get(position).getPrecioProducto()));
-        holder.txtDescripcion.setText("Descripción: " + listaProductos.get(position).getDescripcionProducto());
-        holder.txtTipo.setText("Tipo: " + listaProductos.get(position).getTipoProducto());
+        Context context = holder.itemView.getContext();
+        holder.txtProductoID.setText(context.getString(R.string.producto_id) + " " + listaProductos.get(position).getIdProducto());
+        holder.txtNegocioID.setText(context.getString(R.string.negocio_id) + " " + listaProductos.get(position).getIdNegocio());
+        holder.txtNombre.setText(context.getString(R.string.producto_nombre) + " " + listaProductos.get(position).getNombreProducto());
+        holder.txtPrecio.setText(context.getString(R.string.producto_precio) + " " + String.valueOf(listaProductos.get(position).getPrecioProducto()));
+        holder.txtDescripcion.setText(context.getString(R.string.producto_descripcion) + " " + listaProductos.get(position).getDescripcionProducto());
+        holder.txtTipo.setText(context.getString(R.string.producto_tipo) + " " + listaProductos.get(position).getTipoProducto());
 
-        //Define los valores que tendra segun su valor True o False
-        String existenciaString = listaProductos.get(position).isExistenciaProducto() ? "Producto disponible" : "Producto no disponible";
-        holder.txtExistencias.setText("Existencias: " + existenciaString);
+        // Define los valores que tendrá según su valor True o False
+        String existenciaString = listaProductos.get(position).isExistenciaProducto() ?
+                context.getString(R.string.producto_disponible) :
+                context.getString(R.string.producto_no_disponible);
+        holder.txtExistencias.setText(context.getString(R.string.producto_existencias) + " " + existenciaString);
     }
+
 
     @Override
     public int getItemCount() {

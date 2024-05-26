@@ -26,6 +26,7 @@ public class MiNegocioActivity extends Activity {
     String idAdministrador;
     int idAdmin;
     private boolean primeraCarga = true; // Flag para controlar la primera carga
+    ControlBD helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

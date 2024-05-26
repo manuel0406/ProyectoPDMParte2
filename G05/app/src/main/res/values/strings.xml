@@ -138,18 +138,19 @@
     <string name="botonAgregar">Agregar</string>
     <string name="botonActualizar">Actualizar</string>
     <string name="botonEliminar">Eliminar</string>
-
-
     <string name="botonActualizarNegocio2">Actualizar Negocio</string>
     <string name="botonEliminarNegocio">Eliminar Negocio</string>
     <string name="botonProductosrNegocio">Mis Productos</string>
     <string name="botonNuevoNegocio">Nuevo negocio</string>
 
     <string name="itemIndicacion">Presione un registro para ver más opciones</string>
-    <string name="barraMisNegocios">Mis negocios</string>
-    <string name="barraMisProductos">Mis productos</string>
-    <string name="barraGestionarNegocio">Gestionar mi negocio</string>
-
+    <string name="barraMisNegocios">Mis Negocios</string>
+    <string name="barraMisProductos">Mis Productos</string>
+    <string name="barraGestionarNegocio">Gestionar mi Negocio</string>
+    <string name="barraCrearNegocio">Nuevo Negocio</string>
+    <string name="barraCrearProducto">Crear Producto</string>
+    <string name="barraEditarNegocio">Actualizar Negocio</string>
+    <string name="barraEditarProducto">Actualizar Producto</string>
 
     <string name="negocioNombre">Negocio:</string>
     <string name="negocioTelefono">Teléfono:</string>
@@ -159,6 +160,28 @@
     <string name="negocioDepartamento">Departamento:</string>
     <string name="negocioUbicacionDescripcion">Descripción:</string>
     <string name="negocioMunicipio">Municipio:</string>
+    <string name="negocioPickApertura">Seleccionar Hora Apertura</string>
+    <string name="negocioPickCierre">Seleccionar Hora Cierre</string>
+
+
+    <string name="negocio_nombre">Negocio: </string>
+    <string name="negocio_id">ID del negocio: </string>
+    <string name="negocio_ubicacion_id">ID de la ubicación: </string>
+    <string name="negocio_administrador_id">ID del administrador: </string>
+    <string name="negocio_telefono">Teléfono: </string>
+    <string name="negocio_apertura">Hora de apertura: </string>
+    <string name="negocio_cierre">Hora de cierre: </string>
+    <string name="negocio_direccion">Dirección: </string>
+
+    <string name="producto_id">ID Producto: </string>
+    <string name="producto_nombre">Producto: </string>
+    <string name="producto_precio">Precio: $</string>
+    <string name="producto_descripcion">Descripción: </string>
+    <string name="producto_tipo">Tipo: </string>
+    <string name="producto_disponible">Producto disponible</string>
+    <string name="producto_no_disponible">Producto no disponible</string>
+    <string name="producto_existencias">Existencias: </string>
+
 
     <!--Vista de Registrar Ubicacion CLiente-->
     <string name="ubicacionCliente">Seleccione su ubicacion permanente:</string>

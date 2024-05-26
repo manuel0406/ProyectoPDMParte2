@@ -30,15 +30,18 @@ public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdap
 
     @Override
     public void onBindViewHolder(@NonNull ListaNegociosAdapter.NegociosViewHolder holder, int position) {
-        holder.txtNegocioNombre.setText("Negocio: " + listaNegocios.get(position).getNombre());
-        holder.txtNegocioId.setText("ID del negocio: " + listaNegocios.get(position).getIdNegocio());
-        holder.txtNegocioUbicacionId.setText("ID de la ubicación: " + listaNegocios.get(position).getIdUbicacion());
-        holder.txtNegocioAdministradorId.setText("ID del administrador: " + listaNegocios.get(position).getIdAdministrador());
-        holder.txtNegocioTelefono.setText("Telefono: " + listaNegocios.get(position).getTelefono());
-        holder.txtNegocioApertura.setText("Hora de apertura: " + listaNegocios.get(position).getHorarioApertura());
-        holder.txtNegocioCierre.setText("Hora de cierre: " + listaNegocios.get(position).getHorarioCierre());
-        holder.txtNegocioDireccion.setText("Direccion: " + listaNegocios.get(position).getDescripcionUbicacion());
+        Context context = holder.itemView.getContext();
+        holder.txtNegocioNombre.setText(context.getString(R.string.negocio_nombre) + " " + listaNegocios.get(position).getNombre());
+        holder.txtNegocioId.setText(context.getString(R.string.negocio_id) + " " + listaNegocios.get(position).getIdNegocio());
+        holder.txtNegocioUbicacionId.setText(context.getString(R.string.negocio_ubicacion_id) + " " + listaNegocios.get(position).getIdUbicacion());
+        holder.txtNegocioAdministradorId.setText(context.getString(R.string.negocio_administrador_id) + " " + listaNegocios.get(position).getIdAdministrador());
+        holder.txtNegocioTelefono.setText(context.getString(R.string.negocio_telefono) + " " + listaNegocios.get(position).getTelefono());
+        holder.txtNegocioApertura.setText(context.getString(R.string.negocio_apertura) + " " + listaNegocios.get(position).getHorarioApertura());
+        holder.txtNegocioCierre.setText(context.getString(R.string.negocio_cierre) + " " + listaNegocios.get(position).getHorarioCierre());
+        holder.txtNegocioDireccion.setText(context.getString(R.string.negocio_direccion) + " " + listaNegocios.get(position).getDescripcionUbicacion());
     }
+
+
 
     @Override
     public int getItemCount() {

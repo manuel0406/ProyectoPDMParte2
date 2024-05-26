@@ -37,7 +37,8 @@ public class MiNegocioOpcionesActivity extends Activity {
         idUbicacion = intent.getIntExtra("idUbicacion", 5);
         idAdmin = intent.getIntExtra("idAdministrador", 1);
         name = intent.getStringExtra("name");
-        texto1.setText("Negocio: " + name);
+        String negocioNombre = getResources().getString(R.string.negocio_nombre);
+        texto1.setText(negocioNombre + " " + name);
 
         //Toast.makeText(this, "id Admin " + idAdmin, Toast.LENGTH_LONG).show();
 
@@ -47,7 +48,8 @@ public class MiNegocioOpcionesActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        texto1.setText("idNegocio: " + name);
+        String negocioNombre = getResources().getString(R.string.negocio_nombre);
+        texto1.setText(negocioNombre + " " + name);
     }
 
     public void irActualizarNegocio(View v) {

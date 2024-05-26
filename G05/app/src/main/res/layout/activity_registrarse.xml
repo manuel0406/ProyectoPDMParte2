@@ -172,14 +172,14 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="14dp"
                 android:background="@color/black"
+                android:onClick="abrirCalendario"
                 android:text="@string/btnNacimiento"
                 android:textColor="@color/white"
-                android:onClick="abrirCalendario"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.473"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/lblNacimiento"
-                tools:ignore="VisualLintBounds" />
+                tools:ignore="VisualLintBounds,TextSizeCheck" />
 
             <TextView
                 android:id="@+id/lblSexo"
@@ -233,6 +233,7 @@
                 android:layout_marginTop="14dp"
                 android:autofillHints=""
                 android:ems="10"
+                android:maxLength="8"
                 android:hint="@string/entradaContra"
                 android:inputType="textPassword"
                 android:textColor="@color/black"
@@ -268,6 +269,7 @@
                 android:layout_marginTop="12dp"
                 android:autofillHints=""
                 android:ems="10"
+                android:maxLength="8"
                 android:hint="@string/nentradaContra"
                 android:inputType="textPassword"
                 android:textColor="@color/black"

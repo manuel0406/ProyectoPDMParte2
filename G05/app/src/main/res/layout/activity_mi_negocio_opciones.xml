@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".negocio.negocio.MiNegocioOpcionesActivity">
 
-
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="0dp"
@@ -35,17 +34,12 @@
 
     </LinearLayout>
 
-
     <TextView
         android:id="@+id/txtRaa"
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-
         android:layout_marginTop="32dp"
-
-        android:importantForAutofill="no"
         android:text="Negocio: "
         android:textColor="@color/black"
         android:textSize="16sp"
@@ -53,12 +47,9 @@
         app:layout_constraintTop_toBottomOf="@+id/txtNegocioInfo"
         tools:ignore="HardcodedText" />
 
-
     <TextView
         android:id="@+id/txtNegocioInfo"
-
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
@@ -84,73 +75,81 @@
 
     <Button
         android:id="@+id/btnActualizarNegocio"
-        android:layout_width="190dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/circular_button_backgroundorange"
         android:onClick="irActualizarNegocio"
         android:text="@string/botonActualizarNegocio2"
         android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView25"
-        tools:ignore="VisualLintOverlap,VisualLintButtonSize,TextContrastCheck,TextSizeCheck" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <Button
         android:id="@+id/btnEliminarNegocio"
-        android:layout_width="190dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/circular_button_backgroundorange"
         android:onClick="eliminarNegocio"
         android:text="@string/botonEliminarNegocio"
         android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/btnActualizarNegocio"
-        tools:ignore="VisualLintOverlap,VisualLintButtonSize,TextContrastCheck" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <Button
         android:id="@+id/btnMisProductos"
-        android:layout_width="190dp"
-        android:layout_height="55dp"
-
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/circular_button_backgroundorange"
         android:onClick="irMisProductos"
         android:text="@string/botonProductosrNegocio"
         android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toBottomOf="@+id/btnEliminarNegocio"
-        tools:ignore="VisualLintOverlap,VisualLintButtonSize,TextContrastCheck" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="32dp"
         android:src="@drawable/basura"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/btnActualizarNegocio" />
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="90dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginTop="32dp"
         android:src="@drawable/engrane"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="32dp"
         android:src="@drawable/lista"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
+        app:layout_constraintTop_toBottomOf="@+id/btnEliminarNegocio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +27,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -33,6 +37,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.DetallePedido;
 import sv.edu.ues.fia.telollevoya.R;
 
@@ -49,6 +54,9 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     ProductoCardAdapter adapter;
     ControlBD db;
     private int idCliente;
+    private final String URL_SERVICIO_PRODUCTOS = "https://telollevoya.000webhostapp.com/Pedidos/productos_negocio.php?negocio=";
+    private final String URL_SERVICIO_HORA = "https://telollevoya.000webhostapp.com/Pedidos/hora.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +68,16 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         db = new ControlBD(SeleccionarProductoActivity.this);
         prod_listView = findViewById(R.id.productos_listView);
         carritoBtn = findViewById(R.id.carrito_btn);
         searchView = findViewById(R.id.searchView);
+        productos = new ArrayList<>();
         detallesPedidosList = new ArrayList<>();
-        cargarProductos();
+        getProductosPorNegocio();
         idCliente = getIntent().getIntExtra("idCliente", idCliente);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -77,7 +89,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.isEmpty()) {
-                    cargarProductos();
+                    getProductosPorNegocio();
                     prod_listView.setVisibility(View.VISIBLE);
                 }
                 else {
@@ -106,8 +118,9 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     }
 
     public void agregarProducto(int posicion) {
-        Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR_OF_DAY); // Obtener la hora del día en formato de 24 horas
+        //Calendar cal = Calendar.getInstance();
+        //int hour = cal.get(Calendar.HOUR_OF_DAY); // Obtener la hora del día en formato de 24 horas
+        int hour  = getHoraActual();
         Producto producto = productos.get(posicion);
         if(producto.getNombre().toLowerCase().contains("pupusa")){
             if((hour >= 6 && hour <= 9)){
@@ -160,6 +173,41 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         }
     }
 
+    public void getProductosPorNegocio(){
+        String idNegocio = "1";
+        String url = URL_SERVICIO_PRODUCTOS + idNegocio;
+        String json = ControladorSevicio.obtenerRespuestaPeticion(url,getApplicationContext());
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length() - 1; i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Producto producto = new Producto();
+                producto.setId(jsonObject.getInt("IDPRODUCTO"));
+                producto.setIdNegocio(jsonObject.getInt("IDNEGOCIO"));
+                producto.setNombre(jsonObject.getString("NOMBREPRODUCTO"));
+                producto.setTipo(jsonObject.getString("TIPOPRODUCTO"));
+                producto.setDescripcion(jsonObject.getString("DESCRIPCIONPRODUCTO"));
+                producto.setPrecio(Float.parseFloat(jsonObject.getString("PRECIOPRODUCTO")));
+                producto.setExistencia(jsonObject.getInt("EXISTENCIAPRODUCTO") > 0);
+                productos.add(producto);
+            }
+            adapter = new ProductoCardAdapter(this, productos);
+            prod_listView.setAdapter(adapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getHoraActual(){
+        String json = ControladorSevicio.obtenerRespuestaPeticion(URL_SERVICIO_HORA,getApplicationContext());
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            return jsonObject.getInt("hora");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     public class ProductoCardAdapter extends ArrayAdapter<Producto> {
         List<Producto> productos;

@@ -38,6 +38,7 @@ public class RegistrarseActivity extends Activity {
 
     }
 
+    // Funciona para seleccionar el dia-mes-año de nacimiento
     public void abrirCalendario(View v)
     {
         Calendar cal = Calendar.getInstance();
@@ -46,15 +47,17 @@ public class RegistrarseActivity extends Activity {
         int dia = cal.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog dpd = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
-            String fecha = dayOfMonth + "/" + (month + 1) + "/" + year;
+            String fecha = dayOfMonth + "-" + (month + 1) + "-" + year;
             lblFechaNacimiento.setText(fecha);
         }, dia,mes,anio);
         dpd.show();
     }
 
+    //FUNCIONALIDAD EL BOTON REGISTRARSE
     @SuppressLint("SetTextI18n")
     public void irRolRegistrarse(View v){
         int banderaCorreo = 0, banderaContra=0, banderaConfirmacionContra= 0, banderaApellido= 0,banderaNombre= 0, banderaNacimiento = 0,banderaTotal= 1;
+
         //Extracion de Informacion
         correo = txtCorreo.getText().toString().trim();
         nombre = txtNombre.getText().toString();
@@ -69,38 +72,12 @@ public class RegistrarseActivity extends Activity {
         Pattern pattern = Pattern.compile(patronCorreo);// Crear un objeto Matcher para aplicar el patrón al correo
         Matcher matcher = pattern.matcher(correo);
 
-        // Validar si el correo cumple con el patrón ---------------------------------
-        if (matcher.matches()) {
-            banderaCorreo = 1;
-        } else {
-            txtCorreo.setHintTextColor(ContextCompat.getColor(this, R.color.error));
-            txtCorreo.setHint("¡Correo invalido!");
-            txtCorreo.setText("");// Cambia el texto del hint a "FALTA CORREO"
-            txtCorreo.requestFocus();
-        }
-
-        //Validamos compos de nombre----------------------------
-        if (!nombre.isEmpty()) {
-            banderaNombre = 1;
-        } else {
-            txtNombre.setHintTextColor(ContextCompat.getColor(this, R.color.error)); // Cambia el color del hint a rojo
-            txtNombre.setHint("¡Nombre invalido!");
-        }
-
-        //Validamos compos de apellido----------------------------
-        if (!apellido.isEmpty()) {
-            banderaApellido = 1;
-        } else {
-            txtApellido.setHintTextColor(ContextCompat.getColor(this, R.color.error)); // Cambia el color del hint a rojo
-            txtApellido.setHint("¡Nombre invalido!");
-        }
-
         //Validamos compos de contraseño----------------------------
         if (!contra.isEmpty()) {
             banderaContra = 1;
         } else {
             txtContra.setHintTextColor(ContextCompat.getColor(this, R.color.error)); // Cambia el color del hint a rojo
-            txtContra.setHint("¡Contraseña invalido!");
+            txtContra.setHint("¡Falta contraseña!");
         }
 
         //Validamos compos de confirmacion contraseño ----------------------------
@@ -108,7 +85,7 @@ public class RegistrarseActivity extends Activity {
             banderaConfirmacionContra = 1;
         } else {
             txtConfirmacionContra.setHintTextColor(ContextCompat.getColor(this, R.color.error));// Cambia el color del hint a rojo
-            txtConfirmacionContra.setHint("¡Confirmacion de contraseña invalido!");
+            txtConfirmacionContra.setHint("¡Falta confirmar su contraseña!");
         }
 
         //Validamos la confirmacion de la contraseña ----------------------------
@@ -132,6 +109,34 @@ public class RegistrarseActivity extends Activity {
             banderaNacimiento = 1;
         }
 
+        //Validamos compos de apellido----------------------------
+        if (!apellido.isEmpty()) {
+            banderaApellido = 1;
+        } else {
+            txtApellido.setHintTextColor(ContextCompat.getColor(this, R.color.error)); // Cambia el color del hint a rojo
+            txtApellido.setHint("¡Falta colocar el apellido!");
+            txtApellido.requestFocus();
+        }
+
+        //Validamos compos de nombre----------------------------
+        if (!nombre.isEmpty()) {
+            banderaNombre = 1;
+        } else {
+            txtNombre.setHintTextColor(ContextCompat.getColor(this, R.color.error)); // Cambia el color del hint a rojo
+            txtNombre.setHint("¡Falta colocar el nombre!");
+            txtNombre.requestFocus();
+        }
+
+        // Validar si el correo cumple con el patrón ---------------------------------
+        if (matcher.matches()) {
+            banderaCorreo = 1;
+        } else {
+            txtCorreo.setHintTextColor(ContextCompat.getColor(this, R.color.error));
+            txtCorreo.setHint("¡Correo invalido!");
+            txtCorreo.setText("");// Cambia el texto del hint a "FALTA CORREO"
+            txtCorreo.requestFocus();
+        }
+
         //VALIDAMOS SI DAMOS EL PASE----------------------------
         if (banderaCorreo==1 && banderaNombre==1 && banderaApellido==1 && banderaContra==1 && banderaConfirmacionContra==1 && banderaNacimiento ==1 && banderaTotal==1 ) {
             // Crear un Intent para iniciar la actividad "RegistrarseActivity"
@@ -146,6 +151,5 @@ public class RegistrarseActivity extends Activity {
             intent.putExtra("nacimiento", nacimiento);
             startActivity(intent);
         }
-
     }
 }

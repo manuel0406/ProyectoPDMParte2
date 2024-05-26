@@ -1,6 +1,7 @@
 <resources>
     <!--Vista de Pedidos-->
     <string name="app_name">Te Lo Llevo Ya!</string>
+    <string name="cerrar">Cerrar Sesión</string>
     <string name="buscar_producto">Buscar producto</string>
     <string name="nombre_producto">Nombre del producto</string>
     <string name="codigo">Código</string>

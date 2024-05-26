@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
 
 public class MiNegocioActivity extends Activity {
     RecyclerView listaNegocios;
@@ -47,7 +49,25 @@ public class MiNegocioActivity extends Activity {
         intent.putExtra("idAdministradorRecuperado", idAdmin);
         startActivity(intent);
     }
-    
+
+    //----------------------------------------------------------------------------------------------
+    //                          METODO PARA CERRAR SESION
+    //----------------------------------------------------------------------------------------------
+    public void cerrarSesion(View v) {
+
+        //Limpio base de usuarios disponibles
+        helper = new ControlBD(this);
+        helper.abrir();
+        helper.LimpiarUsuario();
+        helper.cerrar();
+        Toast.makeText(this, "Vuelve pronto", Toast.LENGTH_SHORT).show();
+
+        // Crear un Intent para iniciar sesion "Iniciar Sesion"
+        Intent intent = new Intent(this, IniciarSesionActivity.class);
+        intent.putExtra("desdeInicioApp", false);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     protected void onResume() {

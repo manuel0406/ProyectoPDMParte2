@@ -100,7 +100,6 @@ public class IniciarSesionActivity extends Activity {
                 startActivity(intent);
                 finish();
             } else if ("Administrador".equals(usuario.getRol())) {
-                Toast.makeText(this, "Entra", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, MiNegocioActivity.class);
                 // Enviar información
                 intent.putExtra("idAdministrador", usuario.getIdUsuario());
@@ -109,10 +108,7 @@ public class IniciarSesionActivity extends Activity {
             } else if ("Repartidor".equals(usuario.getRol())) {
                 // Código para la actividad de Repartidor
             }
-        } else {
-            Toast.makeText(this, "No hay usuario activo", Toast.LENGTH_LONG).show();
         }
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -201,9 +197,6 @@ public class IniciarSesionActivity extends Activity {
                 idUsuario = respuesta.getString("IDCLIENTE");
                 rol = "Cliente";
 
-                // Mostrar Toast con el correo
-                Toast.makeText(this, correoJSON, Toast.LENGTH_LONG).show();
-
                 // Verificar si el correo es correcto
                 if (correoJSON.equalsIgnoreCase(correo) && contraJSON.equalsIgnoreCase(contra)) {
                     Toast.makeText(this, "Sus credenciales como cliente son correctas", Toast.LENGTH_LONG).show();
@@ -285,9 +278,6 @@ public class IniciarSesionActivity extends Activity {
                 contraJSON = respuesta.getString("CONTRAREPARTIDOR");
                 idUsuario = respuesta.getString("IDREPARTIDOR");
                 rol = "Repartidor";
-
-                // Mostrar Toast con el correo
-                Toast.makeText(this, correoJSON, Toast.LENGTH_LONG).show();
 
                 // Verificar si el correo es correcto
                 if (correoJSON.equalsIgnoreCase(correo) && contraJSON.equalsIgnoreCase(contra)) {

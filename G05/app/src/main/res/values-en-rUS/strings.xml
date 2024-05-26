@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Te Lo Llevo Ya!</string>
+    <string name="cerrar">Log Out</string>
     <string name="buscar_producto">Search product</string>
     <string name="nombre_producto">Product name</string>
     <string name="codigo">Code</string>

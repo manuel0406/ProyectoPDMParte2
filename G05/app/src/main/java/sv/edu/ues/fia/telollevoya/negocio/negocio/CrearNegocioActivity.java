@@ -123,7 +123,7 @@ public class CrearNegocioActivity extends Activity {
                     .append("&horariocierre=").append(horaCierre);
             String urlNegocio = urlNegocioBuilder.toString();
 
-            ControladorSevicio.genericoNegocio(urlNegocio, this);
+            ControladorSevicio.generico(urlNegocio, this);
 
             // Navegación a MiNegocioActivity
             Intent intent = new Intent(this, MiNegocioActivity.class);

@@ -13,16 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.R;
-import sv.edu.ues.fia.telollevoya.negocio.producto.EditarProductoActivity;
-import sv.edu.ues.fia.telollevoya.negocio.negocio.ListaNegociosAdapter;
-import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
-import sv.edu.ues.fia.telollevoya.negocio.producto.ListaProductosAdaptader;
-import sv.edu.ues.fia.telollevoya.negocio.producto.ProductosActivity;
 
 public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdapter.NegociosViewHolder> {
-    ArrayList<Restaurant> listaNegocios;
+    private ArrayList<Restaurant> listaNegocios;
 
-    public ListaNegociosAdapter(ArrayList<Restaurant> listaRestaurantes) {this.listaNegocios = listaRestaurantes;}
+    public ListaNegociosAdapter(ArrayList<Restaurant> listaRestaurantes) {
+        this.listaNegocios = listaRestaurantes;
+    }
 
     @NonNull
     @Override
@@ -48,6 +45,11 @@ public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdap
         return listaNegocios.size();
     }
 
+    public void setNegocios(ArrayList<Restaurant> nuevosNegocios) {
+        listaNegocios = nuevosNegocios;
+        notifyDataSetChanged();
+    }
+
     public class NegociosViewHolder extends RecyclerView.ViewHolder {
         TextView txtNegocioNombre, txtNegocioId, txtNegocioUbicacionId, txtNegocioAdministradorId,
                 txtNegocioTelefono, txtNegocioApertura, txtNegocioCierre, txtNegocioDireccion;
@@ -63,7 +65,6 @@ public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdap
             txtNegocioApertura = itemView.findViewById(R.id.txtNegocioApertura);
             txtNegocioCierre = itemView.findViewById(R.id.txtNegocioCierre);
             txtNegocioDireccion = itemView.findViewById(R.id.txtNegocioDireccion);
-
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

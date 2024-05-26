@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,13 +21,13 @@ import java.util.ArrayList;
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
-import sv.edu.ues.fia.telollevoya.negocio.negocio.MiNegocioActivity;
 
 public class ProductosActivity extends AppCompatActivity {
     RecyclerView listaProductos;
-    //ArrayList<Product> listaArrayProductos;
+    ListaProductosAdaptader adapter;
     ControlBD helper;
     int idNegocioRecuperado;
+    boolean firstLoad = true; // Variable para controlar la primera carga
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +39,6 @@ public class ProductosActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        //Onda rara
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -49,44 +46,27 @@ public class ProductosActivity extends AppCompatActivity {
         listaProductos.setLayoutManager(new LinearLayoutManager(this));
 
         idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
-        Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_LONG).show();
 
-        String url = "https://telollevoya.000webhostapp.com/Producto/obtenerProductosPorIdNegocio.php?idNegocio=" + idNegocioRecuperado;
-        new ObtenerProductosTask(this).execute(url);
+        adapter = new ListaProductosAdaptader(new ArrayList<>());
+        listaProductos.setAdapter(adapter);
 
-
-
-        /*helper = new ControlBD(this);
-        idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
-        helper.abrir();
-        ListaProductosAdaptader adapter = new ListaProductosAdaptader(helper.obtenerProductosPorIdNegocio(idNegocioRecuperado));
-        helper.cerrar();
-        listaProductos.setAdapter(adapter);*/
+        cargarProductos();
     }
 
-    /*private class ObtenerProductosTask extends AsyncTask<String, Void, ArrayList<Product>> {
-        private Context context;
-
-        public ObtenerProductosTask(Context context) {
-            this.context = context;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!firstLoad) {
+            cargarProductos();
         }
+        firstLoad = false; // Cambiar bandera después de la primera carga
+    }
 
-        @Override
-        protected ArrayList<Product> doInBackground(String... urls) {
-            String url = urls[0];
-            return ControladorSevicio.obtenerProductosPorIdNegocio(url, context);
-        }
+    private void cargarProductos() {
+        String url = "https://telollevoya.000webhostapp.com/Producto/obtenerProductosPorIdNegocio.php?idNegocio=" + idNegocioRecuperado;
+        new ObtenerProductosTask(this).execute(url);
+    }
 
-        @Override
-        protected void onPostExecute(ArrayList<Product> productos) {
-            if (productos != null && !productos.isEmpty()) {
-                ListaProductosAdaptader adapter = new ListaProductosAdaptader(productos);
-                listaProductos.setAdapter(adapter);
-            } else {
-                Toast.makeText(context, "No se encontraron productos", Toast.LENGTH_LONG).show();
-            }
-        }
-    }*/
     private class ObtenerProductosTask extends AsyncTask<String, Void, ArrayList<Product>> {
         private Context context;
 
@@ -103,37 +83,19 @@ public class ProductosActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Product> productos) {
             if (productos != null && !productos.isEmpty()) {
-                ListaProductosAdaptader adapter = new ListaProductosAdaptader(productos);
-                listaProductos.setAdapter(adapter);
+                adapter.setProductos(productos);
             } else {
-                Toast.makeText(context, "No se encontraron productos", Toast.LENGTH_LONG).show();
+                adapter.setProductos(new ArrayList<>());
+                if (!firstLoad) { // Mostrar el Toast solo si no es la primera carga
+                    Toast.makeText(context, "No tienes ningun producto", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
 
-
-
-    public void irNuevoProducto(View v){
+    public void irNuevoProducto(View v) {
         Intent intent = new Intent(this, CrearProductoActivity.class);
         intent.putExtra("idNegocioRecuperado", idNegocioRecuperado);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        actualizarListaProductos();
-    }
-
-    private void actualizarListaProductos() {
-        idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 0);
-        String url = "https://telollevoya.000webhostapp.com/Producto/obtenerProductosPorIdNegocio.php?idNegocio=" + idNegocioRecuperado;
-        new ObtenerProductosTask(this).execute(url);
-        /*
-        helper = new ControlBD(this);
-        helper.abrir();
-        ListaProductosAdaptader adapter = new ListaProductosAdaptader(helper.obtenerProductosPorIdNegocio(idNegocioRecuperado));
-        helper.cerrar();
-        listaProductos.setAdapter(adapter);*/
     }
 }

@@ -19,8 +19,10 @@ import sv.edu.ues.fia.telollevoya.R;
 
 public class MiNegocioActivity extends Activity {
     RecyclerView listaNegocios;
+    ListaNegociosAdapter adapter;
     String idAdministrador;
     int idAdmin;
+    private boolean primeraCarga = true; // Flag para controlar la primera carga
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +32,30 @@ public class MiNegocioActivity extends Activity {
         Intent intent = getIntent();
         idAdministrador = intent.getStringExtra("idAdministrador");
         idAdmin = Integer.parseInt(idAdministrador);
-        idAdmin = 1;
+        idAdmin = 12; // Aseguramos que idAdmin tenga un valor, aunque este valor es estático
 
         listaNegocios = findViewById(R.id.rvListaNegocios);
         listaNegocios.setLayoutManager(new LinearLayoutManager(this));
+
+        adapter = new ListaNegociosAdapter(new ArrayList<>());
+        listaNegocios.setAdapter(adapter);
+
+        cargarNegocios(); // Primera carga de datos
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!primeraCarga) {
+            cargarNegocios(); // Recargar datos al volver a la actividad
+        }
+        primeraCarga = false; // Marcar como falsa después de la primera carga
+    }
+
+    private void cargarNegocios() {
         String url = "https://telollevoya.000webhostapp.com/Negocio/obtener_negocios_por_administrador.php?idAdministrador=" + idAdmin;
         new ObtenerRestaurantesTask(this).execute(url);
     }
-
 
     private class ObtenerRestaurantesTask extends AsyncTask<String, Void, ArrayList<Restaurant>> {
         private Context context;
@@ -55,31 +73,19 @@ public class MiNegocioActivity extends Activity {
         @Override
         protected void onPostExecute(ArrayList<Restaurant> listaRestaurantes) {
             if (listaRestaurantes != null && !listaRestaurantes.isEmpty()) {
-                ListaNegociosAdapter adapter = new ListaNegociosAdapter(listaRestaurantes);
-                listaNegocios.setAdapter(adapter);
+                adapter.setNegocios(listaRestaurantes);
             } else {
-                Toast.makeText(context, "No se encontraron restaurantes", Toast.LENGTH_LONG).show();
+                adapter.setNegocios(new ArrayList<>());
+                if (!primeraCarga) { // Mostrar Toast solo después de la primera carga
+                    Toast.makeText(context, "No tienes ningun restaurante", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
-
 
     public void irNuevoNegocio(View v) {
         Intent intent = new Intent(this, CrearNegocioActivity.class);
         intent.putExtra("idAdministradorRecuperado", idAdmin);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        actualizarListaNegocios();
-    }
-
-    private void actualizarListaNegocios() {
-        String idAdministrador = getIntent().getStringExtra("idAdministrador");
-        idAdmin = Integer.parseInt(idAdministrador);
-        //String url = "https://telollevoya.000webhostapp.com/Negocio/obtener_negocios_por_administrador.php?idAdministrador=2";
-        //new ObtenerRestaurantesTask(this).execute(url);
     }
 }

@@ -186,7 +186,7 @@ public class EditarMiNegocioActivity extends Activity {
                 .append("&horarioApertura=").append(horaApertura)
                 .append("&horarioCierre=").append(horaCierre);
         String urlNegocio = urlNegocioBuilder.toString();
-        ControladorSevicio.genericoNegocio(urlNegocio, this);
+        ControladorSevicio.generico(urlNegocio, this);
 
 
         // Navegación a MiNegocioActivity

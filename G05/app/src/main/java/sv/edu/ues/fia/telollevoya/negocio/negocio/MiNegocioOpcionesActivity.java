@@ -60,7 +60,7 @@ public class MiNegocioOpcionesActivity extends Activity {
 
     public void eliminarNegocio(View v) {
         String urlUbicacion = "https://telollevoya.000webhostapp.com/Negocio/eliminarNegocio.php?idNegocio=" + idNegocio;
-        ControladorSevicio.genericoNegocio(urlUbicacion, this);
+        ControladorSevicio.generico(urlUbicacion, this);
         onBackPressed();
     }
 

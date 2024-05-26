@@ -1,6 +1,5 @@
 package sv.edu.ues.fia.telollevoya.negocio.producto;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.method.DigitsKeyListener;
@@ -32,7 +31,7 @@ public class EditarProductoActivity extends AppCompatActivity {
     RadioButton rbBebida, rbAlimento;
     int id = 4;
     Product producto;
-    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Producto/actualizarProducto.php";
+    private final String urlProducto = "https://telollevoya.000webhostapp.com/Producto/actualizarProducto.php";
 
 
     @Override
@@ -72,7 +71,7 @@ public class EditarProductoActivity extends AppCompatActivity {
         }
 
 
-        Toast.makeText(this, "idproducto " + id, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "idproducto " + id, Toast.LENGTH_SHORT).show();
 
         String url = "https://telollevoya.000webhostapp.com/Producto/verProducto.php?idProducto=" + id;
         producto = ControladorSevicio.obtenerProducto(url, this);
@@ -109,7 +108,7 @@ public class EditarProductoActivity extends AppCompatActivity {
         RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
 
         String nombre = URLEncoder.encode(editProductoNombre.getText().toString(), "UTF-8");
-        float precio =  Float.parseFloat(editProductoPrecio.getText().toString());
+        float precio = Float.parseFloat(editProductoPrecio.getText().toString());
         String descripcion = URLEncoder.encode(editProductoDescripción.getText().toString(), "UTF-8");
         //boolean existencia = switchExistencias.isChecked();
         int existencia = switchExistencias.isChecked() ? 1 : 0;
@@ -118,7 +117,7 @@ public class EditarProductoActivity extends AppCompatActivity {
         //https://telollevoya.000webhostapp.com/Producto/actualizarProducto.php?idProducto=1&nombreProducto=Pacaya
         // &tipoProducto=Comida&descripcionProducto=Amarga&precioProducto=9.99&existenciaProducto=1
         StringBuilder urlNegocioBuilder = new StringBuilder();
-        urlNegocioBuilder.append(urlHostingGratuito)
+        urlNegocioBuilder.append(urlProducto)
                 .append("?idProducto=").append(id)
                 .append("&nombreProducto=").append(nombre)
                 .append("&tipoProducto=").append(tipo)
@@ -126,7 +125,8 @@ public class EditarProductoActivity extends AppCompatActivity {
                 .append("&precioProducto=").append(precio)
                 .append("&existenciaProducto=").append(existencia);
         String urlProducto = urlNegocioBuilder.toString();
-        ControladorSevicio.manejarPeticion(urlProducto, this);
+        ControladorSevicio.generico(urlProducto, this);
+        onBackPressed();
 
         /*
         String nombre = editProductoNombre.getText().toString();
@@ -155,11 +155,23 @@ public class EditarProductoActivity extends AppCompatActivity {
     }
 
     public void eliminarProducto(View v) {
+        //try {
+
+            String urlEliminar = "https://telollevoya.000webhostapp.com/Producto/eliminarProducto.php?idProducto=" + id;
+            //producto = ControladorSevicio.obtenerProducto(url, this);
+            ControladorSevicio.generico(urlEliminar, this);
+            onBackPressed();
+            // Navegación a MiNegocioActivity
 
 
-        String url = "https://telollevoya.000webhostapp.com/Producto/eliminarProducto.php?idProducto=" + id;
-        producto = ControladorSevicio.obtenerProducto(url, this);
+            /*Intent intent = new Intent(this, ProductosActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //intent.putExtra("idAdministrador", String.valueOf(idAdministradorRecuperado));
+            startActivity(intent);
 
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al insertar el negocio: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }*/
         /*
         helper.abrir();
         String mensaje = helper.eliminarProducto(id);

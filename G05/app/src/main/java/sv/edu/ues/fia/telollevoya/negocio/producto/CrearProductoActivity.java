@@ -1,6 +1,5 @@
 package sv.edu.ues.fia.telollevoya.negocio.producto;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
@@ -29,7 +28,7 @@ public class CrearProductoActivity extends AppCompatActivity {
     Switch switchExistencias;
     RadioGroup radioGroupTipo;
     int idNegocioRecuperado;
-    private final String urlHostingGratuito = "https://telollevoya.000webhostapp.com/Producto/insertarProducto.php";
+    private final String urlProducto = "https://telollevoya.000webhostapp.com/Producto/insertarProducto.php";
 
 
     @Override
@@ -51,7 +50,7 @@ public class CrearProductoActivity extends AppCompatActivity {
         radioGroupTipo = (RadioGroup) findViewById(R.id.radioGroupTipo);
         editProductoPrecio.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
         idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
-        Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_LONG).show();
 
     }
 
@@ -62,7 +61,6 @@ public class CrearProductoActivity extends AppCompatActivity {
             return;
         }
 
-
         // Obtener el texto del RadioButton seleccionado
         int selectedRadioButtonId = radioGroupTipo.getCheckedRadioButtonId();
         RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
@@ -70,16 +68,13 @@ public class CrearProductoActivity extends AppCompatActivity {
         String nombre = URLEncoder.encode(editProductoNombre.getText().toString(), "UTF-8");
         float precio =  Float.parseFloat(editProductoPrecio.getText().toString());
         String descripcion = URLEncoder.encode(editProductoDescripción.getText().toString(), "UTF-8");
-        //boolean existencia = switchExistencias.isChecked();
         int existencia = switchExistencias.isChecked() ? 1 : 0;
         String tipo = URLEncoder.encode(selectedRadioButton.getText().toString(), "UTF-8");
 
-        Toast.makeText(this, "existencias " + existencia, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "existencias " + existencia, Toast.LENGTH_LONG).show();
 
-        //https://telollevoya.000webhostapp.com/Producto/insertarProducto.php?idNegocio=1&nombreProducto=Pupusa
-        // &tipoProducto=Comida&descripcionProducto=Chicharron&precioProducto=10.50&existenciaProducto=1
         StringBuilder urlNegocioBuilder = new StringBuilder();
-        urlNegocioBuilder.append(urlHostingGratuito)
+        urlNegocioBuilder.append(urlProducto)
                 .append("?idNegocio=").append(idNegocioRecuperado)
                 .append("&nombreProducto=").append(nombre)
                 .append("&tipoProducto=").append(tipo)
@@ -87,22 +82,7 @@ public class CrearProductoActivity extends AppCompatActivity {
                 .append("&precioProducto=").append(precio)
                 .append("&existenciaProducto=").append(existencia);
         String urlProducto = urlNegocioBuilder.toString();
-        ControladorSevicio.manejarPeticion(urlProducto, this);
-
-
-        /*
-        Product producto = new Product();
-        producto.setIdNegocio(idNegocioRecuperado);//Despues debo ingresar un id dinamico
-        producto.setNombreProducto(nombre);
-        producto.setPrecioProducto(precio);
-        producto.setDescripcionProducto(descripcion);
-        producto.setExistenciaProducto(existencia);
-        producto.setTipoProducto(tipo);
-
-        helper.abrir();
-        String mensaje = helper.insertar(producto);
-        helper.cerrar();
-        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
-        onBackPressed();*/
+        ControladorSevicio.generico(urlProducto, this);
+        onBackPressed();
     }
 }

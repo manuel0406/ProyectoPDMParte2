@@ -92,7 +92,7 @@ public class ControladorSevicio {
 
 
     /*-------------------------------------------------------------------------------------------------------
-    -- Mis metodos para los servicios
+    -- Mis metodos para los servicios - BRYAN - NEGOCIOS Y PRODUCTOS
     -------------------------------------------------------------------------------------------------------*/
 
 
@@ -130,12 +130,10 @@ public class ControladorSevicio {
         return restaurantes;
     }
 
-
     //Obtener los detalles de un negocio en especifico
     public static void obtenerNegocioDesdeServicio(String url, Context ctx, OnRestaurantReceivedListener listener) {
         new ObtenerNegocioTask(url, ctx, listener).execute();
     }
-
     private static class ObtenerNegocioTask extends AsyncTask<Void, Void, Restaurant> {
         private String url;
         private Context ctx;
@@ -177,7 +175,6 @@ public class ControladorSevicio {
         }
     }
 
-
     //Insertar ubicacion y obtener su id
     public static int obtenerIdUbicacion(String url, Context ctx) {
         int idUbicacion = -1;
@@ -195,7 +192,7 @@ public class ControladorSevicio {
     }
 
     // Insertar, editar y eliminar un negocio
-    public static void genericoNegocio(String peticion, Context ctx) {
+    public static void generico(String peticion, Context ctx) {
         String json = obtenerRespuestaPeticion(peticion, ctx);
         try {
             JSONObject resultado = new JSONObject(json);
@@ -242,11 +239,8 @@ public class ControladorSevicio {
             }
         });
     }
-    
 
-
-
-
+    //Obtener todos los productos de un negocio
     public static ArrayList<Product> obtenerProductosPorIdNegocio(String url, Context ctx) {
         ArrayList<Product> productos = new ArrayList<>();
         String respuesta = obtenerRespuestaPeticion(url, ctx);
@@ -279,45 +273,14 @@ public class ControladorSevicio {
         return productos;
     }
 
-
-    public static void manejarPeticion(String url, Context ctx) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                // Llamando al método de obtener respuesta de petición GET
-                String respuesta = obtenerRespuestaPeticion(url, ctx);
-                // Manejar la respuesta según sea necesario
-                Log.v("Respuesta", respuesta);
-                try {
-                    JSONObject jsonResponse = new JSONObject(respuesta);
-                    // Aquí puedes manejar la respuesta JSON según tus necesidades
-                    // Por ejemplo, mostrar un mensaje en un Toast
-                    String mensaje = jsonResponse.getString("resultado");
-                    // Si no necesitas mostrar un Toast, puedes omitir esta línea
-                    // mostrarMensajeEnMainThread(ctx, mensaje);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e("Error raro?", e.toString());
-
-                    // Manejar cualquier error de análisis JSON aquí
-                }
-            }
-        });
-    }
-
-    // actu
-
+    //Obtener los detalles de un producto en especifico
     public static Product obtenerProducto(String url, Context ctx) {
         Product producto = null;
 
-        // Realizar la solicitud HTTP GET para obtener el producto
         String respuesta = obtenerRespuestaPeticion(url, ctx);
 
         try {
-            // Convertir la respuesta JSON en un objeto JSONObject
             JSONObject jsonObject = new JSONObject(respuesta);
-
-            // Crear un objeto Product a partir de los datos JSON
             producto = new Product();
             producto.setIdProducto(jsonObject.getInt("IDPRODUCTO"));
             producto.setIdNegocio(jsonObject.getInt("IDNEGOCIO"));
@@ -331,71 +294,16 @@ public class ControladorSevicio {
             Toast.makeText(ctx, "Error al procesar la respuesta del servidor", Toast.LENGTH_LONG).show();
             Log.e("Error al obtener producto", e.toString());
         }
-
         return producto;
     }
-
-
-    public static void actualizar(String peticion, Context ctx) {
-        String respuesta = "";
-        // Estableciendo tiempo de espera del servicio
-        HttpParams parametros = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(parametros, 3000);
-        HttpConnectionParams.setSoTimeout(parametros, 5000);
-        // Creando objetos de conexion
-        HttpClient cliente = new DefaultHttpClient(parametros);
-        HttpGet httpGet = new HttpGet(peticion);
-        try {
-            HttpResponse httpRespuesta = cliente.execute(httpGet);
-            StatusLine estado = httpRespuesta.getStatusLine();
-            int codigoEstado = estado.getStatusCode();
-            if (codigoEstado == 200) {
-                HttpEntity entidad = httpRespuesta.getEntity();
-                respuesta = EntityUtils.toString(entidad);
-            } else {
-                Log.v("Error de Conexion", "Código de estado: " + codigoEstado);
-            }
-        } catch (Exception e) {
-            Toast.makeText(ctx, "Error en la conexion", Toast.LENGTH_LONG).show();
-            // Desplegando el error en el LogCat
-            Log.v("Error de Conexion", e.toString());
-        }
-
-        Log.v("Respuesta del Servidor", respuesta);  // Añadido para verificar la respuesta
-
-        // Procesar la respuesta JSON
-        try {
-            if (respuesta.isEmpty()) {
-                Toast.makeText(ctx, "Respuesta vacía del servidor", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            Log.v("JSON recibido", respuesta);  // Añadido para verificar la respuesta JSON
-
-            JSONObject resultado = new JSONObject(respuesta);
-
-            if (resultado.has("error")) {
-                Toast.makeText(ctx, "Error: " + resultado.getString("error"), Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            String mensajeResultado = resultado.getString("resultado");
-            Toast.makeText(ctx, mensajeResultado, Toast.LENGTH_LONG).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            // Desplegar el error en el LogCat
-            Log.e("Error de ultimo", e.toString());
-        }
-    }
-
-
-
-
-
-
 
     // Interfaz para manejar la devolución del objeto Restaurant
     public interface OnRestaurantReceivedListener {
         void onRestaurantReceived(Restaurant restaurant);
     }
+
+    /*-------------------------------------------------------------------------------------------------------
+    -- Fin de mis metodos - BRYAN - NEGOCIOS Y PRODUCTOS
+    -------------------------------------------------------------------------------------------------------*/
+
 }

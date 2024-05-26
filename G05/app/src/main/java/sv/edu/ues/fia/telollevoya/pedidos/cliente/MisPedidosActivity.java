@@ -40,11 +40,6 @@ public class MisPedidosActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mis_pedidos);
 
-        //Aqui recibe el idCliente desde la pantalla iniciar sesión
-        Intent intent = getIntent();
-        idClienteStr = intent.getStringExtra("idCliente");
-        idCliente = Integer.parseInt(idClienteStr);
-
         controlBD = new ControlBD(MisPedidosActivity.this);
         pedidosRelizadosList = new ArrayList<>();
         pedidosActivosList = new ArrayList<>();

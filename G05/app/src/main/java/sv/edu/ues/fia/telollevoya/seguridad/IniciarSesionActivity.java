@@ -23,6 +23,7 @@ import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.negocio.negocio.MiNegocioActivity;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Usuario;
+import sv.edu.ues.fia.telollevoya.pedidos.cliente.MisPedidosActivity;
 
 public class IniciarSesionActivity extends Activity {
 
@@ -75,6 +76,41 @@ public class IniciarSesionActivity extends Activity {
         if(desdeInicioApp)
         {
             Toast.makeText(this, tost, Toast.LENGTH_SHORT).show();
+        }
+
+        ultimoInicio();
+
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // METODO PARA SI HAY ULTIMO INICIO DE SESION
+    //----------------------------------------------------------------------------------------------
+
+    public void ultimoInicio(){
+        Usuario usuario;
+
+        helper = new ControlBD(this);
+        helper.abrir();
+        usuario = helper.consultarUsuarioActivo("Activo");
+        helper.cerrar();
+
+        if (usuario != null) {
+            if ("Cliente".equals(usuario.getRol())) {
+                Intent intent = new Intent(this, MisPedidosActivity.class);
+                startActivity(intent);
+                finish();
+            } else if ("Administrador".equals(usuario.getRol())) {
+                Toast.makeText(this, "Entra", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, MiNegocioActivity.class);
+                // Enviar información
+                intent.putExtra("idAdministrador", usuario.getIdUsuario());
+                startActivity(intent);
+                finish();
+            } else if ("Repartidor".equals(usuario.getRol())) {
+                // Código para la actividad de Repartidor
+            }
+        } else {
+            Toast.makeText(this, "No hay usuario activo", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -191,7 +227,9 @@ public class IniciarSesionActivity extends Activity {
                                 break;
                         }
                     }
-
+                    Intent intent = new Intent(this, MisPedidosActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(this, "Sus credenciales como cliente son incorrectas", Toast.LENGTH_LONG).show();
                 }

@@ -1691,6 +1691,9 @@ public class ControlBD {
 
     }
 
+    //********************************************************************************************
+    //***                        CONSULTAR USUARIO POR SU CORREO                               ***
+    //********************************************************************************************
     public Usuario consultarUsuario(String correo) {
         String[] id = {correo};
         Cursor cursor = db.query("Usuario", camposUsuario, "nombreUsuario = ?", id, null, null, null);
@@ -1703,6 +1706,25 @@ public class ControlBD {
             return null;
         }
     }
+
+    //********************************************************************************************
+    //***                        CONSULTAR USUARIO POR SU ESTADO                               ***
+    //********************************************************************************************
+    public Usuario consultarUsuarioActivo(String estado) {
+        String[] state = {estado};
+        Cursor cursor = db.query("Usuario", camposUsuario, "estado = ?", state, null, null, null);
+        if (cursor.moveToFirst()) {
+            Usuario usuario = new Usuario();
+            usuario.setIdUsuario(cursor.getString(0));
+            usuario.setNombreUsuario(cursor.getString(1));
+            usuario.setClave(cursor.getString(2));
+            usuario.setRol(cursor.getString(3));
+            return usuario;
+        } else {
+            return null;
+        }
+    }
+    //**********************************************************************************************
 
     public Administrador consultarAdministrador(String correo) {
         String[] id = {correo};

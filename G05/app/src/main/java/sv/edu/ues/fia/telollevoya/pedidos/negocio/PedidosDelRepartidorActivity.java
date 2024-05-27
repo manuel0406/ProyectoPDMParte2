@@ -56,10 +56,13 @@ public class PedidosDelRepartidorActivity extends AppCompatActivity {
         });
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        idRepartidor = 3;
+
         pedidos = new ArrayList<>();
         pedidosListView = findViewById(R.id.pedidos_listView);
         controlBD = new ControlBD(PedidosDelRepartidorActivity.this);
+        controlBD.abrir();
+        idRepartidor = controlBD.consultaUsuario();
+        controlBD.cerrar();
         getPedidos();
         PedidosAdapter adapter = new PedidosAdapter(PedidosDelRepartidorActivity.this, 0, pedidos);
         pedidosListView.setAdapter(adapter);

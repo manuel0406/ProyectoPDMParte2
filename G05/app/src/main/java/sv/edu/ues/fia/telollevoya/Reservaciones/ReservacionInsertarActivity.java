@@ -69,6 +69,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
     double pagoMinimo=0;
     private  int dia, mes, ano, hora, minutos;
     int idCliente;
+    int idNegocio;
     ScrollView scrollView;
     private int contadorElementos = 0;
     int idReservacionR;
@@ -82,6 +83,8 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         insertarDetallePedido(idReservacionR);
         Intent intent = new Intent(ReservacionInsertarActivity.this, ReservacionesConsultarActivity.class);
         intent.putExtra("idCliente", idCliente);
+        intent.putExtra("idNegocio", idNegocio);
+
         startActivity(intent);
     }
 
@@ -115,6 +118,8 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         idCliente= helper.consultaUsuario();
         helper.cerrar();
         Toast.makeText(this, String.valueOf(idCliente),Toast.LENGTH_SHORT).show();
+        Intent intent= getIntent();
+        idNegocio = intent.getIntExtra("idNegocio", 5);
 
 
 
@@ -306,7 +311,9 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
     }
 
     private void agregarElementos() {
-        String productosR = ControladorSevicio.obtenerRepuestaPeticion(urlProducto,this);
+
+        String url= urlProducto+"?IDNEGOCIO="+idNegocio;
+        String productosR = ControladorSevicio.obtenerRepuestaPeticion(url,this);
 
 
 

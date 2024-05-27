@@ -33,6 +33,7 @@ public class ReservacionesConsultarActivity extends Activity {
     ControlBD db;
     MyAdapter adapter;
     int idCliente;
+    int idNegocio;
     String urlReservaciones="https://telollevoya.000webhostapp.com/Reservaciones/reservacion_query.php";
     @SuppressLint("NewApi")
     @Override
@@ -41,6 +42,8 @@ public class ReservacionesConsultarActivity extends Activity {
 
         setContentView(R.layout.activity_reservaciones_consultar);
         Intent intent= getIntent();
+        idNegocio = intent.getIntExtra("idNegocio", 5);
+
 
 
        // idCliente="1";
@@ -63,15 +66,13 @@ public class ReservacionesConsultarActivity extends Activity {
         displaydata();
 
 
-
-
-
     }
     private ArrayList<Reservacion> obtenerReservaciones() {
+        //obtengo el id del cliente
         db.abrir();
         idCliente= db.consultaUsuario();
         db.cerrar();
-       String url = urlReservaciones + "?IDCLIENTE="+ idCliente;
+       String url = urlReservaciones + "?IDCLIENTE="+ idCliente+ "&IDNEGOCIO="+idNegocio;
         String reservacion = ControladorSevicio.obtenerRepuestaPeticion(url,this); //ControladorServicio.obtenerRespuestaPeticion(url, this);
 
         Log.v("UrlConsulta",url);
@@ -102,7 +103,7 @@ public class ReservacionesConsultarActivity extends Activity {
     public void cambiarPantalla(View v){
 //        Toast.makeText(this, idCliente,Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ReservacionesConsultarActivity.this, ReservacionInsertarActivity.class);
-       // intent.putExtra("idCliente", idCliente);
+        intent.putExtra("idNegocio", idNegocio);
         startActivity(intent);
     }
 }

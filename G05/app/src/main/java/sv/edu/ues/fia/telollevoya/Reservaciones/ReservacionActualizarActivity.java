@@ -69,7 +69,7 @@ public class ReservacionActualizarActivity extends Activity {
             edtFecha.setText(fechaEntrega);
             edtHora.setText(horaEntrega);
 
-            // Aquí puedes usar los datos recuperados para actualizar la interfaz de usuario según sea necesario
+
         }
 }
 public void actualizarReservacion(View v){

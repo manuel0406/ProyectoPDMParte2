@@ -42,7 +42,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-
                 android:text="@string/idResevacion"
                 android:textStyle="bold" />
 
@@ -97,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="Hora de entrega:"
+                android:text="@string/horaEntega"
                 android:textStyle="bold" />
 
             <EditText

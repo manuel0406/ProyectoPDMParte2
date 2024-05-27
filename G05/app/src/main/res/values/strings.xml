@@ -105,7 +105,7 @@
     <string name="AgregarProducto">Agregar producto:</string>
     <string name="total">Total:</string>
     <string name="pagoMinimo">Pago mínimo</string>
-    <string name="descripcion">Descripción</string>
+    <string name="descripcion">Descripción:</string>
     <string name="ingresarAnticipo">Ingresar anticipo:</string>
     <string name="irApagar">Ir a pagar</string>
     <string name="signoDollar">$</string>
@@ -114,6 +114,7 @@
         <item>Opción 2</item>
         <item>Opción 3</item>
     </string-array>
+    <string name="hacer_reservacion">Hacer reservación</string>
     <string name="actualizarReservacion">Actualizar reservación</string>
     <string name="idResevacion">ID de reservación: </string>
     <string name="fechaEntregaAc">Fecha de entrega:</string>
@@ -122,7 +123,9 @@
     <string name="negocioC">Negocio: </string>
     <string name="cancelarC">Cancelar </string>
     <string name="actualizarC">Actualizar </string>
-    <string name="horaEntega">Hora de entrega</string>
+    <string name="horaEntega">Hora de entrega:</string>
+    <string name="seleccionarHora">Seleccionar Hora:</string>
+
 
 
     <!--Vista de negocio-->

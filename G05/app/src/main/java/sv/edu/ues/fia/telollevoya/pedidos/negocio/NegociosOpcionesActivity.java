@@ -14,7 +14,9 @@ import android.widget.*;
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.Reservaciones.ReservacionesConsultarActivity;
 import sv.edu.ues.fia.telollevoya.negocio.producto.ProductosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.cliente.MisPedidosActivity;
 
 public class NegociosOpcionesActivity extends Activity {
     TextView texto1;
@@ -66,6 +68,14 @@ public class NegociosOpcionesActivity extends Activity {
         super.onResume();
         String negocioNombre = getResources().getString(R.string.negocio_nombre);
         texto1.setText(negocioNombre + " " + name);
+    }
+    public void irReservacionesConsultarAc(View v){
+
+        //  Toast.makeText(this, idClienteStr,Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ReservacionesConsultarActivity.class);
+        intent.putExtra("idNegocio", idNegocio);
+
+        startActivity(intent);
     }
 
 

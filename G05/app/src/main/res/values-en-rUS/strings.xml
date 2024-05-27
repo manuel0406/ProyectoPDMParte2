@@ -114,6 +114,7 @@
         <item>Option 2</item>
         <item>Option 3</item>
     </string-array>
+    <string name="hacer_reservacion">Make a reservation</string>
     <string name="actualizarReservacion">Update reservation</string>
     <string name="idResevacion">Reservation ID: </string>
     <string name="fechaEntregaAc">Delivery date:</string>
@@ -123,6 +124,7 @@
     <string name="cancelarC">Cancel</string>
     <string name="actualizarC">Update</string>
     <string name="horaEntega">Delivery time</string>
+    <string name="seleccionarHora">Select time:</string>
 
 
 

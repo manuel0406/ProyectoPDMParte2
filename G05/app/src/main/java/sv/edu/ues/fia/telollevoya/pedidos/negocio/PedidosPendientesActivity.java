@@ -55,13 +55,7 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pedidos_pendientes);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -71,20 +65,11 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
         repartidoresList = new ArrayList<>();
         spínners = new ArrayList<>();
 
-
-
-
         controlBD = new ControlBD(PedidosPendientesActivity.this);
-        //Recibir id de negocio;
-        //idNegocio = 1;
-
         //recuperando, mostrando y asignando el idNegocio seleccionado por el administrador
         int idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
         //Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_SHORT).show();
         idNegocio = idNegocioRecuperado;
-
-//        getPedidosPendientes();
-//        getPedidosPendientesConRepartidor();
         getAllPedidos();
         getRepartidores();
         PedidosActivosAdapter adapter = new PedidosActivosAdapter(PedidosPendientesActivity.this, 0, pedidosList);
@@ -153,18 +138,6 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
             e.printStackTrace();
         }
     }
-
-//    public void getPedidosPendientes(){
-////        controlBD.abrir();
-////        pedidosList = controlBD.getPedidosPendientes();
-////        controlBD.cerrar();
-//    }
-//
-//    public void getPedidosPendientesConRepartidor(){
-//        controlBD.abrir();
-//        pedidosList.addAll(controlBD.getPedidosPendientesConRepartidor());
-//        controlBD.cerrar();
-//    }
 
     public void getRepartidores(){
         String respuesta = ControladorSevicio.obtenerRespuestaPeticion(URL_REPARTIDORES_SERVICIO, getApplicationContext());

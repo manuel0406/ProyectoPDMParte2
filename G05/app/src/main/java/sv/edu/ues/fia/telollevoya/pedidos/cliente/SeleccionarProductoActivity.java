@@ -2,6 +2,7 @@ package sv.edu.ues.fia.telollevoya.pedidos.cliente;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultCaller;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -61,13 +64,8 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_seleccionar_producto);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -205,6 +203,28 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public void backButton(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.confirmar);
+        builder.setMessage(R.string.confirmar_msg);
+        builder.setPositiveButton(R.string.Si, (dialog, which) -> finish());
+        builder.setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.confirmar);
+        builder.setMessage(R.string.confirmar_msg);
+        builder.setPositiveButton(R.string.Si, (dialog, which) -> super.onBackPressed());
+        builder.setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public class ProductoCardAdapter extends ArrayAdapter<Producto> {

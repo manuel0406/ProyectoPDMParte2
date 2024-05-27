@@ -56,13 +56,8 @@ public class CrearPedidoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_crear_pedido);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
         detallesListView = findViewById(R.id.detalles_listView);
         totPagarTextView = findViewById(R.id.tot_pagar_textView);
         controlBD = new ControlBD(CrearPedidoActivity.this);

@@ -3,6 +3,7 @@ package sv.edu.ues.fia.telollevoya.pedidos.negocio;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,21 +20,30 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import sv.edu.ues.fia.telollevoya.Cliente;
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.Pedido;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Repartidor;
+import sv.edu.ues.fia.telollevoya.Ubicacion;
 
 public class PedidosDelRepartidorActivity extends AppCompatActivity {
 
     private ArrayList<Pedido> pedidos;
     private ListView pedidosListView;
+    private int idRepartidor;
     ControlBD controlBD;
-
+    private final String URL_PEDIDOS_REPARTIDOR = "https://telollevoya.000webhostapp.com/Pedidos/pedidos_repartidor.php?repartidor=";
+    private final String URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos/actualizar_estado_pedido.php?";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,23 +54,50 @@ public class PedidosDelRepartidorActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         pedidos = new ArrayList<>();
         pedidosListView = findViewById(R.id.pedidos_listView);
         controlBD = new ControlBD(PedidosDelRepartidorActivity.this);
+        controlBD.abrir();
+        idRepartidor = controlBD.consultaUsuario();
+        controlBD.cerrar();
         getPedidos();
         PedidosAdapter adapter = new PedidosAdapter(PedidosDelRepartidorActivity.this, 0, pedidos);
         pedidosListView.setAdapter(adapter);
     }
 
     public void getPedidos(){
+        String url = URL_PEDIDOS_REPARTIDOR+idRepartidor;
+        String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
         try {
-            String enviado = getIntent().getExtras().getString("idRepartidor");
-            if (enviado != null) {
-                int idRepartidor = Integer.parseInt(enviado);
-                controlBD.abrir();
-                pedidos = controlBD.getPedidosActivosPorRepartidor(idRepartidor);
+            JSONArray jsonArray = new JSONArray(respuesta);
+            for (int i = 0; i < jsonArray.length(); i++){
+                Pedido pedido = new Pedido();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                pedido.setId(jsonObject.getInt("IDPEDIDO"));
+                pedido.setTotalAPagar(Float.parseFloat(jsonObject.getString("TOTALAPAGAR")));
+                pedido.setFechaPedido(Timestamp.valueOf(jsonObject.getString("FECHAPEDIDO")));
+                pedido.setDescripcionOrden(jsonObject.getString("DESCRIPCIONORDEN"));
+
+                Cliente cliente = new Cliente();
+                cliente.setIdCliente(jsonObject.getString("IDCLIENTE"));
+                pedido.setCliente(cliente);
+
+                Ubicacion ub = new Ubicacion();
+                ub.setDescripcion(jsonObject.getString("DESCRIPCIONUBICACION"));
+                pedido.setUbicacion(ub);
+
+                pedidos.add(pedido);
             }
-        }catch (NullPointerException ex){
+//            String enviado = getIntent().getExtras().getString("idRepartidor");
+//            if (enviado != null) {
+//                int idRepartidor = Integer.parseInt(enviado);
+//                controlBD.abrir();
+//               pedidos = controlBD.getPedidosActivosPorRepartidor(idRepartidor);
+//            }
+        }catch (Exception ex){
             ex.printStackTrace();
         }
     }
@@ -95,11 +132,14 @@ public class PedidosDelRepartidorActivity extends AppCompatActivity {
             finalizarBtn.setOnClickListener(v ->{
                 controlBD.abrir();
                 int idPedido = (int) v.getTag();
-                if (controlBD.actualizarEstadoPedido(idPedido, 3, new java.util.Date())){//Dando por ENTREGADO el pedido con la fecha actual
+                String url = URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO+"pedido="+idPedido+"&estado=3";//Dando por ENTREGADO el pedido con la fecha actual
+                String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
+                if (respuesta.toLowerCase().contains("actualizado")){
                     Toast.makeText(PedidosDelRepartidorActivity.this, "Estado de pedido actualizado a REALIZADO!!", Toast.LENGTH_SHORT).show();
                     v.setEnabled(false);
                     v.setBackgroundColor(Color.GRAY);
                 }
+                else Toast.makeText(PedidosDelRepartidorActivity.this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
             });
             return convertView;
         }

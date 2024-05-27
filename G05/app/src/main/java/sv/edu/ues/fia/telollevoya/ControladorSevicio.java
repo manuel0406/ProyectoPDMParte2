@@ -17,9 +17,12 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 public class ControladorSevicio {
+
 
     public static String obtenerRepuestaPeticion(String url, Context ctx) {
         String respuesta="";
@@ -46,7 +50,7 @@ public class ControladorSevicio {
             if(codigoEstado==200){
                 HttpEntity entidad= httpRespuesta.getEntity();
                 respuesta= EntityUtils.toString(entidad);
-
+                //Log.v("respuesta", respuesta);
             }
 
         }catch (Exception e){
@@ -89,43 +93,67 @@ public class ControladorSevicio {
         }
         return respuesta;
     }
+    public static List<Reservacion> obtenerReservaciones(String json, Context ctx) {
+
+        List<Reservacion> listaReservaciones = new ArrayList<Reservacion>();
+        try {
+            JSONArray reservacionesJSON = new JSONArray(json);
+
+            for (int i = 0; i < reservacionesJSON.length(); i++) {
+                JSONObject obj = reservacionesJSON.getJSONObject(i);
+                Reservacion reservaciones = new Reservacion();
+                reservaciones.setIdReservacion( obj.getInt("idReservacion"));
+                reservaciones.setNombreNegocion(obj.getString("nombreNegocio"));
+                reservaciones.setFechaEntregaR(obj.getString("fechaEntregar"));
+                reservaciones.setHoraEntrega(obj.getString("horaEntregar"));
+
+
+                listaReservaciones.add(reservaciones);
+            }
+            return listaReservaciones;
+        } catch (Exception e) {
+            Toast.makeText(ctx, "Error en parseOO de JSON",
+                            Toast.LENGTH_LONG)
+                    .show();
+            return null;
+        }
+    }
+
+    public static List<Producto> obtenerProductos(String json, Context ctx) {
+
+        List<Producto> listaProductos= new ArrayList<Producto>();
+        try {
+            JSONArray productoJSON = new JSONArray(json);
+
+            for (int i = 0; i < productoJSON.length(); i++) {
+
+                JSONObject obj = productoJSON.getJSONObject(i);
+                Producto producto= new Producto();
+                producto.setId(obj.getInt("IDPRODUCTO"));
+                producto.setIdNegocio(obj.getInt("IDNEGOCIO"));
+                producto.setNombre(obj.getString("NOMBREPRODUCTO"));
+                producto.setTipo( obj.getString("TIPOPRODUCTO"));
+                producto.setDescripcion(obj.getString("DESCRIPCIONPRODUCTO"));
+                producto.setPrecio(Float.parseFloat( obj.getString("PRECIOPRODUCTO")));
+                producto.setExistencia(obj.getString("EXISTENCIAPRODUCTO").equals("1"));
+
+
+
+                listaProductos.add(producto);
+            }
+            return listaProductos;
+        } catch (Exception e) { Toast.makeText(ctx, "Error en parseOO de JSON",
+                            Toast.LENGTH_LONG)
+                    .show();
+            return null;
+        }
+    }
 
     /*
     * Este metodo es que el insertar los datos a las BD pero en segundo plano
     * por el momento no funcionara
     * */
-//    public static void insertarDepartamento(final String peticion, final Context ctx){
-//        new AsyncTask<Void, Void, String>() {
-//            @Override
-//            protected String doInBackground(Void... voids) {
-//                return obtenerRespuestaPeticion(peticion, ctx);
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String json) {
-//                try {
-//                    JSONObject resultado = new JSONObject(json);
-//
-//                    Toast.makeText(ctx, "Registro ingresado"+
-//                                    resultado.getJSONArray("resultado").toString(), Toast.LENGTH_LONG)
-//                            .show();
-//                    int respuesta = resultado.getInt("resultado");
-//                    if (respuesta == 1)
-//                        Toast.makeText(ctx, "Registro ingresado",
-//                                        Toast.LENGTH_LONG)
-//                                .show();
-//                    else
-//                        Toast.makeText(ctx, "Error registro duplicado",
-//                                Toast.LENGTH_LONG).show();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.execute();
-//    }
-
-    public static void insertarReservacion(final String peticion, Context ctx) {
-
+    public static void insertarDetalle(final String peticion, final Context ctx){
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
@@ -134,24 +162,91 @@ public class ControladorSevicio {
 
             @Override
             protected void onPostExecute(String json) {
+
                 try {
                     JSONObject resultado = new JSONObject(json);
-
-                    Toast.makeText(ctx, "Registro ingresado"+ resultado.getJSONArray("resultado").toString(), Toast.LENGTH_LONG).show();
                     int respuesta = resultado.getInt("resultado");
-                    if (respuesta == 1)
-                        Toast.makeText(ctx, "Registro ingresado",
-                                        Toast.LENGTH_LONG)
-                                .show();
-                    else
-                        Toast.makeText(ctx, "Error registro duplicado",
-                                Toast.LENGTH_LONG).show();
+//                    idReservacion = resultado.getInt("idReservacion");
+//                    Log.v("idReservacionC",String.valueOf( idReservacion));
+
+                    if (respuesta == 1) {
+                       // Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+                    } else {
+                       // Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+//                        idReservacion = 0; // Reiniciar idReservacion en caso de error
+                    }
+                    // Llamar al método de callback con el ID de la reservación
+                  //  listener.onReservacionInserted(idReservacion);
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                 }
             }
         }.execute();
     }
+    public static void updateReservacion(String peticion, Context ctx) {
+        String json = obtenerRespuestaPeticion(peticion, ctx);
+        try {
+            JSONObject resultado = new JSONObject(json);
+            int respuesta = resultado.getInt("resultado");
+//                    idReservacion = resultado.getInt("idReservacion");
+//                    Log.v("idReservacionC",String.valueOf( idReservacion));
+
+            if (respuesta == 1) {
+                Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+//                        idReservacion = 0; // Reiniciar idReservacion en caso de error
+            }
+            // Llamar al método de callback con el ID de la reservación
+            //  listener.onReservacionInserted(idReservacion);
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public interface ReservacionInsertListener {
+        void onReservacionInserted(int idReservacion);
+    }
+
+    public static void insertarReservacion(final String peticion, final Context ctx, final ReservacionInsertListener listener) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return obtenerRepuestaPeticion(peticion, ctx);
+            }
+
+            @Override
+            protected void onPostExecute(String json) {
+                int idReservacion=0;
+                try {
+                    JSONObject resultado = new JSONObject(json);
+                    int respuesta = resultado.getInt("resultado");
+                     idReservacion = resultado.getInt("idReservacion");
+                    Log.v("idReservacionC",String.valueOf( idReservacion));
+
+                    if (respuesta == 1) {
+                        Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+                        idReservacion = 0; // Reiniciar idReservacion en caso de error
+                    }
+                    // Llamar al método de callback con el ID de la reservación
+                    listener.onReservacionInserted(idReservacion);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    idReservacion = 0; // Reiniciar idReservacion en caso de error
+                    // Llamar al método de callback con el ID de la reservación
+                    listener.onReservacionInserted(idReservacion);
+                }
+            }
+        }.execute();
+    }
+
+
+
+
 
     //********************************************************************************************
     //***                        INSERSICION DE USUARIO EN 000WEBHOST                          ***

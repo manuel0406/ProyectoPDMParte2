@@ -143,6 +143,8 @@
     <string name="botonEliminarNegocio">Delete Business</string>
     <string name="botonProductosrNegocio">My Products</string>
     <string name="botonNuevoNegocio">New Business</string>
+    <string name="botonMisPedidos">Active Orders</string>
+
 
     <string name="itemIndicacion">Press a record to see more options</string>
     <string name="barraMisNegocios">My Businesses</string>
@@ -152,6 +154,7 @@
     <string name="barraCrearProducto">Create Product</string>
     <string name="barraEditarNegocio">Update Business</string>
     <string name="barraEditarProducto">Update Product</string>
+
 
 
     <string name="negocioNombre">Business Name:</string>

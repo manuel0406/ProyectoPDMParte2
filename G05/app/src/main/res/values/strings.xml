@@ -142,6 +142,8 @@
     <string name="botonEliminarNegocio">Eliminar Negocio</string>
     <string name="botonProductosrNegocio">Mis Productos</string>
     <string name="botonNuevoNegocio">Nuevo negocio</string>
+    <string name="botonMisPedidos">Pedidos Activos</string>
+
 
     <string name="itemIndicacion">Presione un registro para ver más opciones</string>
     <string name="barraMisNegocios">Mis Negocios</string>

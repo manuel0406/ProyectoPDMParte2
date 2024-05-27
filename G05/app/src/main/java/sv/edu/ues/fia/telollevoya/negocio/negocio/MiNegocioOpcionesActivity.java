@@ -12,6 +12,7 @@ import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.negocio.producto.ProductosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.negocio.PedidosPendientesActivity;
 
 public class MiNegocioOpcionesActivity extends Activity {
     TextView texto1;
@@ -62,6 +63,12 @@ public class MiNegocioOpcionesActivity extends Activity {
 
     public void irMisProductos(View v) {
         Intent intent = new Intent(this, ProductosActivity.class);
+        intent.putExtra("idNegocioRecuperado", idNegocio);
+        startActivity(intent);
+    }
+
+    public void irMisPedidos(View v) {
+        Intent intent = new Intent(this, PedidosPendientesActivity.class);
         intent.putExtra("idNegocioRecuperado", idNegocio);
         startActivity(intent);
     }

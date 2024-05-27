@@ -145,8 +145,11 @@ public class MisPedidosActivity extends Activity {
         Intent intent = new Intent(this, IniciarSesionActivity.class);
         intent.putExtra("desdeInicioApp", false);
         startActivity(intent);
-        finish();}
-        
+        finish();
+    
+    }
+
+
     public boolean cancelarPedido(int idPedido){
         String url = URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO + "pedido=" + idPedido + "&estado="+2;
         String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());

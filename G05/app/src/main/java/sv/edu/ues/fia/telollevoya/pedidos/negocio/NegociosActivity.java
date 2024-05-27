@@ -1,4 +1,4 @@
-package sv.edu.ues.fia.telollevoya.negocio.negocio;
+package sv.edu.ues.fia.telollevoya.pedidos.negocio;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
-import sv.edu.ues.fia.telollevoya.pedidos.negocio.NegociosActivity;
 import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
+import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
 
-public class MiNegocioActivity extends Activity {
+public class NegociosActivity extends Activity {
     RecyclerView listaNegocios;
-    ListaNegociosAdapter adapter;
+    NegociosDisponiblesAdapter adapter;
     String idAdministrador;
     int idAdmin;
     private boolean primeraCarga = true; // Flag para controlar la primera carga
@@ -32,17 +32,18 @@ public class MiNegocioActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mi_negocio);
+        setContentView(R.layout.activity_negocios);
 
+        /*
         Intent intent = getIntent();
         idAdministrador = intent.getStringExtra("idAdministrador");
-        idAdmin = Integer.parseInt(idAdministrador);
+        idAdmin = Integer.parseInt(idAdministrador);*/
         // idAdmin = 12; // Aseguramos que idAdmin tenga un valor, aunque este valor es estático
 
         listaNegocios = findViewById(R.id.rvListaNegocios);
         listaNegocios.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new ListaNegociosAdapter(new ArrayList<>());
+        adapter = new NegociosDisponiblesAdapter(new ArrayList<>());
         listaNegocios.setAdapter(adapter);
 
         cargarNegocios(); // Primera carga de datos
@@ -76,10 +77,10 @@ public class MiNegocioActivity extends Activity {
     }
 
     private void cargarNegocios() {
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         idAdministrador = intent.getStringExtra("idAdministrador");
-        idAdmin = Integer.parseInt(idAdministrador);
-        String url = "https://telollevoya.000webhostapp.com/Negocio/obtener_negocios_por_administrador.php?idAdministrador=" + idAdmin;
+        idAdmin = Integer.parseInt(idAdministrador);*/
+        String url = "https://telollevoya.000webhostapp.com/Negocio/obtener_negocios.php";
         new ObtenerRestaurantesTask(this).execute(url);
     }
 
@@ -116,12 +117,11 @@ public class MiNegocioActivity extends Activity {
                 adapter.setNegocios(new ArrayList<>());
                 if (!primeraCarga) { // Mostrar Snackbar solo después de la primera carga
                     View rootView = findViewById(android.R.id.content);
-                    Snackbar.make(rootView, "No tienes negocios asociados. Añade un negocio para comenzar.", Snackbar.LENGTH_LONG)
+                    Snackbar.make(rootView, "No hay negocios disponibles", Snackbar.LENGTH_LONG)
                             .setDuration(4000) // Duración de 4 segundos
-                            .setAction("Añadir", new View.OnClickListener() {
+                            .setAction("", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    irNuevoNegocio(v);
                                 }
                             }).show();
                 }
@@ -129,10 +129,4 @@ public class MiNegocioActivity extends Activity {
         }
     }
 
-    public void irNuevoNegocio(View v) {
-        //Intent intent = new Intent(this, NegociosActivity.class);
-        Intent intent = new Intent(this, CrearNegocioActivity.class);
-        intent.putExtra("idAdministradorRecuperado", idAdmin);
-        startActivity(intent);
-    }
 }

@@ -1,6 +1,5 @@
 package sv.edu.ues.fia.telollevoya.negocio.producto;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
@@ -16,7 +15,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 
 public class CrearProductoActivity extends AppCompatActivity {
@@ -25,6 +28,8 @@ public class CrearProductoActivity extends AppCompatActivity {
     Switch switchExistencias;
     RadioGroup radioGroupTipo;
     int idNegocioRecuperado;
+    private final String urlProducto = "https://telollevoya.000webhostapp.com/Producto/insertarProducto.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,37 +50,39 @@ public class CrearProductoActivity extends AppCompatActivity {
         radioGroupTipo = (RadioGroup) findViewById(R.id.radioGroupTipo);
         editProductoPrecio.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
         idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
+        //Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_LONG).show();
+
     }
 
-    public void insertarProducto(View v) {
+    public void insertarProducto(View v) throws UnsupportedEncodingException {
         // Verificar si los campos requeridos están vacíos
         if (editProductoNombre.getText().toString().isEmpty() || editProductoPrecio.getText().toString().isEmpty() || editProductoDescripción.getText().toString().isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String nombre = editProductoNombre.getText().toString();
-        float precio = Float.parseFloat(editProductoPrecio.getText().toString());
-        String descripcion = editProductoDescripción.getText().toString();
-        boolean existencia = switchExistencias.isChecked();
-
         // Obtener el texto del RadioButton seleccionado
         int selectedRadioButtonId = radioGroupTipo.getCheckedRadioButtonId();
         RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
-        String tipo = selectedRadioButton.getText().toString();
 
-        Product producto = new Product();
-        producto.setIdNegocio(idNegocioRecuperado);//Despues debo ingresar un id dinamico
-        producto.setNombreProducto(nombre);
-        producto.setPrecioProducto(precio);
-        producto.setDescripcionProducto(descripcion);
-        producto.setExistenciaProducto(existencia);
-        producto.setTipoProducto(tipo);
+        String nombre = URLEncoder.encode(editProductoNombre.getText().toString(), "UTF-8");
+        float precio =  Float.parseFloat(editProductoPrecio.getText().toString());
+        String descripcion = URLEncoder.encode(editProductoDescripción.getText().toString(), "UTF-8");
+        int existencia = switchExistencias.isChecked() ? 1 : 0;
+        String tipo = URLEncoder.encode(selectedRadioButton.getText().toString(), "UTF-8");
 
-        helper.abrir();
-        String mensaje = helper.insertar(producto);
-        helper.cerrar();
-        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "existencias " + existencia, Toast.LENGTH_LONG).show();
+
+        StringBuilder urlNegocioBuilder = new StringBuilder();
+        urlNegocioBuilder.append(urlProducto)
+                .append("?idNegocio=").append(idNegocioRecuperado)
+                .append("&nombreProducto=").append(nombre)
+                .append("&tipoProducto=").append(tipo)
+                .append("&descripcionProducto=").append(descripcion)
+                .append("&precioProducto=").append(precio)
+                .append("&existenciaProducto=").append(existencia);
+        String urlProducto = urlNegocioBuilder.toString();
+        ControladorSevicio.generico(urlProducto, this);
         onBackPressed();
     }
 }

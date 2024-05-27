@@ -139,16 +139,23 @@
     <string name="botonAgregar">Add</string>
     <string name="botonActualizar">Update</string>
     <string name="botonEliminar">Delete</string>
-
     <string name="botonActualizarNegocio2">Update Business</string>
     <string name="botonEliminarNegocio">Delete Business</string>
     <string name="botonProductosrNegocio">My Products</string>
     <string name="botonNuevoNegocio">New Business</string>
+    <string name="botonMisPedidos">Active Orders</string>
+
 
     <string name="itemIndicacion">Press a record to see more options</string>
     <string name="barraMisNegocios">My Businesses</string>
     <string name="barraMisProductos">My Products</string>
     <string name="barraGestionarNegocio">Manage My Business</string>
+    <string name="barraCrearNegocio">Create Business</string>
+    <string name="barraCrearProducto">Create Product</string>
+    <string name="barraEditarNegocio">Update Business</string>
+    <string name="barraEditarProducto">Update Product</string>
+
+
 
     <string name="negocioNombre">Business Name:</string>
     <string name="negocioTelefono">Phone:</string>
@@ -158,6 +165,27 @@
     <string name="negocioDepartamento">Department:</string>
     <string name="negocioUbicacionDescripcion">Description:</string>
     <string name="negocioMunicipio">Municipality:</string>
+
+
+    <string name="negocio_nombre">Business: </string>
+    <string name="negocio_id">Business ID: </string>
+    <string name="negocio_ubicacion_id">Location ID: </string>
+    <string name="negocio_administrador_id">Administrator ID: </string>
+    <string name="negocio_telefono">Phone: </string>
+    <string name="negocio_apertura">Opening time: </string>
+    <string name="negocio_cierre">Closing time: </string>
+    <string name="negocio_direccion">Address: </string>
+    <string name="negocioPickApertura">Pick Opening Time</string>
+    <string name="negocioPickCierre">Pick Closing Time</string>
+
+    <string name="producto_id">Product ID: </string>
+    <string name="producto_nombre">Product: </string>
+    <string name="producto_precio">Price: $</string>
+    <string name="producto_descripcion">Description: </string>
+    <string name="producto_tipo">Type: </string>
+    <string name="producto_disponible">Product available</string>
+    <string name="producto_no_disponible">Product not available</string>
+    <string name="producto_existencias">Stock: </string>
 
     <!-- View for Registering Customer Location -->
     <string name="ubicacionCliente">Select your permanent location:</string>

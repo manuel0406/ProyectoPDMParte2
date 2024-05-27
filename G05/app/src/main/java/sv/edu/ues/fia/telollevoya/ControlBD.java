@@ -946,7 +946,7 @@ public class ControlBD {
     }
 
 
-    //Modulo producto - Insertar
+    //Modulo producto - Insertar  (Ya estuvo)
     public String insertar(Product producto) {
         String regInsertados = "Producto Registrado";
         long contador = 0;
@@ -967,7 +967,7 @@ public class ControlBD {
         return regInsertados;
     }
 
-    //Modulo producto - Consultar todos los productos
+    //Modulo producto - Consultar todos los productos (Ya estuvo)
     public ArrayList<Product> obtenerProductosPorIdNegocio(int idNegocio) {
         ArrayList<Product> productos = new ArrayList<>();
 
@@ -998,7 +998,7 @@ public class ControlBD {
         return productos;
     }
 
-    //Modulo producto - Consultar un producto en especifico
+    //Modulo producto - Consultar un producto en especifico (Ya estuvo)
     public Product verProducto(int idProducto) {
         Product producto = null;
 
@@ -1020,7 +1020,7 @@ public class ControlBD {
         return producto;
     }
 
-    //Modulo producto - Actualizar
+    //Modulo producto - Actualizar (Ya estuvo)
     public String actualizar(Product producto) {
         String[] id = {String.valueOf(producto.getIdProducto())};
 
@@ -1049,7 +1049,7 @@ public class ControlBD {
 
 
 
-    //Modulo negocio - insertar ubicacion
+    //Modulo negocio - insertar ubicacion (Ya estuvo)
     public int insertarUbicacion1(Restaurant restaurant, String nombreDistrito) {
         //Consiguiendo el idDistrito asociado a nombreDistrito
         int idDistrito = 10;
@@ -1071,7 +1071,7 @@ public class ControlBD {
         return valorInt;
     }
 
-    //Modulo negocio - insertar Negocio
+    //Modulo negocio - insertar Negocio (Ya estuvo)
     public String insertarNegocio(Restaurant restaurant) {
         String regInsertados = "Producto Registrado Correctamente";
         long contador = 0;
@@ -1092,7 +1092,7 @@ public class ControlBD {
         return regInsertados;
     }
 
-    //Modulo negocio - Consultar todos los negocios
+    //Modulo negocio - Consultar todos los negocios (Ya estuvo)
     public ArrayList<Restaurant> obtenernegociosPorAdministrador(int idAdministrador) {
         ArrayList<Restaurant> productos = new ArrayList<>();
 
@@ -1144,7 +1144,7 @@ public class ControlBD {
 
     }
 
-    //Modulo Negocio - Consultar un negocio en especifico
+    //Modulo Negocio - Consultar un negocio en especifico (Ya estuvo)
     public Restaurant verNegocio(int idNegocio) {
         Restaurant negocio = null;
 
@@ -1166,7 +1166,7 @@ public class ControlBD {
         return negocio;
     }
 
-    //Modulo negocio - actualizar ubicacion
+    //Modulo negocio - actualizar ubicacion (Ya estuvo)
     public String actualizarUbicacion(Restaurant restaurant, int idUbicacion, String nombreDistrito) {
         String[] id = {String.valueOf(idUbicacion)};
         //Consiguiendo el idDistrito asociado a nombreDistrito
@@ -1185,7 +1185,7 @@ public class ControlBD {
         return "Producto Actualizado Correctamente";
     }
 
-    //Modulo negocio - actualizar Negocio
+    //Modulo negocio - actualizar Negocio (Ya estuvo)
     public String actualizarNegocio(Restaurant restaurant) {
         String[] idNegocio = {String.valueOf(restaurant.getIdNegocio())};
 
@@ -1198,7 +1198,7 @@ public class ControlBD {
         return "Datos del Negocio actualizados";
     }
 
-
+    // (Ya estuvo)
     public String eliminarNegocio(int idNegocio) {
         String regAfectados = "Negocio Eliminado Correctamente";
         int contadorNegocio = 0;

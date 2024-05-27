@@ -71,9 +71,18 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
         repartidoresList = new ArrayList<>();
         spínners = new ArrayList<>();
 
+
+
+
         controlBD = new ControlBD(PedidosPendientesActivity.this);
         //Recibir id de negocio;
-        idNegocio = 1;
+        //idNegocio = 1;
+
+        //recuperando, mostrando y asignando el idNegocio seleccionado por el administrador
+        int idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
+        //Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_SHORT).show();
+        idNegocio = idNegocioRecuperado;
+
 //        getPedidosPendientes();
 //        getPedidosPendientesConRepartidor();
         getAllPedidos();

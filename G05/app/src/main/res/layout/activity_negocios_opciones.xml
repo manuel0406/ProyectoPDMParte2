@@ -11,7 +11,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".negocio.negocio.MiNegocioOpcionesActivity">
+        tools:context=".pedidos.negocio.NegociosOpcionesActivity">
 
         <LinearLayout
             android:id="@+id/linearLayout4"
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="@string/barraGestionarNegocio"
+                android:text="@string/app_name"
                 android:textAlignment="center"
                 android:textColor="#FFFF"
                 android:textSize="20sp"
@@ -87,8 +87,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/circular_button_backgroundorange"
-            android:onClick="irActualizarNegocio"
-            android:text="@string/botonActualizarNegocio2"
+            android:text="Hacer Pedido"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -103,28 +102,13 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/circular_button_backgroundorange"
-            android:onClick="eliminarNegocio"
-            android:text="@string/botonEliminarNegocio"
+            android:text="Hacer reservacion"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-        <Button
-            android:id="@+id/btnMisProductos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/circular_button_backgroundorange"
-            android:onClick="irMisProductos"
-            android:text="@string/botonProductosrNegocio"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -146,41 +130,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="32dp"
-            android:src="@drawable/lista"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnEliminarNegocio" />
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="32dp"
-            android:src="@drawable/pedidos"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnMisProductos" />
-
-        <Button
-            android:id="@+id/btnMisPedidos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/circular_button_backgroundorange"
-            android:onClick="irMisPedidos"
-            android:text="@string/botonMisPedidos"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

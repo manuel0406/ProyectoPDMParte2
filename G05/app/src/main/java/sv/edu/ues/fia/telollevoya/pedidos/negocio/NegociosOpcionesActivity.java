@@ -15,9 +15,11 @@ import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.negocio.producto.ProductosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.cliente.SeleccionarProductoActivity;
 
 public class NegociosOpcionesActivity extends Activity {
     TextView texto1;
+    Button irSeleccionProdBtn;
     String idNegocioRecuperado;
     int idNegocio = -1, idUbicacion,idAdmin;
     String name;
@@ -33,6 +35,7 @@ public class NegociosOpcionesActivity extends Activity {
 
         helper = new ControlBD(this);
         texto1 = findViewById(R.id.txtRaa);
+        irSeleccionProdBtn = findViewById(R.id.btnSeleccionProd);
 
         //Recuperamos id de Negocio
         Intent intent = getIntent();
@@ -68,6 +71,10 @@ public class NegociosOpcionesActivity extends Activity {
         texto1.setText(negocioNombre + " " + name);
     }
 
-
+    public void irSeleccionProductos(View v){
+        Intent intent = new Intent(NegociosOpcionesActivity.this, SeleccionarProductoActivity.class);
+        intent.putExtra("idNegocio", idNegocio);
+        this.startActivity(intent);
+    }
 
 }

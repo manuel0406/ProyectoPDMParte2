@@ -53,6 +53,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     ArrayList<DetallePedido> detallesPedidosList;
     ProductoCardAdapter adapter;
     ControlBD db;
+    private int idNegocio;
     private final String URL_SERVICIO_PRODUCTOS = "https://telollevoya.000webhostapp.com/Pedidos/productos_negocio.php?negocio=";
     private final String URL_SERVICIO_HORA = "https://telollevoya.000webhostapp.com/Pedidos/hora.php";
 
@@ -70,6 +71,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        idNegocio = getIntent().getIntExtra("idNegocio", 1);
         db = new ControlBD(SeleccionarProductoActivity.this);
         prod_listView = findViewById(R.id.productos_listView);
         carritoBtn = findViewById(R.id.carrito_btn);
@@ -171,7 +173,6 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     }
 
     public void getProductosPorNegocio(){
-        String idNegocio = "1";
         String url = URL_SERVICIO_PRODUCTOS + idNegocio;
         String json = ControladorSevicio.obtenerRespuestaPeticion(url,getApplicationContext());
         try {

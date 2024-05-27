@@ -30,6 +30,7 @@ import sv.edu.ues.fia.telollevoya.Producto;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Repartidor;
 import sv.edu.ues.fia.telollevoya.Reservaciones.ReservacionesConsultarActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.negocio.NegociosActivity;
 import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
 
 public class MisPedidosActivity extends Activity {
@@ -161,7 +162,7 @@ public class MisPedidosActivity extends Activity {
     }
 
     public void irSeleccionProducto(View v){
-        Intent intent = new Intent(MisPedidosActivity.this, SeleccionarProductoActivity.class);
+        Intent intent = new Intent(MisPedidosActivity.this, NegociosActivity.class);
         intent.putExtra("idCliente", idCliente);
         startActivity(intent);
     }

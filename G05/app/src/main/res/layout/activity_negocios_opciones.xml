@@ -80,15 +80,16 @@
             app:layout_constraintTop_toBottomOf="@+id/txtRaa" />
 
         <Button
-            android:id="@+id/btnActualizarNegocio"
+            android:id="@+id/btnSeleccionProd"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/circular_button_backgroundorange"
-            android:text="Hacer Pedido"
+            android:text="@string/hacer_pedido"
             android:textColor="@color/white"
+            android:onClick="irSeleccionProductos"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -118,14 +119,14 @@
             android:src="@drawable/basura"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnActualizarNegocio" />
+            app:layout_constraintTop_toBottomOf="@+id/btnSeleccionProd" />
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginTop="32dp"
-            android:src="@drawable/engrane"
+            android:src="@drawable/order_food_online"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView25" />

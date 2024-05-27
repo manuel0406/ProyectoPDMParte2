@@ -191,6 +191,10 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
         finish();
     }
 
+    public void cerrarSesion(View view) {
+        //En este caso no hara nada
+    }
+
     public class PedidosActivosAdapter extends ArrayAdapter<Pedido> {
         public PedidosActivosAdapter(@NonNull Context context, int resource, @NonNull List<Pedido> objects) {
             super(context, resource, objects);

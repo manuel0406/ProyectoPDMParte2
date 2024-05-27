@@ -6,6 +6,8 @@
     <string name="nombre_producto">Nombre del producto</string>
     <string name="codigo">Código</string>
     <string name="nombre">Nombre</string>
+    <string name="PedidosAsignados">Pedidos asignados</string>
+
 
     <string name="monto">Monto</string>
     <string name="fecha_pedido">Fecha Pedido</string>

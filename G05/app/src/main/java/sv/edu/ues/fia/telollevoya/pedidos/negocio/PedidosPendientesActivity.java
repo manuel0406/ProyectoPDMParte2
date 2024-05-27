@@ -3,6 +3,7 @@ package sv.edu.ues.fia.telollevoya.pedidos.negocio;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,12 +22,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import sv.edu.ues.fia.telollevoya.Cliente;
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.Pedido;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Repartidor;
@@ -38,6 +47,11 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
     private ArrayList<Repartidor> repartidoresList;
     private List<Spinner> spínners;
     private ControlBD controlBD;
+    private int idNegocio;
+    private final String URL_PEDIDOS_PENDIENTES_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos/pedidos_pendientes.php?negocio=";
+    private final String URL_ACTUALIZAR_REPARTIDOR_PEDIDO = "https://telollevoya.000webhostapp.com/Pedidos/actualizar_repartidor_pedido.php";
+    private final String URL_REPARTIDORES_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos/repartidores.php";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,34 +63,119 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
             return insets;
         });
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         pedidosActivosListView = findViewById(R.id.pedidos_activos_listView);
         pedidosList = new ArrayList<>();
         repartidoresList = new ArrayList<>();
         spínners = new ArrayList<>();
+
         controlBD = new ControlBD(PedidosPendientesActivity.this);
-        getPedidosPendientes();
-        getPedidosPendientesConRepartidor();
+        //Recibir id de negocio;
+        idNegocio = 1;
+//        getPedidosPendientes();
+//        getPedidosPendientesConRepartidor();
+        getAllPedidos();
         getRepartidores();
         PedidosActivosAdapter adapter = new PedidosActivosAdapter(PedidosPendientesActivity.this, 0, pedidosList);
         pedidosActivosListView.setAdapter(adapter);
     }
 
-    public void getPedidosPendientes(){
-        controlBD.abrir();
-        pedidosList = controlBD.getPedidosPendientes();
-        controlBD.cerrar();
+    public void getAllPedidos() {
+        String url = URL_PEDIDOS_PENDIENTES_SERVICIO + idNegocio;
+        String respuesta = ControladorSevicio.obtenerRepuestaPeticion(url, getApplicationContext());
+        try {
+            JSONArray jsonArray = new JSONArray(respuesta);
+            JSONArray jsonSinRep = jsonArray.getJSONObject(0).getJSONArray("sin");
+            JSONArray jsonConRep = jsonArray.getJSONObject(1).getJSONArray("con");
+            //PEDIDOS SIN REPARTIDOR
+            for (int i = 0; i <= jsonSinRep.length() - 1; i++){
+                Pedido pedido = new Pedido();
+                JSONObject object = jsonSinRep.getJSONObject(i);
+
+                pedido.setId(object.getInt("IDPEDIDO"));
+                Cliente cliente = new Cliente();
+                cliente.setIdCliente(Integer.toString(object.getInt("IDCLIENTE")));
+                pedido.setCliente(cliente);
+                pedido.setTotalAPagar(Float.parseFloat(object.getString("TOTALAPAGAR")));
+                String fechaPed = object.getString("FECHAPEDIDO");
+                if (!fechaPed.equalsIgnoreCase("null"))
+                    pedido.setFechaPedido(Timestamp.valueOf(fechaPed));
+                else
+                    pedido.setFechaPedido(null);
+
+                pedido.setDescripcionOrden(object.getString("DESCRIPCIONORDEN"));
+
+                pedidosList.add(pedido);
+            }
+
+            //PEDIDOS CON REPARTIDORES
+            for(int i = 0; i <= jsonConRep.length()-1; i++){
+                Pedido pedido = new Pedido();
+                JSONObject object = jsonConRep.getJSONObject(i);
+                pedido.setId(object.getInt("IDPEDIDO"));
+                pedido.setTotalAPagar(Float.parseFloat(object.getString("TOTALAPAGAR")));
+                String fechaPed = object.getString("FECHAPEDIDO");
+                if (!fechaPed.equalsIgnoreCase("null"))
+                    pedido.setFechaPedido(Timestamp.valueOf(fechaPed));
+                else
+                    pedido.setFechaPedido(null);
+
+                String fechaEn = object.getString("FECHAENTREGAP");
+                if (!fechaEn.equalsIgnoreCase("null"))
+                    pedido.setFechaEntrega(Timestamp.valueOf(fechaEn));
+                else
+                    pedido.setFechaEntrega(null);
+                pedido.setDescripcionOrden(object.getString("DESCRIPCIONORDEN"));
+                Repartidor rep = new Repartidor();
+                rep.setIdRepartidor(Integer.toString(object.getInt("IDREPARTIDOR")));
+                rep.setNombre(object.getString("NOMBREREPARTIDOR"));
+                rep.setApellido(object.getString("APELLIDOREPARTIDOR"));
+                pedido.setRepartidor(rep);
+
+                Cliente cliente = new Cliente();
+                cliente.setIdCliente(Integer.toString(object.getInt("IDCLIENTE")));
+                pedido.setCliente(cliente);
+                pedidosList.add(pedido);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void getPedidosPendientesConRepartidor(){
-        controlBD.abrir();
-        pedidosList.addAll(controlBD.getPedidosPendientesConRepartidor());
-        controlBD.cerrar();
-    }
+//    public void getPedidosPendientes(){
+////        controlBD.abrir();
+////        pedidosList = controlBD.getPedidosPendientes();
+////        controlBD.cerrar();
+//    }
+//
+//    public void getPedidosPendientesConRepartidor(){
+//        controlBD.abrir();
+//        pedidosList.addAll(controlBD.getPedidosPendientesConRepartidor());
+//        controlBD.cerrar();
+//    }
 
     public void getRepartidores(){
-        controlBD.abrir();
-        repartidoresList = controlBD.getRepartidores();
-        controlBD.cerrar();
+        String respuesta = ControladorSevicio.obtenerRespuestaPeticion(URL_REPARTIDORES_SERVICIO, getApplicationContext());
+        try {
+            JSONArray jsonArray = new JSONArray(respuesta);
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Repartidor repartidor = new Repartidor();
+                repartidor.setIdRepartidor(jsonObject.getString("IDREPARTIDOR"));
+                repartidor.setNombre(jsonObject.getString("NOMBREREPARTIDOR"));
+                repartidor.setApellido(jsonObject.getString("APELLIDOREPARTIDOR"));
+                repartidor.setSexo(jsonObject.getString("SEXOREPARTIDOR"));
+                repartidor.setCorreo(jsonObject.getString("CORREOREPARTIDOR"));
+                repartidor.setNacimiento(jsonObject.getString("FECHANACIMIENTOR"));
+
+                repartidoresList.add(repartidor);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public void backButton(View v){
@@ -119,13 +218,15 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
                 repartidorSpinner.setSelection(repartidoresList.indexOf(repAsignado), false);
             }
             repartidorSpinner.setOnItemSelectedListener(PedidosPendientesActivity.this);
-
+            repartidorSpinner.setTag(repartidoresList.get(0));
             guardarBtn.setTag(pedido.getId());
             guardarBtn.setOnClickListener(v ->{
                 controlBD.abrir();
                 Repartidor repartidor = (Repartidor) repartidorSpinner.getTag();
                 int idPedido = (int) v.getTag();
-                if(controlBD.actualizarRepartidorPedido(Integer.parseInt(repartidor.getIdRepartidor()), idPedido)){
+                String url = URL_ACTUALIZAR_REPARTIDOR_PEDIDO+"?repartidor="+repartidor.getIdRepartidor()+"&pedido="+idPedido;
+                String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
+                if(respuesta.toLowerCase().contains("actualizado")){
                     Toast.makeText(PedidosPendientesActivity.this, "Repartidor asignado con éxito",
                             Toast.LENGTH_SHORT).show();
                     repartidorTextView.setText(repartidor.getNombre());

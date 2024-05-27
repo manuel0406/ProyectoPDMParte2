@@ -1,13 +1,19 @@
 package sv.edu.ues.fia.telollevoya.pago;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,9 +37,14 @@ public class SeleccionPagoActivity extends AppCompatActivity {
     private EditText nombreTitular;
     private EditText correo;
     private ConstraintLayout layoutFormularioTarjetaCredito;
+    private ConstraintLayout layoutFormularioBitcoin;
+    private ConstraintLayout layoutFormularioCorreo;
     private ControlBD controlBD;
     private MetodoPago metodoPago;
     private boolean tipoPagoSeleccionado;
+    private ImageView codigoQR;
+    private TextView txtDireccionBitcoin;
+    private Button btnCopiarDireccion;
     Pedido pedido;
 
 
@@ -46,10 +57,17 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         controlBD = new ControlBD(SeleccionPagoActivity.this);
         layoutFormularioTarjetaCredito = findViewById(R.id.layoutFormularioTarjetaCredito);
         layoutFormularioTarjetaCredito.setVisibility(View.GONE);
+        layoutFormularioBitcoin = findViewById(R.id.layoutFormularioBitcoin);
+        layoutFormularioBitcoin.setVisibility(View.GONE);
+        layoutFormularioCorreo = findViewById(R.id.layoutFormularioCorreo);
+        codigoQR = findViewById(R.id.imgCodigoQR);
+        txtDireccionBitcoin = findViewById(R.id.txtDireccionBitcoin);
+        btnCopiarDireccion = findViewById(R.id.btnCopiarDireccion);
 
         metodoPago = new MetodoPago();
-        pedido = new Pedido();//IMPORTANTE AQUI SE ASIGNARA EL PEDIDO QUE SE TRAE DE LA VISTA ANTERIOR
+        pedido = new Pedido();//AQUI SE ASIGNARA EL PEDIDO QUE SE TRAE DE LA VISTA ANTERIOR
         tipoPagoSeleccionado = false; //cambiará a true cuando se seleccione "efectivo" o "tarjeta"
+        codigoQR.setImageResource(R.drawable.codigo_qr);
 
         pedido = (Pedido) getIntent().getExtras().getSerializable("pedido");
 
@@ -59,10 +77,19 @@ public class SeleccionPagoActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radioButtonEfectivo) {
                     layoutFormularioTarjetaCredito.setVisibility(View.GONE);
+                    layoutFormularioBitcoin.setVisibility(View.GONE);
+                    layoutFormularioCorreo.setTranslationY(0);
                     metodoPago.setTipoPago("Efectivo");
                 } else if (checkedId == R.id.radioButtonTarjeta) {
                     layoutFormularioTarjetaCredito.setVisibility(View.VISIBLE);
+                    layoutFormularioBitcoin.setVisibility(View.GONE);
+                    layoutFormularioCorreo.setTranslationY(900);
                     metodoPago.setTipoPago("Tarjeta");
+                } else if(checkedId == R.id.radioButtonBitcoin){
+                    layoutFormularioTarjetaCredito.setVisibility(View.GONE);
+                    layoutFormularioBitcoin.setVisibility(View.VISIBLE);
+                    layoutFormularioCorreo.setTranslationY(0);
+                    metodoPago.setTipoPago("Bitcoin");
                 }
                 tipoPagoSeleccionado = true; //Ya se seleccionó un tipo de pago
             }
@@ -179,5 +206,15 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         controlBD.cerrar();
 
     }
+
+    public void copiarDireccionBitcoin(View view) {
+        String direccionBitcoin = txtDireccionBitcoin.getText().toString().split(": ")[1];
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Dirección Bitcoin", direccionBitcoin);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(this, "Dirección Bitcoin copiada al portapapeles", Toast.LENGTH_SHORT).show();
+    }
+
+
 
 }

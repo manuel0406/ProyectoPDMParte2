@@ -26,6 +26,7 @@ public class FacturaActivity extends AppCompatActivity{
     private AdaptadorProductosAPagar adaptador;
     private ControlBD helper;
     private Pedido pedido;
+    TextView txNumFactura;
     TextView txDireccion;
     TextView txFechaEntrega;
     TextView txMetodoPago;
@@ -49,6 +50,9 @@ public class FacturaActivity extends AppCompatActivity{
 
         txDireccion = (TextView) findViewById(R.id.txtDireccion);
         txDireccion.setText(pedido.getUbicacion().toString());
+
+        txNumFactura = (TextView) findViewById(R.id.txtNumeroDePedido);
+        txNumFactura.setText(String.valueOf(pedido.getFactura().getId()));
 
         txFechaEntrega = (TextView) findViewById(R.id.txtFechaEntrega);
         Date fechaEntrega = pedido.getFechaEntrega();

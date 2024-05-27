@@ -587,6 +587,19 @@ public class ControlBD {
         db.close();
         return reservacion;
     }
+    public int consultaUsuario() {
+        Cursor cursor = db.rawQuery("SELECT * FROM USUARIO", null);
+        int idUsuario = -1;  // Valor predeterminado para indicar que no se encontró ningún usuario
+
+        if (cursor.moveToFirst()) {
+            // Asumiendo que la columna 0 es el idUsuario
+            idUsuario = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return idUsuario;
+    }
+
     public String actualizar(Reservacion reservacion){
 
         String [] id ={String.valueOf( reservacion.getIdReservacion())};

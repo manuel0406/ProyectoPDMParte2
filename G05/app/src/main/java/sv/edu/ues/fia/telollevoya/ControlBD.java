@@ -1,5 +1,6 @@
 package sv.edu.ues.fia.telollevoya;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,7 +8,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
@@ -19,9 +19,13 @@ import java.util.Locale;
 import sv.edu.ues.fia.telollevoya.Reservaciones.DetallePedidoR;
 
 import sv.edu.ues.fia.telollevoya.pago.MetodoPago;
-
+@SuppressLint("NewApi")
 public class ControlBD {
 
+
+    private final String urlDepartamento="https://telollevoya.000webhostapp.com/departamento_insertar.php";
+    private  final  String urlMunicipio="https://telollevoya.000webhostapp.com/municipio_insertar.php";
+    private  final  String urlDistrito="https://telollevoya.000webhostapp.com/distrito_insertar.php";
     private static final String[] camposDepartamento = new String[]{
             "idDepartamento", "nombreDepartamento"
     };
@@ -88,7 +92,7 @@ public class ControlBD {
             "idUbicacion", "idDistrito", "descripcionUbicacion"
     };
     private static final String[] camposUsuario = new String[]{
-            "idUsuario", "nombreUsuario", "clave"
+            "idUsuario", "nombreUsuario", "clave", "rol", "estado"
     };
 
 
@@ -259,7 +263,9 @@ public class ControlBD {
                 db.execSQL("CREATE TABLE Usuario (\n" +
                         "   idUsuario INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                         "   nombreUsuario VARCHAR(30),\n" +
-                        "   clave CHAR(5)\n" +
+                        "   clave CHAR(5),\n" +
+                        "   rol CHAR(14),\n" +
+                        "   estado CHAR(7)\n" +
                         ");");
 
 //                -- Trigger para ACCESOUSUARIO
@@ -289,23 +295,6 @@ public class ControlBD {
                         "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDNEGOCIO no existente en NEGOCIO')\n" +
                         "    END;\n" +
                         "END;");
-                //Trigger para DETALLEPEDIDO
-//                db.execSQL("CREATE TRIGGER fk_detallep_contiene_pedido\n" +
-//                        "BEFORE INSERT ON DetallePedido\n" +
-//                        "FOR EACH ROW\n" +
-//                        "BEGIN\n" +
-//                        "    SELECT CASE WHEN ((SELECT idPedido FROM Pedido WHERE idPedido = NEW.idPedido) IS NULL)\n" +
-//                        "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDPEDIDO no existente en PEDIDO')\n" +
-//                        "    END;\n" +
-//                        "END;");
-//                db.execSQL("CREATE TRIGGER fk_detallep_posee_reservac\n" +
-//                        "BEFORE INSERT ON DetallePedido\n" +
-//                        "FOR EACH ROW\n" +
-//                        "BEGIN\n" +
-//                        "    SELECT CASE WHEN ((SELECT idReservacion FROM Reservacion WHERE idReservacion = NEW.idReservacion) IS NULL)\n" +
-//                        "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDRESERVACION no existente en RESERVACION')\n" +
-//                        "    END;\n" +
-//                        "END;");
                 //Trigger para DISTRITO
                 db.execSQL("CREATE TRIGGER fk_distrito_engloba_municipi\n" +
                         "BEFORE INSERT ON Distrito\n" +
@@ -351,14 +340,6 @@ public class ControlBD {
                         "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDUBICACION no existente en UBICACION')\n" +
                         "    END;\n" +
                         "END;");
-//                db.execSQL("CREATE TRIGGER fk_pedido_entrega_repartid\n" +
-//                        "BEFORE INSERT ON Pedido\n" +
-//                        "FOR EACH ROW\n" +
-//                        "BEGIN\n" +
-//                        "    SELECT CASE WHEN ((SELECT idRepartidor FROM Repartidor WHERE idRepartidor = NEW.idRepartidor) IS NULL)\n" +
-//                        "    THEN RAISE(ABORT, 'Error: Intento de inserción con IDREPARTIDOR no existente en REPARTIDOR')\n" +
-//                        "    END;\n" +
-//                        "END;");
                 db.execSQL("CREATE TRIGGER fk_pedido_genera_factura\n" +
                         "BEFORE INSERT ON Pedido\n" +
                         "FOR EACH ROW\n" +
@@ -440,9 +421,6 @@ public class ControlBD {
                         "    END;\n" +
                         "END;");
 
-
-
-
             } catch (SQLException e) {
                 e.printStackTrace();
 
@@ -465,7 +443,21 @@ public class ControlBD {
     }
 
 
+
     public String insertar(Departamento departamento) {
+//        String nombreDepartamentoCodificado = "",idDepartamentoCodificado="";
+//        try {
+//            idDepartamentoCodificado=URLEncoder.encode(String.valueOf( departamento.getIdDepartamento()), "UTF-8");
+//            nombreDepartamentoCodificado = URLEncoder.encode(departamento.getNombreDepartamento(), "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlDepartamento +"?IDDEPARTAMENTO="+idDepartamentoCodificado+ "&NOMBREDEPARTAMENTO=" + nombreDepartamentoCodificado;
+//        ControladorSevicio.insertarDepartamento(url, context);
+//        JSONObject datosDepa = new JSONObject();
+
         String regInsertados = "Registros Insertados N°=";
         long contador = 0;
         ContentValues depa = new ContentValues();
@@ -479,6 +471,7 @@ public class ControlBD {
         }
         return regInsertados;
     }
+
 
     public String insertar(Reservacion reservacion) {
         String regInsertados = "Registros insertados N°= ";
@@ -518,6 +511,21 @@ public class ControlBD {
         return regInsertados;
     }
     public String insertar(Municipio municipio) {
+
+//        String nombreMunicipioCodificado = "",idMunicipioCodificado="", idDepartamentoCodificado="";
+//        try {
+//            idMunicipioCodificado=URLEncoder.encode(String.valueOf( municipio.getIdMunicipio()), "UTF-8");
+//            idDepartamentoCodificado=URLEncoder.encode(String.valueOf( municipio.getIdDepartamento()), "UTF-8");
+//            nombreMunicipioCodificado = URLEncoder.encode(municipio.getNombreMunicipio(), "UTF-8");
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlMunicipio +"?IDMUNICIPIO="+idMunicipioCodificado+"&IDDEPARTAMENTO="+idDepartamentoCodificado+ "&NOMBREMUNICIPIO=" + nombreMunicipioCodificado;
+//        ControladorSevicio.insertarDepartamento(url, context);
+//        JSONObject datosDepa = new JSONObject();
 
         String regInsertados = "Registro insetado N°= ";
         long contador = 0;
@@ -579,6 +587,19 @@ public class ControlBD {
         db.close();
         return reservacion;
     }
+    public int consultaUsuario() {
+        Cursor cursor = db.rawQuery("SELECT * FROM USUARIO", null);
+        int idUsuario = -1;  // Valor predeterminado para indicar que no se encontró ningún usuario
+
+        if (cursor.moveToFirst()) {
+            // Asumiendo que la columna 0 es el idUsuario
+            idUsuario = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return idUsuario;
+    }
+
     public String actualizar(Reservacion reservacion){
 
         String [] id ={String.valueOf( reservacion.getIdReservacion())};
@@ -605,6 +626,23 @@ public class ControlBD {
     }
 
     public String insertar (Distrito distrito){
+
+
+//        String nombreDistritoCodificado = " ",idMunicipioCodificado= "", idDistritoCodificado="";
+//        try {
+//            idMunicipioCodificado=URLEncoder.encode(String.valueOf( distrito.getIdMunicipio()), "UTF-8");
+//            idDistritoCodificado=URLEncoder.encode(String.valueOf( distrito.getIdDistrito()), "UTF-8");
+//            nombreDistritoCodificado = URLEncoder.encode(distrito.getNombreDistrito(), "UTF-8");
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlDistrito +"?IDDISTRITO="+idDistritoCodificado+"&IDMUNICIPIO="+idMunicipioCodificado+ "&NOMBREDISTRITO=" + nombreDistritoCodificado;
+//        ControladorSevicio.insertarDepartamento(url, context);
+//        JSONObject datosDepa = new JSONObject();
+
         String regInsertados= "Registros insertados N°= ";
         long contador=0;
         ContentValues distri = new ContentValues();
@@ -1330,7 +1368,7 @@ public class ControlBD {
                 1, 1, 1, 1,
                 2, 2, 2, 2,
                 3, 3, 3, 3,
-                4, 4, 4,
+                4, 4, 4, 4,
                 5,
                 6, 6,
                 7, 7, 7, 7, 7, 7,
@@ -1409,7 +1447,7 @@ public class ControlBD {
                 /*34 San Vicente Sur */"San Vicente", "Guadalupe", "Verapaz", "Nuevo Tepetitán", "Tecoluca", "San Cayetano Istepeque",
                 /*35 Usulután norte **/"Santiago de María", "Alegría", "Berlín", "Mercedes Umaña", "Jucuapa", "El Triunfo", "Estanzuelas", "San Buenaventura", "Nueva Guadalupe",
                 /*36 Usulután Este **/"Usulután", "Jucuarán", "San Dionisio", "Concepción Batres", "Santa María", "Ozatlan", "Tecapán", "Santa Elena", "California", "Ereguayquín",
-                /*37 Usulután Oeste **/"Jiquilisco, Puerto El Triunfo", "San Agustín", "San Francisco Javier",
+                /*37 Usulután Oeste **/"Jiquilisco", "Puerto El Triunfo", "San Agustín", "San Francisco Javier",
                 /*38 San Miguel norte **/"Ciudad Barrios", "Sesori", "Nuevo Edén de San Juan", "San Gerardo", "San Luis La Reina", "Carolina", "San Antonio del Mosco", "Chapeltique",
                 /*39 San Miguel Centro **/"San Miguel", "Comacarán", "Uluazapa", "Moncagua", "Quelepa", "Chirilagua",
                 /*40 San Miguel Oeste **/"Chinameca", "Nueva Guadaluoe", "Lolotique", "San Jorge", "San Rael Oriente", "El Tránsito",
@@ -1430,6 +1468,7 @@ public class ControlBD {
             departamento.setIdDepartamento(VDidDepartamento[i]);
             departamento.setNombreDepartamento(VDnombreDepartamento[i]);
             insertar(departamento);
+
         }
         Municipio municipio = new Municipio();
         for (int i = 0; i < 44; i++) {
@@ -1492,12 +1531,18 @@ public class ControlBD {
         return regInsertados;
     }
 
+    //********************************************************************************************
+    //***                        INSERSICION DE USUARIO EN SQLITE                              ***
+    //********************************************************************************************
     public String insertar(Usuario usuario) {
         String regInsertados = "Registros insertados N°= ";
         long contador;
         ContentValues user = new ContentValues();
+        user.put("idUsuario", usuario.getIdUsuario() );
         user.put("nombreUsuario", usuario.getNombreUsuario());
         user.put("clave", usuario.getClave());
+        user.put("rol", usuario.getRol());
+        user.put("estado", usuario.getEstado());
 
         contador = db.insert("Usuario", null, user);
         if (contador == -1 || contador == 0) {
@@ -1507,6 +1552,8 @@ public class ControlBD {
         }
         return regInsertados;
     }
+
+    //********************************************************************************************
 
     public String insertar(Administrador administrador) {
         String regInsertados = "Registros insertados N°= ";
@@ -1657,6 +1704,9 @@ public class ControlBD {
 
     }
 
+    //********************************************************************************************
+    //***                        CONSULTAR USUARIO POR SU CORREO                               ***
+    //********************************************************************************************
     public Usuario consultarUsuario(String correo) {
         String[] id = {correo};
         Cursor cursor = db.query("Usuario", camposUsuario, "nombreUsuario = ?", id, null, null, null);
@@ -1669,6 +1719,25 @@ public class ControlBD {
             return null;
         }
     }
+
+    //********************************************************************************************
+    //***                        CONSULTAR USUARIO POR SU ESTADO                               ***
+    //********************************************************************************************
+    public Usuario consultarUsuarioActivo(String estado) {
+        String[] state = {estado};
+        Cursor cursor = db.query("Usuario", camposUsuario, "estado = ?", state, null, null, null);
+        if (cursor.moveToFirst()) {
+            Usuario usuario = new Usuario();
+            usuario.setIdUsuario(cursor.getString(0));
+            usuario.setNombreUsuario(cursor.getString(1));
+            usuario.setClave(cursor.getString(2));
+            usuario.setRol(cursor.getString(3));
+            return usuario;
+        } else {
+            return null;
+        }
+    }
+    //**********************************************************************************************
 
     public Administrador consultarAdministrador(String correo) {
         String[] id = {correo};

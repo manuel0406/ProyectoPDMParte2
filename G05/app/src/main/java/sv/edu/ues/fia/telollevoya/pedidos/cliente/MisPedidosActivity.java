@@ -40,11 +40,6 @@ public class MisPedidosActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mis_pedidos);
 
-        //Aqui recibe el idCliente desde la pantalla iniciar sesión
-        Intent intent = getIntent();
-        idClienteStr = intent.getStringExtra("idCliente");
-        idCliente = Integer.parseInt(idClienteStr);
-
         controlBD = new ControlBD(MisPedidosActivity.this);
         pedidosRelizadosList = new ArrayList<>();
         pedidosActivosList = new ArrayList<>();
@@ -92,9 +87,9 @@ public class MisPedidosActivity extends Activity {
 
     public void irReservacionesConsultar(View v){
 
-        Toast.makeText(this, idClienteStr,Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, idClienteStr,Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MisPedidosActivity.this, ReservacionesConsultarActivity.class);
-        intent.putExtra("idCliente", idClienteStr);
+        //intent.putExtra("idCliente", idClienteStr);
 
         startActivity(intent);
     }

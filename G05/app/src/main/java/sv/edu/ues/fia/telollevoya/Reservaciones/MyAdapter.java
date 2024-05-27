@@ -1,6 +1,8 @@
 package sv.edu.ues.fia.telollevoya.Reservaciones;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.service.controls.Control;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Reservacion;
 
@@ -22,6 +25,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
     private Context context;
     private ArrayList<Reservacion> reservacion;
     private  ControlBD db;
+    private String urlEliminar= "https://telollevoya.000webhostapp.com/Reservaciones/reservacion_delete.php";
 
     public MyAdapter(Context context, ArrayList<Reservacion> reservacion) {
         this.context = context;
@@ -68,25 +72,37 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
         holder.btnEliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Obtener la posición del elemento en la lista
-                int posicion = holder.getAdapterPosition();
-                if (posicion != RecyclerView.NO_POSITION) {
-                    // Obtener la reservación correspondiente a esa posición
-                    Reservacion reservacionActual = reservacion.get(posicion);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("¿Está seguro de que desea eliminar esta reservación?")
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // El usuario ha confirmado la eliminación
+                                int posicion = holder.getAdapterPosition();
+                                if (posicion != RecyclerView.NO_POSITION) {
+                                    Reservacion reservacionActual = reservacion.get(posicion);
 
-                    // Llamar al método de eliminación en la base de datos
-                    db.abrir();
-                    db.cancelarReservacion(reservacionActual);
-                    db.cerrar();
+                                    String url=urlEliminar+"?IDRESERVACION="+reservacionActual.getIdReservacion();
+                                    ControladorSevicio.insertarDetalle(url,context);
 
-                    // Eliminar la reservación de la lista
-                    reservacion.remove(posicion);
-
-                    // Notificar al adaptador que se ha eliminado un elemento
-                    notifyItemRemoved(posicion);
-                }
+//                                    db.abrir();
+//                                    db.cancelarReservacion(reservacionActual);
+//                                    db.cerrar();
+                                    reservacion.remove(posicion);
+                                    notifyItemRemoved(posicion);
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // El usuario ha cancelado la eliminación, no se hace nada
+                            }
+                        });
+                // Crear y mostrar el cuadro de diálogo
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
+
 
 
     }

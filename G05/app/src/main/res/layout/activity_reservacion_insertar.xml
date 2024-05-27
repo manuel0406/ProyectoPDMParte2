@@ -7,81 +7,63 @@
     android:layout_height="match_parent"
     tools:context=".Reservaciones.ReservacionInsertarActivity">
 
-
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/naranja"
         android:gravity="center"
         android:text="@string/AgregarReservacion"
         android:textColor="@color/white"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TextContrastCheck" />
 
-
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="5dp"
         app:layout_constraintBottom_toTopOf="@+id/btnPagar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.01999998">
-
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
-                android:layout_marginLeft="16dp"
                 android:text="@string/fechaEntrega"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/editTextDateReservacion"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.043"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                app:layout_constraintVertical_bias="0.0" />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextDateReservacion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="0dp"
-                android:layout_marginLeft="16dp"
                 android:onClick="fecha"
                 android:ems="8"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:inputType="text"
-                android:minHeight="48dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.064"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                tools:ignore="LabelFor,SpeakableTextPresentCheck" />
+                android:minHeight="48dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Seleccionar Hora"
                 android:textStyle="bold"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginTop="16dp" />
 
             <EditText
                 android:id="@+id/edtHora"
@@ -90,20 +72,17 @@
                 android:inputType="text"
                 android:onClick="fecha"
                 android:ems="8"
-                android:layout_marginStart="16dp"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                />
+                android:layout_marginTop="4dp" />
 
             <TextView
                 android:id="@+id/textViewA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
-                android:layout_marginLeft="16dp"
                 android:text="@string/AgregarProducto"
-                android:textStyle="bold"
-                tools:ignore="MissingConstraints" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -112,12 +91,11 @@
 
                 <LinearLayout
                     android:id="@+id/contenedorElementos"
-                    android:layout_width="300dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_margin="8dp"
-                    android:layout_marginTop="4dp"
-                    android:orientation="vertical"
-                    tools:ignore="MissingConstraints" />
+                    android:orientation="vertical" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/floatingActionButton"
@@ -127,26 +105,17 @@
                     android:clickable="true"
                     app:backgroundTint="@color/naranja"
                     app:fabSize="mini"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/baseline_add_agregar"
-                    tools:ignore="MissingConstraints" />
+                    app:srcCompat="@drawable/baseline_add_agregar" />
 
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
-                android:layout_marginLeft="16dp"
                 android:text="@string/total"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.011"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/scrollView2"
-                tools:ignore="UnknownId" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -158,30 +127,17 @@
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:text="@string/signoDollar"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView12"
-                    tools:ignore="MissingConstraints" />
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editTextTotal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="0dp"
-                    android:autofillHints=""
-                    android:ems="10"
+                    android:layout_weight="1"
                     android:enabled="false"
-                    android:inputType="number"
-                    app:layout_constraintBottom_toTopOf="@+id/textView23"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/textView15"
-                    app:layout_constraintTop_toBottomOf="@+id/textView12"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:ignore="LabelFor" />
+                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -189,18 +145,12 @@
                 android:id="@+id/textView23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/pagoMinimo"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.061"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView15"
-                tools:ignore="MissingConstraints" />
-
+                android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
                 android:orientation="horizontal">
@@ -209,25 +159,17 @@
                     android:id="@+id/textView24"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:text="@string/signoDollar"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView23" />
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editTextPagoMinimo"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:ems="10"
                     android:enabled="false"
-                    android:inputType="number"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.005"
-                    app:layout_constraintStart_toEndOf="@+id/textView24"
-                    app:layout_constraintTop_toBottomOf="@+id/textView23"
-                    tools:ignore="MissingConstraints" />
+                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -235,18 +177,12 @@
                 android:id="@+id/textView28"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="4dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="Ingresar anticipo"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.052"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
-
+                android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
                 android:orientation="horizontal">
@@ -255,66 +191,42 @@
                     android:id="@+id/textView29"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:text="@string/signoDollar"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/btnPagar"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView28"
-                    app:layout_constraintVertical_bias="0.245" />
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editTextAnticipo"
-                    android:layout_width="39dp"
-                    android:layout_height="41dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginStart="16dp"
-
-                    android:inputType="numberDecimal"
-                    app:layout_constraintBottom_toTopOf="@+id/btnPagar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/textView29"
-                    app:layout_constraintTop_toBottomOf="@+id/textView28"
-                    app:layout_constraintVertical_bias="0.279" />
+                    android:inputType="numberDecimal" />
 
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/textView27"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="4dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="Descripción"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.047"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextPagoMinimo"
-                tools:ignore="MissingConstraints" />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextTextMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
                 android:layout_marginVertical="4dp"
                 android:ems="10"
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView27" />
-
+                android:inputType="textMultiLine" />
 
         </LinearLayout>
-
 
     </ScrollView>
 
     <Button
         android:id="@+id/btnPagar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/naranja"
         android:onClick="insertarReservacion"
@@ -323,12 +235,6 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
-
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

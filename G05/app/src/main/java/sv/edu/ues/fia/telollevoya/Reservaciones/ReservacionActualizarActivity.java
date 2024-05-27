@@ -3,7 +3,10 @@ package sv.edu.ues.fia.telollevoya.Reservaciones;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -16,9 +19,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Reservacion;
 
@@ -28,6 +35,7 @@ public class ReservacionActualizarActivity extends Activity {
 
     EditText edtIdReservacion, edtFecha, edtHora;
     private  int dia, mes, ano, hora, minutos;
+    private String urlUpdate="https://telollevoya.000webhostapp.com/Reservaciones/reservacion_update.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +45,12 @@ public class ReservacionActualizarActivity extends Activity {
         edtIdReservacion= (EditText)findViewById(R.id.edtIdReservacion);
         edtFecha=(EditText) findViewById(R.id.edtFecha);
         edtHora= (EditText)  findViewById(R.id.edtHoraEn);
+        helper = new ControlBD(this);
 
-
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         int idReservacion;
         String nombreNegocio;
         String fechaEntrega;
@@ -66,11 +78,35 @@ public void actualizarReservacion(View v){
     reservacion.setFechaEntregaR(edtFecha.getText().toString());
     reservacion.setHoraEntrega(edtHora.getText().toString());
 
-    helper.abrir();
-    String estado= helper.actualizar(reservacion);
-    helper.cerrar();
 
-    Toast.makeText(this, estado, Toast.LENGTH_SHORT).show();
+    String fechaEntregar="";
+    SimpleDateFormat dateFormatEntrada = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    SimpleDateFormat dateFormatSalida = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    try {
+        java.util.Date fecha = dateFormatEntrada.parse(reservacion.getFechaEntregaR());
+        fechaEntregar = dateFormatSalida.format(fecha);
+
+    } catch (ParseException e) {
+        e.printStackTrace();
+        // Manejar el error de análisis de fecha aquí
+    }
+
+
+    String url=urlUpdate+"?IDRESERVACION="+reservacion.getIdReservacion()+"&FECHAENTREGAR="+fechaEntregar+"&HORAENTREGAR="+reservacion.getHoraEntrega();
+
+    ControladorSevicio.updateReservacion(url,this);
+    Log.v("urlUpdate",url);
+//    helper.abrir();
+//    String estado= helper.actualizar(reservacion);
+//    helper.cerrar();
+
+    //Toast.makeText(this, estado, Toast.LENGTH_SHORT).show();
+    Intent intent = new Intent(ReservacionActualizarActivity.this, ReservacionesConsultarActivity.class);
+    startActivity(intent);
+}
+public void cancelarActualicacion(View v){
+    Intent intent = new Intent(ReservacionActualizarActivity.this, ReservacionesConsultarActivity.class);
+    startActivity(intent);
 }
 
 public void limpiarTexto(View v){

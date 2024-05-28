@@ -31,6 +31,12 @@
     <string name="asignar">Assign</string>
     <string name="selecciona_productos">Select Your Products</string>
     <string name="pedidos_repartidor">Delivery Person Orders</string>
+    <string name="hacer_pedido">Create Order</string>
+    <string name="confirmar">Confirm</string>
+    <string name="confirmar_msg">If you go back, your shopping cart will be cleared.</string>
+    <string name="Si">Yes</string>
+    <string name="No">No</string>
+    <string name="confirmar_elimn_msg">Are you sure you want to remove this product?</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

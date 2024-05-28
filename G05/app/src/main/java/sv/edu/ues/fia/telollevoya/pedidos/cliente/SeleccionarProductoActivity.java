@@ -5,44 +5,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.speech.RecognizerIntent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResultCaller;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.DetallePedido;
-import sv.edu.ues.fia.telollevoya.R;
-
 import sv.edu.ues.fia.telollevoya.Producto;
-//import sv.edu.ues.fia.telollevoya.pedidos.dto.ProductoDTO;
+import sv.edu.ues.fia.telollevoya.R;
 
 public class SeleccionarProductoActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -53,6 +43,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     ArrayList<DetallePedido> detallesPedidosList;
     ProductoCardAdapter adapter;
     ControlBD db;
+    private int idNegocio;
     private final String URL_SERVICIO_PRODUCTOS = "https://telollevoya.000webhostapp.com/Pedidos/productos_negocio.php?negocio=";
     private final String URL_SERVICIO_HORA = "https://telollevoya.000webhostapp.com/Pedidos/hora.php";
 
@@ -60,16 +51,12 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_seleccionar_producto);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        idNegocio = getIntent().getIntExtra("idNegocio", 1);
         db = new ControlBD(SeleccionarProductoActivity.this);
         prod_listView = findViewById(R.id.productos_listView);
         carritoBtn = findViewById(R.id.carrito_btn);
@@ -92,7 +79,8 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
                 }
                 else {
                     ArrayList<Producto> nuevosProd = (ArrayList<Producto>) productos.stream().filter(producto ->
-                            producto.getNombre().contains(newText)).collect(Collectors.toList());
+                            producto.getNombre().toLowerCase().contains(newText.toLowerCase()))
+                            .collect(Collectors.toList());
                     if(!nuevosProd.isEmpty()){
                         productos.clear();
                         productos.addAll(nuevosProd);
@@ -107,17 +95,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         });
     }
 
-    public void cargarProductos(){
-        db.abrir();
-        productos = db.getProductos();
-        db.cerrar();
-        adapter = new ProductoCardAdapter(this, productos);
-        prod_listView.setAdapter(adapter);
-    }
-
     public void agregarProducto(int posicion) {
-        //Calendar cal = Calendar.getInstance();
-        //int hour = cal.get(Calendar.HOUR_OF_DAY); // Obtener la hora del día en formato de 24 horas
         int hour  = getHoraActual();
         Producto producto = productos.get(posicion);
         if(producto.getNombre().toLowerCase().contains("pupusa")){
@@ -166,12 +144,18 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
                 default:
                     break;
             }
-
         }
+
+        //Lectura de texto ingresado por Voz
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            assert results != null;
+            searchView.setQuery(results.get(0), true);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void getProductosPorNegocio(){
-        String idNegocio = "1";
         String url = URL_SERVICIO_PRODUCTOS + idNegocio;
         String json = ControladorSevicio.obtenerRespuestaPeticion(url,getApplicationContext());
         try {
@@ -206,6 +190,28 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         return 0;
     }
 
+    public void backButton(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.confirmar);
+        builder.setMessage(R.string.confirmar_msg);
+        builder.setPositiveButton(R.string.Si, (dialog, which) -> finish());
+        builder.setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.confirmar);
+        builder.setMessage(R.string.confirmar_msg);
+        builder.setPositiveButton(R.string.Si, (dialog, which) -> super.onBackPressed());
+        builder.setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     public class ProductoCardAdapter extends ArrayAdapter<Producto> {
         List<Producto> productos;
         public  ProductoCardAdapter(@NonNull Context context, List<Producto> productos){
@@ -235,5 +241,15 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+    }
+
+    private static final int SPEECH_REQUEST_CODE = 0;
+
+    // Crea intent para abrir pantalla de reconocimiento de voz
+    public void reconocerVoz(View v) {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
     }
 }

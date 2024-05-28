@@ -1,7 +1,9 @@
 package sv.edu.ues.fia.telollevoya.pedidos.negocio;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
-import android.database.DataSetObserver;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -11,24 +13,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.app.NotificationCompat;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +63,6 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
         controlBD = new ControlBD(PedidosPendientesActivity.this);
         //recuperando, mostrando y asignando el idNegocio seleccionado por el administrador
         int idNegocioRecuperado = getIntent().getIntExtra("idNegocioRecuperado", 5);
-        //Toast.makeText(this, "idNegocio " + idNegocioRecuperado, Toast.LENGTH_SHORT).show();
         idNegocio = idNegocioRecuperado;
         getAllPedidos();
         getRepartidores();
@@ -118,7 +112,7 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
 
                 String fechaEn = object.getString("FECHAENTREGAP");
                 if (!fechaEn.equalsIgnoreCase("null"))
-                    pedido.setFechaEntrega(Timestamp.valueOf(fechaEn));
+                    pedido.setFechaEntrega(Date.valueOf(fechaEn));
                 else
                     pedido.setFechaEntrega(null);
                 pedido.setDescripcionOrden(object.getString("DESCRIPCIONORDEN"));
@@ -202,6 +196,7 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
             repartidorSpinner.setOnItemSelectedListener(PedidosPendientesActivity.this);
             repartidorSpinner.setTag(repartidoresList.get(0));
             guardarBtn.setTag(pedido.getId());
+            //Guardando cambios de repartidor
             guardarBtn.setOnClickListener(v ->{
                 controlBD.abrir();
                 Repartidor repartidor = (Repartidor) repartidorSpinner.getTag();
@@ -209,8 +204,20 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
                 String url = URL_ACTUALIZAR_REPARTIDOR_PEDIDO+"?repartidor="+repartidor.getIdRepartidor()+"&pedido="+idPedido;
                 String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
                 if(respuesta.toLowerCase().contains("actualizado")){
-                    Toast.makeText(PedidosPendientesActivity.this, "Repartidor asignado con éxito",
-                            Toast.LENGTH_SHORT).show();
+                    //Mostrar notificación Push
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(),"Channel")
+                            .setSmallIcon(R.drawable.logo_general)
+                            .setContentTitle("Cambio Repartidor")
+                            .setContentText("El repartidor se ha asignado con éxito al pedido")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        CharSequence name = "Channel";// The user-visible name of the channel.
+                        int importance = NotificationManager.IMPORTANCE_HIGH;
+                        NotificationChannel mChannel = new NotificationChannel("Channel", name, importance);
+                        notificationManager.createNotificationChannel(mChannel);
+                    }
+                    notificationManager.notify(1, builder.build());
                     repartidorTextView.setText(repartidor.getNombre());
                 }else Toast.makeText(PedidosPendientesActivity.this, "Ocurrió un problema",
                         Toast.LENGTH_SHORT).show();

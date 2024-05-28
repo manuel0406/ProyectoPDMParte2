@@ -34,6 +34,7 @@
     <string name="confirmar_msg">Si vuelve atrás se limpiara su carrito de compras</string>
     <string name="Si">Si</string>
     <string name="No">No</string>
+    <string name="confirmar_elimn_msg">¿Desea eliminar este producto de su carrito?</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

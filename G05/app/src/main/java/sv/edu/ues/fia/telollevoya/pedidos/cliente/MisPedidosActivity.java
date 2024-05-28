@@ -30,6 +30,7 @@ import sv.edu.ues.fia.telollevoya.Producto;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Repartidor;
 import sv.edu.ues.fia.telollevoya.Reservaciones.ReservacionesConsultarActivity;
+import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
 
 public class MisPedidosActivity extends Activity {
 
@@ -125,6 +126,29 @@ public class MisPedidosActivity extends Activity {
             Toast.makeText(MisPedidosActivity.this, "No  hay nada por mostrar", Toast.LENGTH_SHORT);
         }
     }
+
+
+    //----------------------------------------------------------------------------------------------
+    //                          METODO PARA CERRAR SESION
+    //----------------------------------------------------------------------------------------------
+    public void cerrarSesion(View v) {
+
+        //Limpio base de usuarios disponibles
+        controlBD = new ControlBD(this);
+        controlBD.abrir();
+        controlBD.LimpiarUsuario();
+        controlBD.cerrar();
+
+        Toast.makeText(this, "Vuelve pronto", Toast.LENGTH_SHORT).show();
+
+        // Crear un Intent para iniciar sesion "Iniciar Sesion"
+        Intent intent = new Intent(this, IniciarSesionActivity.class);
+        intent.putExtra("desdeInicioApp", false);
+        startActivity(intent);
+        finish();
+    
+    }
+
 
     public boolean cancelarPedido(int idPedido){
         String url = URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO + "pedido=" + idPedido + "&estado="+2;

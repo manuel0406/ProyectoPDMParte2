@@ -1,4 +1,4 @@
-package sv.edu.ues.fia.telollevoya.negocio.negocio;
+package sv.edu.ues.fia.telollevoya.pedidos.negocio;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,23 +13,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
 
-public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdapter.NegociosViewHolder> {
+public class NegociosDisponiblesAdapter extends RecyclerView.Adapter<NegociosDisponiblesAdapter.NegociosViewHolder> {
     private ArrayList<Restaurant> listaNegocios;
 
-    public ListaNegociosAdapter(ArrayList<Restaurant> listaRestaurantes) {
+    public NegociosDisponiblesAdapter(ArrayList<Restaurant> listaRestaurantes) {
         this.listaNegocios = listaRestaurantes;
     }
 
     @NonNull
     @Override
-    public ListaNegociosAdapter.NegociosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NegociosDisponiblesAdapter.NegociosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_negocio, null, false);
         return new NegociosViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListaNegociosAdapter.NegociosViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NegociosDisponiblesAdapter.NegociosViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
         holder.txtNegocioNombre.setText(context.getString(R.string.negocio_nombre) + " " + listaNegocios.get(position).getNombre());
         holder.txtNegocioId.setText(context.getString(R.string.negocio_id) + " " + listaNegocios.get(position).getIdNegocio());
@@ -40,7 +41,6 @@ public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdap
         holder.txtNegocioCierre.setText(context.getString(R.string.negocio_cierre) + " " + listaNegocios.get(position).getHorarioCierre());
         holder.txtNegocioDireccion.setText(context.getString(R.string.negocio_direccion) + " " + listaNegocios.get(position).getDescripcionUbicacion());
     }
-
 
 
     @Override
@@ -73,7 +73,7 @@ public class ListaNegociosAdapter extends RecyclerView.Adapter<ListaNegociosAdap
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
-                    Intent intent = new Intent(context, MiNegocioOpcionesActivity.class);
+                    Intent intent = new Intent(context, NegociosOpcionesActivity.class);
                     int idNegocio = listaNegocios.get(getAdapterPosition()).getIdNegocio();
                     String name = listaNegocios.get(getAdapterPosition()).getNombre();
                     int idUbicacion = listaNegocios.get(getAdapterPosition()).getIdUbicacion();

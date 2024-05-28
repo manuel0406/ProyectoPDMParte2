@@ -23,7 +23,8 @@ import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.negocio.negocio.MiNegocioActivity;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Usuario;
-import sv.edu.ues.fia.telollevoya.pedidos.cliente.MisPedidosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.negocio.NegociosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.negocio.PedidosDelRepartidorActivity;
 
 public class IniciarSesionActivity extends Activity {
 
@@ -96,7 +97,7 @@ public class IniciarSesionActivity extends Activity {
 
         if (usuario != null) {
             if ("Cliente".equals(usuario.getRol())) {
-                Intent intent = new Intent(this, MisPedidosActivity.class);
+                Intent intent = new Intent(this, NegociosActivity.class);
                 startActivity(intent);
                 finish();
             } else if ("Administrador".equals(usuario.getRol())) {
@@ -220,7 +221,7 @@ public class IniciarSesionActivity extends Activity {
                                 break;
                         }
                     }
-                    Intent intent = new Intent(this, MisPedidosActivity.class);
+                    Intent intent = new Intent(this, NegociosActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -269,7 +270,7 @@ public class IniciarSesionActivity extends Activity {
                     Toast.makeText(this, "Sus credenciales como administrador son incorrectas", Toast.LENGTH_LONG).show();
                 }
             }
-            // Obtener el primer Administrador
+            // Obtener el primer Repartidor
             else if (jsonArrayR.length() > 0) {
                 JSONObject respuesta = jsonArrayR.getJSONObject(0);
 
@@ -302,6 +303,10 @@ public class IniciarSesionActivity extends Activity {
                                 break;
                         }
                     }
+
+                    Intent intent = new Intent(this, PedidosDelRepartidorActivity.class);
+                    startActivity(intent);
+                    finish();
 
                 } else {
                     Toast.makeText(this, "Sus credenciales como repartidor son incorrectas", Toast.LENGTH_LONG).show();

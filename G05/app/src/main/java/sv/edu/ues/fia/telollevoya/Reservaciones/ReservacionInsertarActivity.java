@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.DeadObjectException;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +36,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -307,11 +311,8 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
 
     private void agregarElementos() {
-
-        String url= urlProducto+"?IDNEGOCIO="+idNegocio;
-        String productosR = ControladorSevicio.obtenerRepuestaPeticion(url,this);
-
-
+        String url = urlProducto + "?IDNEGOCIO=" + idNegocio;
+        String productosR = ControladorSevicio.obtenerRepuestaPeticion(url, this);
 
         try {
             listaproductos.addAll(ControladorSevicio.obtenerProductos(productosR, this));
@@ -319,7 +320,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Crear un nuevo LinearLayout horizontal para contener el Spinner, el EditText y el botón de eliminar
+
         LinearLayout nuevoLayout = new LinearLayout(this);
         nuevoLayout.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -327,7 +328,6 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         ));
         nuevoLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-        // Crear el Spinner y configurar el adaptador
         Spinner nuevoSpinner = new Spinner(this);
         nuevoSpinner.setTag("Spinner_" + contadorElementos);
 
@@ -338,17 +338,9 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         );
         nuevoSpinner.setLayoutParams(spinnerLayoutParams);
 
-
-//        helper.abrir();
-//        productos = helper.getProductos();
-//        helper.cerrar();
-
         ArrayList<String> nombreProductos = new ArrayList<>();
-        Log.v("UrlConsulta", String.valueOf(listaproductos));
         for (Producto producto : listaproductos) {
-           // Log.v("UrlConsultaFor", String.valueOf(producto.isExistencia()));
             if (producto.isExistencia()) {
-              //  Log.v("UrlConsultaFor",producto.getNombre());
                 nombreProductos.add(producto.getNombre());
             }
         }
@@ -361,7 +353,6 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         nuevoSpinner.setAdapter(adapter);
         nuevoLayout.addView(nuevoSpinner);
 
-        // Crear el EditText de tipo número
         EditText nuevoEditText = new EditText(this);
         nuevoEditText.setTag("EditText_" + contadorElementos);
         LinearLayout.LayoutParams editTextLayoutParams = new LinearLayout.LayoutParams(
@@ -374,37 +365,50 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         nuevoEditText.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         nuevoLayout.addView(nuevoEditText);
 
-        // Crear el botón de eliminar
+        // Añadir TextWatcher para actualizar el total
+        nuevoEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                // No necesitas hacer nada aquí
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Llama a actualizarTotal() cada vez que cambia el texto
+                actualizarTotal();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // No necesitas hacer nada aquí
+            }
+        });
+
         ImageButton botonEliminar = new ImageButton(this);
         botonEliminar.setImageResource(R.drawable.borrar);
 
         botonEliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Eliminar el conjunto cuando se hace clic en el botón de eliminar
                 contenedorElementos.removeView(nuevoLayout);
                 contadorElementos--;
-               actualizarTotal();
+                actualizarTotal();
             }
         });
         nuevoLayout.addView(botonEliminar);
 
-        // Agregar un espacio al final del nuevo conjunto
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins(0, 16, 0, 0); // Ajustar el margen para el espacio entre conjuntos
+        layoutParams.setMargins(0, 16, 0, 0);
         nuevoLayout.setLayoutParams(layoutParams);
 
-        // Agregar el nuevo LinearLayout al contenedor principal
         contenedorElementos.addView(nuevoLayout);
         contadorElementos++;
 
-        // Actualizar el total después de agregar un nuevo conjunto
         actualizarTotal();
     }
-
 
     // Método para obtener el texto seleccionado en el Spinner y el valor introducido en el EditText
     private void obtenerDatos() {
@@ -475,9 +479,17 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
         // Actualizar los campos de texto del total y el pago mínimo con los nuevos valores calculados
         total = totalActualizado;
+        BigDecimal t = new BigDecimal(total);
+        t=t.setScale(2, RoundingMode.DOWN);
+        double totalCorregido= t.doubleValue();
+
         pagoMinimo = total * 0.5;
-        edtTotal.setText(String.valueOf(total));
-        edtPagoMinimo.setText(String.valueOf(pagoMinimo));
+        BigDecimal p= new BigDecimal(pagoMinimo);
+        p= p.setScale(2, RoundingMode.DOWN);
+        double pagoCorregido= p.doubleValue();
+        
+        edtTotal.setText(String.valueOf(totalCorregido));
+        edtPagoMinimo.setText(String.valueOf(pagoCorregido));
     }
 
 

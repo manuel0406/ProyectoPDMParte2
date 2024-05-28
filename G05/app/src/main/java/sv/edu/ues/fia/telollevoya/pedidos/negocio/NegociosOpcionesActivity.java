@@ -50,17 +50,17 @@ public class NegociosOpcionesActivity extends Activity {
 
 
         //Solo es para informar, borrarlo despues
-        new AlertDialog.Builder(this)
-                .setTitle("En esta pantalla tienen disponibles estos datos")
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Código para ejecutar cuando el usuario presiona OK
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("En esta pantalla tienen disponibles estos datos")
+//                .setMessage(message)
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        // Código para ejecutar cuando el usuario presiona OK
+//                        dialog.dismiss();
+//                    }
+//                })
+//                .show();
     }
 
     @Override

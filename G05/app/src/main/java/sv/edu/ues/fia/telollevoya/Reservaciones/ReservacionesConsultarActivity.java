@@ -45,7 +45,8 @@ public class ReservacionesConsultarActivity extends Activity {
         idNegocio = intent.getIntExtra("idNegocio", 5);
 
 
-
+//        intent = new Intent(ReservacionesConsultarActivity.this, ReservacionActualizarActivity.class);
+//        intent.putExtra("idNegocio", idNegocio);
        // idCliente="1";
 
         db= new ControlBD(this);
@@ -73,7 +74,7 @@ public class ReservacionesConsultarActivity extends Activity {
         idCliente= db.consultaUsuario();
         db.cerrar();
        String url = urlReservaciones + "?IDCLIENTE="+ idCliente+ "&IDNEGOCIO="+idNegocio;
-        String reservacion = ControladorSevicio.obtenerRepuestaPeticion(url,this); //ControladorServicio.obtenerRespuestaPeticion(url, this);
+        String reservacion = ControladorSevicio.obtenerRepuestaPeticion(url,this);
 
         Log.v("UrlConsulta",url);
         Log.v("UrlConsulta",reservacion);

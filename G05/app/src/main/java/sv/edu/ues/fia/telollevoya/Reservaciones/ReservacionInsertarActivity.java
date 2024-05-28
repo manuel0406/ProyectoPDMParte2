@@ -78,6 +78,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
     private  String urlProducto="https://telollevoya.000webhostapp.com/Reservaciones/productos_query.php";
     @Override
     public void onReservacionInserted(int idReservacion) {
+
         idReservacionR = idReservacion;
         Log.v("idReservacionInt", String.valueOf(idReservacionR));
         insertarDetallePedido(idReservacionR);
@@ -117,7 +118,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
      helper.abrir();
         idCliente= helper.consultaUsuario();
         helper.cerrar();
-        Toast.makeText(this, String.valueOf(idCliente),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, String.valueOf(idCliente),Toast.LENGTH_SHORT).show();
         Intent intent= getIntent();
         idNegocio = intent.getIntExtra("idNegocio", 5);
 
@@ -234,7 +235,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
                 descripcionCodificado+"&ANTICIPORESERVACION="+anticipoCodificado+"&MONTOPENDIENTE="+
                 montoPendienteCodificado+"&FECHAENTREGAR="+fechaEntregaCodificado+"&HORAENTREGAR="+horaEntegaCodificado+
                 "&TOTALRESERVACION="+totalReservacionCodficado;
-            Toast.makeText(this, url, Toast.LENGTH_LONG).show();
+         //   Toast.makeText(this, url, Toast.LENGTH_LONG).show();
            ControladorSevicio.insertarReservacion(url, this,this);
           // Log.v("idreservacionI",String.valueOf( idReservacionR));
 
@@ -256,6 +257,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
     }
     public void insertarDetallePedido(int idReservacion) {
         obtenerDatos();
+        int contador = 0;
 
         // Verificar que las listas estén sincronizadas
         if (listaSpinner.size() != listaCantidad.size()) {
@@ -265,50 +267,44 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
         ArrayList<DetallePedidoR> listDetalle = new ArrayList<>();
 
-        for (int i = 1; i < listaproductos.size(); i++) {
-            Producto producto = listaproductos.get(i);
+        for (int i = 0; i < listaSpinner.size(); i++) {
+            String nombreProducto = listaSpinner.get(i);
+            int cantidad = listaCantidad.get(i);
 
-            for (int j = 0; j < listaSpinner.size(); j++) {
-                String nombre = listaSpinner.get(j);
+            for (Producto producto : listaproductos) {
+                if (producto.getNombre().equals(nombreProducto)) {
+                    contador++;
+                    Log.v("Contador", String.valueOf(contador));
 
-                if (producto.getNombre().equals(nombre)) {
-                    if (j < listaCantidad.size()) {
-                        DetallePedidoR detallePedido = new DetallePedidoR();
-                        detallePedido.setIdProducto(producto.getId());
-                        detallePedido.setIdReservacion(idReservacion);
+                    DetallePedidoR detallePedido = new DetallePedidoR();
+                    detallePedido.setIdProducto(producto.getId());
+                    detallePedido.setIdReservacion(idReservacion);
+                    detallePedido.setCantidadDetalle(cantidad);
+                    detallePedido.setSubTotal(producto.getPrecio() * cantidad);
+                    listDetalle.add(detallePedido);
 
-                        Log.v("dentero del forCantidad", String.valueOf(listaCantidad.get(j)));
+                    String idReservacionCodificado = "", idProductoCodificado = "", cantidadDetalleCodificado = "", subTotalCodificado = "";
+                    try {
+                        idReservacionCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdReservacion()), "UTF-8");
+                        idProductoCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdProducto()), "UTF-8");
+                        cantidadDetalleCodificado = URLEncoder.encode(String.valueOf(detallePedido.getCantidadDetalle()), "UTF-8");
+                        subTotalCodificado = URLEncoder.encode(String.valueOf(detallePedido.getSubTotal()), "UTF-8");
 
-                        detallePedido.setCantidadDetalle(listaCantidad.get(j));
-                        detallePedido.setSubTotal(producto.getPrecio() * listaCantidad.get(j));
-                        listDetalle.add(detallePedido);
+                        String url = urldetalle + "?IDRESERVACION=" + idReservacionCodificado + "&IDPRODUCTO=" +
+                                idProductoCodificado + "&CANTIDADDETALLE=" + cantidadDetalleCodificado + "&SUBTOTAL=" + subTotalCodificado;
 
-                        String idReservacionCodificado = "", idProductoCodificado = "", cantidadDetalleCodificado = "", subdtotalCodificado = "";
-                        try {
-                            idReservacionCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdReservacion()), "UTF-8");
-                            idProductoCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdProducto()), "UTF-8");
-                            cantidadDetalleCodificado = URLEncoder.encode(String.valueOf(detallePedido.getCantidadDetalle()), "UTF-8");
-                            subdtotalCodificado = URLEncoder.encode(String.valueOf(detallePedido.getSubTotal()), "UTF-8");
-                            String url = urldetalle + "?IDRESERVACION=" + idReservacionCodificado + "&IDPRODUCTO=" +
-                                    idProductoCodificado + "&CANTIDADDETALLE=" + cantidadDetalleCodificado + "&SUBTOTAL=" + subdtotalCodificado;
-
-                            ControladorSevicio.insertarDetalle(url, this);
-                            Log.v("Url Detalle", url);
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
-
-
-
-                    } else {
-                        Log.e("insertarDetallePedido", "Index j out of bounds for listaCantidad: " + j);
+                        ControladorSevicio.insertarDetalle(url, this);
+                        Log.v("Url Detalle", url);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
                     }
+                    // Salir del bucle interno una vez que se ha encontrado y procesado el producto
+                    break;
                 }
             }
         }
-
-
     }
+
 
     private void agregarElementos() {
 
@@ -412,6 +408,8 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
     // Método para obtener el texto seleccionado en el Spinner y el valor introducido en el EditText
     private void obtenerDatos() {
+        listaSpinner.clear();
+        listaCantidad.clear();
 
         // Iterar sobre los elementos en el contenedor principal
         for (int i = 0; i < contenedorElementos.getChildCount(); i++) {

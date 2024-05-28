@@ -126,6 +126,11 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         this.startActivityForResult(intent, 1);
     }
 
+    public void irMisPedidos(View v){
+        Intent intent = new Intent(SeleccionarProductoActivity.this, MisPedidosActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

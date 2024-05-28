@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,11 +14,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
+import sv.edu.ues.fia.telollevoya.EstadoOrden;
 import sv.edu.ues.fia.telollevoya.Pedido;
+import sv.edu.ues.fia.telollevoya.Producto;
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.Repartidor;
 import sv.edu.ues.fia.telollevoya.Reservaciones.ReservacionesConsultarActivity;
 
 public class MisPedidosActivity extends Activity {
@@ -33,6 +44,8 @@ public class MisPedidosActivity extends Activity {
     private final int PEDIDO_REALIZADO = 3;
     private int idCliente;
     public String idClienteStr;
+    private final String URL_PEDIDOS_CLIENTE_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos/pedidos_cliente.php?cliente=";
+    private final String URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos//actualizar_estado_pedido.php?";
 
     ControlBD controlBD;
     @Override
@@ -40,6 +53,12 @@ public class MisPedidosActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mis_pedidos);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        //Aqui recibe el idCliente desde la pantalla iniciar sesión
+//        Intent intent = getIntent();
+//        idClienteStr = intent.getStringExtra("idCliente");
+//        idCliente = Integer.parseInt(idClienteStr);
         controlBD = new ControlBD(MisPedidosActivity.this);
         pedidosRelizadosList = new ArrayList<>();
         pedidosActivosList = new ArrayList<>();
@@ -55,24 +74,62 @@ public class MisPedidosActivity extends Activity {
 
     public void getPedidos(){
         try {
-            String enviado = getIntent().getExtras().getString("idCliente");
-            if (enviado != null) {
-                idCliente = Integer.parseInt(enviado);
-                controlBD.abrir();
-                List<Pedido> pedidos = controlBD.getPedidos(idCliente);
-                pedidos.forEach(p -> {
-                    String tipo = p.getEstadoOrden().getTipo();
-                    if (tipo.equalsIgnoreCase("A") || tipo.equalsIgnoreCase("ACTIVO"))//Pedido activo
-                        pedidosActivosList.add(p);
-                    else//Pedidos realizados o cancelados
-                        pedidosRelizadosList.add(p);
-                });
-            }
+            controlBD.abrir();
+                idCliente = controlBD.consultaUsuario();
+                controlBD.cerrar();
+                String url = URL_PEDIDOS_CLIENTE_SERVICIO + idCliente;
+                String json = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
+                try{
+                    JSONArray jsonArray = new JSONArray(json);
+                    for(int i = 0; i <= jsonArray.length() - 1; i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Pedido pedido = new Pedido();
+                        pedido.setId(jsonObject.getInt("IDPEDIDO"));
 
+                        EstadoOrden estado = new EstadoOrden();
+                        estado.setId(jsonObject.getInt("IDESTADO"));
+                        estado.setTipo(jsonObject.getString("TIPOESTADO"));
+                        pedido.setEstadoOrden(estado);
+
+                        Repartidor rep = new Repartidor();
+                        rep.setIdRepartidor(jsonObject.getString("IDREPARTIDOR"));
+                        pedido.setRepartidor(rep);
+
+                        pedido.setTotalAPagar(Float.parseFloat(jsonObject.getString("TOTALAPAGAR")));
+
+                        String fechaPed = jsonObject.getString("FECHAPEDIDO");
+                        if (fechaPed != null)
+                            pedido.setFechaPedido(Timestamp.valueOf(fechaPed));
+                        else
+                            pedido.setFechaPedido(null);
+
+                        String fechaEn = jsonObject.getString("FECHAENTREGAP");
+                        if (!fechaEn.equalsIgnoreCase("null"))
+                            pedido.setFechaEntrega(Timestamp.valueOf(fechaEn));
+                        else
+                            pedido.setFechaEntrega(null);
+
+                        pedido.setDescripcionOrden(jsonObject.getString("DESCRIPCIONORDEN"));
+
+                        //Añadiendo a realizados-cancelados o a Activos
+                        if(pedido.getEstadoOrden().getId() == 1)
+                            pedidosActivosList.add(pedido);
+                        else
+                            pedidosRelizadosList.add(pedido);
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
         }catch(NullPointerException ex){
         ex.printStackTrace();
             Toast.makeText(MisPedidosActivity.this, "No  hay nada por mostrar", Toast.LENGTH_SHORT);
         }
+    }
+
+    public boolean cancelarPedido(int idPedido){
+        String url = URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO + "pedido=" + idPedido + "&estado="+2;
+        String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
+        return respuesta.equalsIgnoreCase("actualizado");
     }
 
     public void backButton(View v){
@@ -120,11 +177,9 @@ public class MisPedidosActivity extends Activity {
 
             cancelarBtn.setTag(pedido.getId());
             cancelarBtn.setOnClickListener(v ->{
-                //query a modificar estado de pedido
+                //Solicitud al server a modificar estado de pedido
                 int idPedido = (int) v.getTag();
-                controlBD.abrir();
-                boolean result = controlBD.actualizarEstadoPedido(idPedido, PEDIDO_CANCELADO);// siendo 2 estado CANCELADO
-                controlBD.cerrar();
+                boolean result = cancelarPedido(idPedido);
                 if(result) {
                     v.setEnabled(false);
                     v.setBackgroundColor(Color.GRAY);

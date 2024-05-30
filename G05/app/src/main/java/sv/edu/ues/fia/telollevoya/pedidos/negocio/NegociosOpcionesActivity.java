@@ -14,10 +14,14 @@ import android.widget.*;
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.Reservaciones.ReservacionesConsultarActivity;
 import sv.edu.ues.fia.telollevoya.negocio.producto.ProductosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.cliente.MisPedidosActivity;
+import sv.edu.ues.fia.telollevoya.pedidos.cliente.SeleccionarProductoActivity;
 
 public class NegociosOpcionesActivity extends Activity {
     TextView texto1;
+    Button irSeleccionProdBtn;
     String idNegocioRecuperado;
     int idNegocio = -1, idUbicacion,idAdmin;
     String name;
@@ -33,6 +37,7 @@ public class NegociosOpcionesActivity extends Activity {
 
         helper = new ControlBD(this);
         texto1 = findViewById(R.id.txtRaa);
+        irSeleccionProdBtn = findViewById(R.id.btnSeleccionProd);
 
         //Recuperamos id de Negocio
         Intent intent = getIntent();
@@ -48,17 +53,17 @@ public class NegociosOpcionesActivity extends Activity {
 
 
         //Solo es para informar, borrarlo despues
-        new AlertDialog.Builder(this)
-                .setTitle("En esta pantalla tienen disponibles estos datos")
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Código para ejecutar cuando el usuario presiona OK
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("En esta pantalla tienen disponibles estos datos")
+//                .setMessage(message)
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        // Código para ejecutar cuando el usuario presiona OK
+//                        dialog.dismiss();
+//                    }
+//                })
+//                .show();
     }
 
     @Override
@@ -67,7 +72,19 @@ public class NegociosOpcionesActivity extends Activity {
         String negocioNombre = getResources().getString(R.string.negocio_nombre);
         texto1.setText(negocioNombre + " " + name);
     }
+    public void irReservacionesConsultarAc(View v){
 
+        //  Toast.makeText(this, idClienteStr,Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ReservacionesConsultarActivity.class);
+        intent.putExtra("idNegocio", idNegocio);
 
+        startActivity(intent);
+    }
+
+    public void irSeleccionProductos(View v){
+        Intent intent = new Intent(NegociosOpcionesActivity.this, SeleccionarProductoActivity.class);
+        intent.putExtra("idNegocio", idNegocio);
+        this.startActivity(intent);
+    }
 
 }

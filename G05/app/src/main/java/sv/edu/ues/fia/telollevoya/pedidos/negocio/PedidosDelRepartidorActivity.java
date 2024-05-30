@@ -1,6 +1,7 @@
 package sv.edu.ues.fia.telollevoya.pedidos.negocio;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -35,6 +36,7 @@ import sv.edu.ues.fia.telollevoya.Pedido;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Repartidor;
 import sv.edu.ues.fia.telollevoya.Ubicacion;
+import sv.edu.ues.fia.telollevoya.seguridad.IniciarSesionActivity;
 
 public class PedidosDelRepartidorActivity extends AppCompatActivity {
 
@@ -47,13 +49,8 @@ public class PedidosDelRepartidorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pedidos_del_repartidor);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -143,5 +140,23 @@ public class PedidosDelRepartidorActivity extends AppCompatActivity {
             });
             return convertView;
         }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //                          METODO PARA CERRAR SESION
+    //----------------------------------------------------------------------------------------------
+    public void cerrarSesion(View v) {
+        // Limpio base de usuarios disponibles
+        controlBD = new ControlBD(this);
+        controlBD.abrir();
+        controlBD.LimpiarUsuario();
+        controlBD.cerrar();
+        Toast.makeText(this, "Vuelve pronto", Toast.LENGTH_SHORT).show();
+
+        // Crear un Intent para iniciar sesion "Iniciar Sesion"
+        Intent intent = new Intent(this, IniciarSesionActivity.class);
+        intent.putExtra("desdeInicioApp", false);
+        startActivity(intent);
+        finish();
     }
 }

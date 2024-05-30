@@ -28,13 +28,13 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:clickable="true"
+        android:contentDescription="@string/ordenar"
+        android:onClick="irSeleccionProducto"
         app:backgroundTint="@color/naranja"
         app:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/ordenar"
-        android:onClick="irSeleccionProducto"
-        app:srcCompat="@drawable/mas" />
+        app:srcCompat="@drawable/order_food_online" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2"

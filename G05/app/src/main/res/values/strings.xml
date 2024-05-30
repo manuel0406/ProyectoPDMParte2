@@ -6,6 +6,8 @@
     <string name="nombre_producto">Nombre del producto</string>
     <string name="codigo">Código</string>
     <string name="nombre">Nombre</string>
+    <string name="PedidosAsignados">Pedidos asignados</string>
+
 
     <string name="monto">Monto</string>
     <string name="fecha_pedido">Fecha Pedido</string>
@@ -29,6 +31,12 @@
     <string name="asignar">Asignar</string>
     <string name="selecciona_productos">Selecciona tus productos</string>
     <string name="pedidos_repartidor">Pedidos de Repartidor</string>
+    <string name="hacer_pedido">Hacer Pedido</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="confirmar_msg">Si vuelve atrás se limpiara su carrito de compras</string>
+    <string name="Si">Si</string>
+    <string name="No">No</string>
+    <string name="confirmar_elimn_msg">¿Desea eliminar este producto de su carrito?</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -105,7 +113,7 @@
     <string name="AgregarProducto">Agregar producto:</string>
     <string name="total">Total:</string>
     <string name="pagoMinimo">Pago mínimo</string>
-    <string name="descripcion">Descripción</string>
+    <string name="descripcion">Descripción:</string>
     <string name="ingresarAnticipo">Ingresar anticipo:</string>
     <string name="irApagar">Ir a pagar</string>
     <string name="signoDollar">$</string>
@@ -114,6 +122,7 @@
         <item>Opción 2</item>
         <item>Opción 3</item>
     </string-array>
+    <string name="hacer_reservacion">Hacer reservación</string>
     <string name="actualizarReservacion">Actualizar reservación</string>
     <string name="idResevacion">ID de reservación: </string>
     <string name="fechaEntregaAc">Fecha de entrega:</string>
@@ -122,7 +131,9 @@
     <string name="negocioC">Negocio: </string>
     <string name="cancelarC">Cancelar </string>
     <string name="actualizarC">Actualizar </string>
-    <string name="horaEntega">Hora de entrega</string>
+    <string name="horaEntega">Hora de entrega:</string>
+    <string name="seleccionarHora">Seleccionar Hora:</string>
+
 
 
     <!--Vista de negocio-->

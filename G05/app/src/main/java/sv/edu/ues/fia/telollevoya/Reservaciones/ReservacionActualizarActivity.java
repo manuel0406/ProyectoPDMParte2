@@ -28,6 +28,7 @@ import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Reservacion;
+import sv.edu.ues.fia.telollevoya.pedidos.negocio.NegociosActivity;
 
 public class ReservacionActualizarActivity extends Activity {
 
@@ -35,6 +36,7 @@ public class ReservacionActualizarActivity extends Activity {
 
     EditText edtIdReservacion, edtFecha, edtHora;
     private  int dia, mes, ano, hora, minutos;
+    int idNegocio;
     private String urlUpdate="https://telollevoya.000webhostapp.com/Reservaciones/reservacion_update.php";
 
     @Override
@@ -64,13 +66,18 @@ public class ReservacionActualizarActivity extends Activity {
             nombreNegocio = extras.getString("nombreNegocio");
             fechaEntrega = extras.getString("fechaEntrega");
             horaEntrega=extras.getString("horaEntrega");
+           // idNegocio = extras.getInt("idNegocio");
+
 
             edtIdReservacion.setText(String.valueOf(idReservacion));
             edtFecha.setText(fechaEntrega);
             edtHora.setText(horaEntrega);
 
-            // Aquí puedes usar los datos recuperados para actualizar la interfaz de usuario según sea necesario
+
         }
+        Intent intent= getIntent();
+        idNegocio = intent.getIntExtra("idNegocio", 5);
+        Toast.makeText(this, String.valueOf(idNegocio), Toast.LENGTH_SHORT).show();
 }
 public void actualizarReservacion(View v){
     Reservacion reservacion= new Reservacion();
@@ -105,7 +112,10 @@ public void actualizarReservacion(View v){
     startActivity(intent);
 }
 public void cancelarActualicacion(View v){
-    Intent intent = new Intent(ReservacionActualizarActivity.this, ReservacionesConsultarActivity.class);
+
+    Intent intent = new Intent(this, NegociosActivity.class);
+    intent.putExtra("idNegocio", idNegocio);
+
     startActivity(intent);
 }
 

@@ -25,6 +25,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
     private Context context;
     private ArrayList<Reservacion> reservacion;
     private  ControlBD db;
+    int idNegocio;
     private String urlEliminar= "https://telollevoya.000webhostapp.com/Reservaciones/reservacion_delete.php";
 
     public MyAdapter(Context context, ArrayList<Reservacion> reservacion) {
@@ -58,11 +59,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
                 // Crear un Intent para iniciar la actividad ReservacionActualizarActivity
                 Intent intent = new Intent(context, ReservacionActualizarActivity.class);
 
+                //idNegocio = intent.getIntExtra("idNegocio", 5);
                 // Pasar los datos de la reserva a través de putExtra()
                 intent.putExtra("idReservacion", reservaActual.getIdReservacion());
                 intent.putExtra("nombreNegocio", reservaActual.getNombreNegocion());
                 intent.putExtra("fechaEntrega", reservaActual.getFechaEntregaR());
                 intent.putExtra("horaEntrega",reservaActual.getHoraEntrega());
+              //  intent.putExtra("idNegocio",idNegocio);
+
 
                 // Iniciar la actividad
                 context.startActivity(intent);

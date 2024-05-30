@@ -56,13 +56,8 @@ public class CrearPedidoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_crear_pedido);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
         detallesListView = findViewById(R.id.detalles_listView);
         totPagarTextView = findViewById(R.id.tot_pagar_textView);
         controlBD = new ControlBD(CrearPedidoActivity.this);
@@ -276,10 +271,10 @@ public class CrearPedidoActivity extends AppCompatActivity {
             eliminarBtn.setOnClickListener(v ->{
                 AlertDialog dialogo = new AlertDialog
                         .Builder(CrearPedidoActivity.this)
-                        .setPositiveButton("Sí, eliminar", (dialog, which) -> eliminarDetalle((int) v.getTag()))
-                        .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-                .setTitle("Confirmar")
-                .setMessage("¿Deseas eliminar este producto de tu carrito de compras?")
+                        .setPositiveButton(R.string.Si, (dialog, which) -> eliminarDetalle((int) v.getTag()))
+                        .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
+                .setTitle(R.string.confirmar)
+                .setMessage(R.string.confirmar_elimn_msg)
                 .create();
                 dialogo.show();
             });

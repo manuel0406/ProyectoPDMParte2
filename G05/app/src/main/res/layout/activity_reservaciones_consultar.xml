@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:background="@color/naranja"
         android:onClick="cambiarPantalla"
-        android:text="Agregar reservacion"
+        android:text="@string/AgregarReservacion"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

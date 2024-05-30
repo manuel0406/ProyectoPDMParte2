@@ -6,6 +6,8 @@
     <string name="nombre_producto">Product name</string>
     <string name="codigo">Code</string>
     <string name="nombre">Name</string>
+    <string name="PedidosAsignados">Assigned Orders</string>
+
 
     <string name="monto">Amount</string>
     <string name="fecha_pedido">Order Date</string>
@@ -29,6 +31,12 @@
     <string name="asignar">Assign</string>
     <string name="selecciona_productos">Select Your Products</string>
     <string name="pedidos_repartidor">Delivery Person Orders</string>
+    <string name="hacer_pedido">Create Order</string>
+    <string name="confirmar">Confirm</string>
+    <string name="confirmar_msg">If you go back, your shopping cart will be cleared.</string>
+    <string name="Si">Yes</string>
+    <string name="No">No</string>
+    <string name="confirmar_elimn_msg">Are you sure you want to remove this product?</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -114,6 +122,7 @@
         <item>Option 2</item>
         <item>Option 3</item>
     </string-array>
+    <string name="hacer_reservacion">Make a reservation</string>
     <string name="actualizarReservacion">Update reservation</string>
     <string name="idResevacion">Reservation ID: </string>
     <string name="fechaEntregaAc">Delivery date:</string>
@@ -123,6 +132,7 @@
     <string name="cancelarC">Cancel</string>
     <string name="actualizarC">Update</string>
     <string name="horaEntega">Delivery time</string>
+    <string name="seleccionarHora">Select time:</string>
 
 
 

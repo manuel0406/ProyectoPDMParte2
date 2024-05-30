@@ -8,6 +8,9 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import org.json.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.*;
 
@@ -45,6 +48,16 @@ public class rolRegistrarseActivity extends AppCompatActivity {
         sexo = intent.getStringExtra("sexo");
         nacimiento = intent.getStringExtra("nacimiento");
 
+
+        //Transformacion de apellidos o nombre con espacios
+        try {
+            nombre = URLEncoder.encode(nombre,"UTF-8");
+            apellido = URLEncoder.encode(apellido,"UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     //Se asigna el rol cliente --------------------------------------------------------------------
@@ -76,6 +89,7 @@ public class rolRegistrarseActivity extends AppCompatActivity {
             intent = new Intent(this, registrarUbicacionActivity.class);
             intent.putExtra("idCliente", idCliente);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -99,6 +113,7 @@ public class rolRegistrarseActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("desdeInicioApp", false);
             startActivity(intent);
+            finish();
         }
 
     }
@@ -122,6 +137,7 @@ public class rolRegistrarseActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("desdeInicioApp", false);
             startActivity(intent);
+            finish();
         }
     }
 }

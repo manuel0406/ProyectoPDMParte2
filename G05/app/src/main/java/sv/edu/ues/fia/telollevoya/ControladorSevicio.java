@@ -67,7 +67,7 @@ public class ControladorSevicio {
             }
 
         }catch (Exception e){
-            Toast.makeText(ctx,"Error en la conexion" +e, Toast.LENGTH_LONG).show();
+          //  Toast.makeText(ctx,"Error en la conexion" +e, Toast.LENGTH_LONG).show();
             // Desplegando el error en el LogCat
             Log.v("Error de Conexion", e.toString());
         }
@@ -119,14 +119,11 @@ public class ControladorSevicio {
                 reservaciones.setNombreNegocion(obj.getString("nombreNegocio"));
                 reservaciones.setFechaEntregaR(obj.getString("fechaEntregar"));
                 reservaciones.setHoraEntrega(obj.getString("horaEntregar"));
-
-
                 listaReservaciones.add(reservaciones);
             }
             return listaReservaciones;
         } catch (Exception e) {
-            Toast.makeText(ctx, "Error en parseOO de JSON",
-                            Toast.LENGTH_LONG)
+            Toast.makeText(ctx, "No tiene registrada reservaciones", Toast.LENGTH_LONG)
                     .show();
             return null;
         }
@@ -426,8 +423,7 @@ public class ControladorSevicio {
             if (respuesta == 1) {
                 Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
-//                        idReservacion = 0; // Reiniciar idReservacion en caso de error
+                Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
             }
             // Llamar al método de callback con el ID de la reservación
             //  listener.onReservacionInserted(idReservacion);

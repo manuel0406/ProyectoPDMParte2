@@ -1,6 +1,7 @@
 package sv.edu.ues.fia.telollevoya;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,21 +21,26 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import sv.edu.ues.fia.telollevoya.negocio.negocio.Restaurant;
 import sv.edu.ues.fia.telollevoya.negocio.producto.Product;
+import sv.edu.ues.fia.telollevoya.pago.MetodoPago;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.Locale;
 
 public class ControladorSevicio {
 
@@ -581,4 +587,138 @@ public class ControladorSevicio {
         }
         return respuesta;
     }
+
+
+
+    // ***** Inicio de Funciones para Pagos y Facturas (Michael) ***** //
+
+    public static void insertarFactura(String urlString, Context ctx) {
+        String respuesta = obtenerRespuestaPeticion(urlString, ctx);
+
+        try {
+            JSONObject resultado = new JSONObject(respuesta);
+            if (resultado.has("last_id")) {
+                int lastId = resultado.getInt("last_id");
+                //Toast.makeText(ctx, "Factura insertada correctamente. ID: " + lastId, Toast.LENGTH_LONG).show();
+
+                // Se guarda el ID de la factura insertada en SharedPreferences
+                SharedPreferences sharedPreferences = ctx.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("lastFacturaId", lastId);
+                editor.apply();
+            } else {
+                String mensajeError = resultado.getString("message");
+                Toast.makeText(ctx, "Error al insertar factura: " + mensajeError, Toast.LENGTH_LONG).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error procesando la respuesta del servidor", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    public static Factura obtenerFacturaPorId(String url, Context ctx) {
+        Factura factura = null;
+
+        String respuesta = obtenerRespuestaPeticion(url, ctx);
+
+        try {
+            JSONObject jsonObject = new JSONObject(respuesta);
+            factura = new Factura();
+            factura.setId(jsonObject.getInt("IDFACTURA"));
+
+            // Verificar si el campo TOTALPAGADO es null
+            if (!jsonObject.isNull("TOTALPAGADO")) {
+                factura.setTotalPagado((float) jsonObject.getDouble("TOTALPAGADO"));
+            } else {
+                // Si el campo TOTALPAGADO es null, establecerlo como 0.0
+                factura.setTotalPagado(0.0f);
+            }
+
+            // Convertir la fecha de emisión de String a Date si es necesario
+            String fechaEmisionStr = jsonObject.getString("FECHAEMISION");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date fechaEmision = dateFormat.parse(fechaEmisionStr);
+            factura.setFechaEmision(fechaEmision);
+
+            // Crear un objeto MetodoPago y establecer su ID y tipo de pago
+            MetodoPago metodoPago = new MetodoPago();
+            metodoPago.setId(jsonObject.getInt("IDPAGO"));
+            metodoPago.setTipoPago(jsonObject.optString("TIPOPAGO", "Tipo de pago desconocido"));
+
+            // Asignar el objeto MetodoPago a la factura
+            factura.setMetodoPago(metodoPago);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error al procesar la respuesta del servidor: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("Error al obtener factura", e.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error al convertir la fecha de emisión: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("Error al convertir fecha", e.toString());
+        }
+
+        return factura;
+    }
+
+    public static List<DetallePedido> obtenerDetallesPedidoPorId(String url, Context ctx) {
+        List<DetallePedido> detallesPedido = new ArrayList<>();
+
+        String respuesta = obtenerRespuestaPeticion(url, ctx);
+
+        if (respuesta == null || respuesta.isEmpty()) {
+            Toast.makeText(ctx, "Error: Respuesta vacía del servidor", Toast.LENGTH_LONG).show();
+            return detallesPedido;
+        }
+
+        try {
+            JSONArray jsonArray = new JSONArray(respuesta);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                DetallePedido detalle = new DetallePedido();
+                detalle.setId(jsonObject.optInt("IDDETALLEPEDIDO", -1)); // -1 or any default value
+                detalle.setIdReservacion(jsonObject.optInt("IDRESERVACION", -1));
+                detalle.setCantidad(jsonObject.optInt("CANTIDADDETALLE", 0));
+                detalle.setSubTotal((float) jsonObject.optDouble("SUBTOTAL", 0.0));
+
+                Producto producto = new Producto();
+                producto.setId(jsonObject.optInt("IDPRODUCTO", -1));
+                producto.setIdNegocio(jsonObject.optInt("IDNEGOCIO", -1));
+                producto.setNombre(jsonObject.optString("NOMBREPRODUCTO", "Nombre desconocido"));
+                producto.setTipo(jsonObject.optString("TIPOPRODUCTO", "Tipo desconocido"));
+                producto.setDescripcion(jsonObject.optString("DESCRIPCIONPRODUCTO", "Descripción desconocida"));
+                producto.setPrecio((float) jsonObject.optDouble("PRECIOPRODUCTO", 0.0));
+                producto.setExistencia(jsonObject.optBoolean("EXISTENCIAPRODUCTO", false));
+
+                detalle.setProducto(producto);
+
+                detallesPedido.add(detalle);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error al procesar la respuesta del servidor", Toast.LENGTH_LONG).show();
+        }
+
+        return detallesPedido;
+    }
+
+    public static double calcularSumaSubtotales(String url, Context ctx) {
+        String respuesta = obtenerRespuestaPeticion(url, ctx);
+        if (respuesta == null || respuesta.isEmpty()) {
+            return 0.0;
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(respuesta);
+            return jsonObject.optDouble("suma_subtotales", 0.0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
+    // ***** Fin de Funciones para Pagos y Facturas (Michael) ***** //
+
+
 }

@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,11 +21,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
+import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.DetallePedido;
 import sv.edu.ues.fia.telollevoya.Factura;
 import sv.edu.ues.fia.telollevoya.Pedido;
@@ -31,11 +40,13 @@ import sv.edu.ues.fia.telollevoya.R;
 
 public class SeleccionPagoActivity extends AppCompatActivity {
 
+    // Variables de instancia
     private EditText numeroTarjeta;
     private EditText fechaExpiracion;
     private EditText cvc;
     private EditText nombreTitular;
     private EditText correo;
+    private RadioGroup radioGroupMetodoPago;
     private ConstraintLayout layoutFormularioTarjetaCredito;
     private ConstraintLayout layoutFormularioBitcoin;
     private ConstraintLayout layoutFormularioCorreo;
@@ -46,15 +57,17 @@ public class SeleccionPagoActivity extends AppCompatActivity {
     private TextView txtDireccionBitcoin;
     private Button btnCopiarDireccion;
     Pedido pedido;
-
-
+    Factura factura;
+    private String urlFactura = "https://telollevoya.000webhostapp.com/Pago/insertar_factura.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pago_seleccion);
 
+        // Inicialización de variables
         controlBD = new ControlBD(SeleccionPagoActivity.this);
+        radioGroupMetodoPago = findViewById(R.id.radioGroupMetodoPago);
         layoutFormularioTarjetaCredito = findViewById(R.id.layoutFormularioTarjetaCredito);
         layoutFormularioTarjetaCredito.setVisibility(View.GONE);
         layoutFormularioBitcoin = findViewById(R.id.layoutFormularioBitcoin);
@@ -63,15 +76,17 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         codigoQR = findViewById(R.id.imgCodigoQR);
         txtDireccionBitcoin = findViewById(R.id.txtDireccionBitcoin);
         btnCopiarDireccion = findViewById(R.id.btnCopiarDireccion);
-
+        tipoPagoSeleccionado = false;
         metodoPago = new MetodoPago();
-        pedido = new Pedido();//AQUI SE ASIGNARA EL PEDIDO QUE SE TRAE DE LA VISTA ANTERIOR
-        tipoPagoSeleccionado = false; //cambiará a true cuando se seleccione "efectivo" o "tarjeta"
+        factura = new Factura();
+
         codigoQR.setImageResource(R.drawable.codigo_qr);
 
-        pedido = (Pedido) getIntent().getExtras().getSerializable("pedido");
+        if (getIntent().getExtras() != null) {
+            pedido = (Pedido) getIntent().getExtras().getSerializable("pedido");
+        }
 
-        RadioGroup radioGroupMetodoPago = findViewById(R.id.radioGroupMetodoPago);
+        // Configuración de listeners y otros componentes
         radioGroupMetodoPago.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -79,30 +94,32 @@ public class SeleccionPagoActivity extends AppCompatActivity {
                     layoutFormularioTarjetaCredito.setVisibility(View.GONE);
                     layoutFormularioBitcoin.setVisibility(View.GONE);
                     layoutFormularioCorreo.setTranslationY(0);
+                    metodoPago.setId(1);
                     metodoPago.setTipoPago("Efectivo");
                 } else if (checkedId == R.id.radioButtonTarjeta) {
                     layoutFormularioTarjetaCredito.setVisibility(View.VISIBLE);
                     layoutFormularioBitcoin.setVisibility(View.GONE);
                     layoutFormularioCorreo.setTranslationY(900);
+                    metodoPago.setId(2);
                     metodoPago.setTipoPago("Tarjeta");
                 } else if(checkedId == R.id.radioButtonBitcoin){
                     layoutFormularioTarjetaCredito.setVisibility(View.GONE);
                     layoutFormularioBitcoin.setVisibility(View.VISIBLE);
                     layoutFormularioCorreo.setTranslationY(0);
+                    metodoPago.setId(3);
                     metodoPago.setTipoPago("Bitcoin");
                 }
-                tipoPagoSeleccionado = true; //Ya se seleccionó un tipo de pago
+                tipoPagoSeleccionado = true; // Ya se seleccionó un tipo de pago
             }
         });
 
-        numeroTarjeta = (EditText) findViewById(R.id.editNumeroTarjeta);
-        fechaExpiracion = (EditText) findViewById(R.id.editFechaExpiracion);
-        cvc = (EditText) findViewById(R.id.editCVC);
-        nombreTitular = (EditText) findViewById(R.id.editNombreTitular);
+        numeroTarjeta = findViewById(R.id.editNumeroTarjeta);
+        fechaExpiracion = findViewById(R.id.editFechaExpiracion);
+        cvc = findViewById(R.id.editCVC);
+        nombreTitular = findViewById(R.id.editNombreTitular);
+        correo = findViewById(R.id.editCorreo);
 
-        correo = (EditText) findViewById(R.id.editCorreo);
-
-        //Manejo de Formatos para el campo que permite ingresar el numero de tarjeta de credito o debito
+        // Manejo de formatos para el campo de número de tarjeta de crédito o débito
         numeroTarjeta.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -116,7 +133,7 @@ public class SeleccionPagoActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(input)) {
                     // Eliminar guiones actuales para evitar duplicados
                     String cleanString = input.replace("-", "");
-                    // Agregando guiones cada 4 dígitos
+                    // Agregar guiones cada 4 dígitos
                     StringBuilder formattedString = new StringBuilder();
                     int index = 0;
                     while (index < cleanString.length()) {
@@ -135,7 +152,7 @@ public class SeleccionPagoActivity extends AppCompatActivity {
             }
         });
 
-        //Manejo de formato para el campo que permite poner la fecha de expiracion de la tarjeta de credito/debito
+        // Manejo de formato para el campo de fecha de expiración de la tarjeta de crédito/débito
         fechaExpiracion.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -153,8 +170,6 @@ public class SeleccionPagoActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
     public void procesarPago(View view) {
@@ -166,19 +181,25 @@ public class SeleccionPagoActivity extends AppCompatActivity {
 
         boolean datosValidos = validarDatos(numeroTarjetaStr, fechaExpiracionStr, cvcStr, nombreTitularStr);
 
-        if (tipoPagoSeleccionado == false) {
-            Toast.makeText(this, "Por favor seleccione una de las opciones de Pago", Toast.LENGTH_SHORT).show();
-        } else if (!validarDatos(numeroTarjetaStr, fechaExpiracionStr, cvcStr, nombreTitularStr)) {
-            Toast.makeText(this, "Error, Datos de la tarjeta no son válidos", Toast.LENGTH_SHORT).show();
+        if (!tipoPagoSeleccionado) {
+            Toast.makeText(this, "Debe seleccionar un tipo de pago", Toast.LENGTH_SHORT).show();
+        } else if (!datosValidos) {
+            Toast.makeText(this, "Error, datos de la tarjeta no son válidos", Toast.LENGTH_SHORT).show();
         } else if(!isValidEmail(correoStr)){
             Toast.makeText(this, "Error, ingrese un correo electrónico válido", Toast.LENGTH_SHORT).show();
-        }else{
-            generarFactura(pedido);
+        } else {
+            //generarFactura(); // Insertar factura en BD SQLite
+            insertarFactura(view); //Insertar factura usando Web Service
+
+            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE); // Recuperar el ID de la factura de SharedPreferences
+            int lastFacturaId = sharedPreferences.getInt("lastFacturaId", -1);
+            factura.setId(lastFacturaId);
+            pedido.setFactura(factura); //se le asigna la factura al pedido
+
             Intent intent = new Intent(this, PagoAprobadoActivity.class);
-            intent.putExtra("pedido", (Serializable) pedido);
+            intent.putExtra("pedido", pedido);
             startActivity(intent);
         }
-
     }
 
     private boolean validarDatos(String numeroTarjeta, String fechaExpiracion, String cvc, String nombreTitular) {
@@ -186,7 +207,7 @@ public class SeleccionPagoActivity extends AppCompatActivity {
             return true; // No se requiere validación para efectivo
         } else {
             // Si la tarjeta de crédito está seleccionada, se validan los campos relacionados
-            return !numeroTarjeta.isEmpty() && !fechaExpiracion.isEmpty() && !cvc.isEmpty() && !nombreTitular.isEmpty() && numeroTarjeta.length() == 19 && cvc.length() == 3 && fechaExpiracion.length() ==5;
+            return !numeroTarjeta.isEmpty() && !fechaExpiracion.isEmpty() && !cvc.isEmpty() && !nombreTitular.isEmpty() && numeroTarjeta.length() == 19 && cvc.length() == 3 && fechaExpiracion.length() == 5;
         }
     }
 
@@ -194,8 +215,7 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    private void generarFactura(Pedido pedido) {
-        Factura factura = new Factura();
+    private void generarFactura() { // Generar factura para insertar en BD SQLite
         factura.setMetodoPago(metodoPago);
         factura.setTotalPagado(pedido.getTotalAPagar());
         factura.setFechaEmision(pedido.getFechaEntrega());
@@ -204,7 +224,6 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         controlBD.abrir();
         controlBD.insertar(factura, pedido);
         controlBD.cerrar();
-
     }
 
     public void copiarDireccionBitcoin(View view) {
@@ -215,6 +234,24 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         Toast.makeText(this, "Dirección Bitcoin copiada al portapapeles", Toast.LENGTH_SHORT).show();
     }
 
+    public void insertarFactura(View v) {
 
+        Date fechaActual = new Date();
+        factura.setMetodoPago(metodoPago);
+        factura.setFechaEmision(fechaActual);
 
+        String idPago = String.valueOf(factura.getMetodoPago().getId());
+        Date fechaEmision = factura.getFechaEmision();
+
+        // Convertir la fecha a un formato adecuado (yyyy-MM-dd HH:mm:ss)
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String fechaEmisionStr = dateFormat.format(fechaEmision);
+
+        String url = urlFactura + "?idPago=" + idPago + "&fechaEmision=" + fechaEmisionStr;
+
+        ControladorSevicio.insertarFactura(url, this);
+
+    }
 }
+
+

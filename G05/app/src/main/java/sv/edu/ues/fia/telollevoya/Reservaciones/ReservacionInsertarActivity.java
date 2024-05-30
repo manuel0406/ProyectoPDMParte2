@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.DeadObjectException;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,10 +36,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
+import java.nio.BufferUnderflowException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,12 +56,16 @@ import sv.edu.ues.fia.telollevoya.ControladorSevicio;
 import sv.edu.ues.fia.telollevoya.Producto;
 import sv.edu.ues.fia.telollevoya.R;
 import sv.edu.ues.fia.telollevoya.Reservacion;
+import sv.edu.ues.fia.telollevoya.pago.SeleccionPagoActivity;
+
 @SuppressLint("NewApi")
 public class ReservacionInsertarActivity extends AppCompatActivity implements ControladorSevicio.ReservacionInsertListener {
 
     private LinearLayout contenedorElementos;
     ArrayList<String> listaSpinner= new ArrayList<>();
     ArrayList<Integer> listaCantidad= new ArrayList<Integer>();
+    ArrayList<DetallePedidoR> listDetalle = new ArrayList<>();
+    Reservacion reservacion;
     ControlBD helper;
    // private int contadorElementos=0;
    List<Producto> listaproductos;
@@ -85,10 +92,15 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
         idReservacionR = idReservacion;
         Log.v("idReservacionInt", String.valueOf(idReservacionR));
+
         insertarDetallePedido(idReservacionR);
-        Intent intent = new Intent(ReservacionInsertarActivity.this, ReservacionesConsultarActivity.class);
-        intent.putExtra("idCliente", idCliente);
+
+        Intent intent = new Intent(ReservacionInsertarActivity.this, SeleccionPagoActivity.class);
+        Bundle extra = new Bundle();
+        extra.putSerializable("reservacion", reservacion);
+        intent.putParcelableArrayListExtra("listaDetalle",  listDetalle);
         intent.putExtra("idNegocio", idNegocio);
+        intent.putExtras(extra);
 
         startActivity(intent);
     }
@@ -106,6 +118,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         StrictMode.setThreadPolicy(policy);
         listaproductos= new ArrayList<Producto>();
 
+       reservacion = new Reservacion();
         contenedorElementos = findViewById(R.id.contenedorElementos);
         FloatingActionButton agregarBoton = findViewById(R.id.floatingActionButton);
         scrollView = findViewById(R.id.scrollView2);
@@ -207,7 +220,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
         if (Anticipo >= pagoMinimo && Anticipo <= totalReservacion){
 
-            Reservacion reservacion= new Reservacion();
+
             reservacion.setIdCliente(idCliente);
             reservacion.setDescripcionReservacion(descripcionRe);
             reservacion.setAnticipoReservacion(Anticipo);
@@ -217,31 +230,31 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
             reservacion.setTotalRerservacion(totalReservacion);
 
             JSONObject datosReservacion = new JSONObject();
-
-            String idClienteCodificado = "",descripcionCodificado="",anticipoCodificado="",montoPendienteCodificado="",
-                    fechaEntregaCodificado="",horaEntegaCodificado="",totalReservacionCodficado="";
-        try {
-            idClienteCodificado= URLEncoder.encode(String.valueOf(reservacion.getIdCliente()), "UTF-8");
-            descripcionCodificado = URLEncoder.encode(reservacion.getDescripcionReservacion(), "UTF-8");
-            anticipoCodificado=URLEncoder.encode(String.valueOf(reservacion.getAnticipoReservacion()), "UTF-8");
-            montoPendienteCodificado=URLEncoder.encode(String.valueOf(reservacion.getMontoPediente()), "UTF-8");
-            fechaEntregaCodificado=fechaEntregar;
-            horaEntegaCodificado=URLEncoder.encode(reservacion.getHoraEntrega(), "UTF-8");
-            totalReservacionCodficado= URLEncoder.encode(String.valueOf(reservacion.getTotalRerservacion()), "UTF-8");
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            //return;
-            //return "Error al codificar el nombre del departamento";
-        }
-
-        String url = urlReservacion +"?IDCLIENTE="+idClienteCodificado+ "&DESCRIPCIONRESERVACION=" +
-                descripcionCodificado+"&ANTICIPORESERVACION="+anticipoCodificado+"&MONTOPENDIENTE="+
-                montoPendienteCodificado+"&FECHAENTREGAR="+fechaEntregaCodificado+"&HORAENTREGAR="+horaEntegaCodificado+
-                "&TOTALRESERVACION="+totalReservacionCodficado;
-         //   Toast.makeText(this, url, Toast.LENGTH_LONG).show();
-           ControladorSevicio.insertarReservacion(url, this,this);
-          // Log.v("idreservacionI",String.valueOf( idReservacionR));
+////aca empiezo a tratar los datos para no terner problemas con espacios y luego se insertan
+//            String idClienteCodificado = "",descripcionCodificado="",anticipoCodificado="",montoPendienteCodificado="",
+//                    fechaEntregaCodificado="",horaEntegaCodificado="",totalReservacionCodficado="";
+//        try {
+//            idClienteCodificado= URLEncoder.encode(String.valueOf(reservacion.getIdCliente()), "UTF-8");
+//            descripcionCodificado = URLEncoder.encode(reservacion.getDescripcionReservacion(), "UTF-8");
+//            anticipoCodificado=URLEncoder.encode(String.valueOf(reservacion.getAnticipoReservacion()), "UTF-8");
+//            montoPendienteCodificado=URLEncoder.encode(String.valueOf(reservacion.getMontoPediente()), "UTF-8");
+//            fechaEntregaCodificado=fechaEntregar;
+//            horaEntegaCodificado=URLEncoder.encode(reservacion.getHoraEntrega(), "UTF-8");
+//            totalReservacionCodficado= URLEncoder.encode(String.valueOf(reservacion.getTotalRerservacion()), "UTF-8");
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//            //return;
+//            //return "Error al codificar el nombre del departamento";
+//        }
+//
+//        String url = urlReservacion +"?IDCLIENTE="+idClienteCodificado+ "&DESCRIPCIONRESERVACION=" +
+//                descripcionCodificado+"&ANTICIPORESERVACION="+anticipoCodificado+"&MONTOPENDIENTE="+
+//                montoPendienteCodificado+"&FECHAENTREGAR="+fechaEntregaCodificado+"&HORAENTREGAR="+horaEntegaCodificado+
+//                "&TOTALRESERVACION="+totalReservacionCodficado;
+//
+//           ControladorSevicio.insertarReservacion(url, this,this);
+//          // Log.v("idreservacionI",String.valueOf( idReservacionR));
 
 
 //            helper.abrir();
@@ -269,7 +282,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
             return;
         }
 
-        ArrayList<DetallePedidoR> listDetalle = new ArrayList<>();
+
 
         for (int i = 0; i < listaSpinner.size(); i++) {
             String nombreProducto = listaSpinner.get(i);
@@ -288,20 +301,20 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
                     listDetalle.add(detallePedido);
 
                     String idReservacionCodificado = "", idProductoCodificado = "", cantidadDetalleCodificado = "", subTotalCodificado = "";
-                    try {
-                        idReservacionCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdReservacion()), "UTF-8");
-                        idProductoCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdProducto()), "UTF-8");
-                        cantidadDetalleCodificado = URLEncoder.encode(String.valueOf(detallePedido.getCantidadDetalle()), "UTF-8");
-                        subTotalCodificado = URLEncoder.encode(String.valueOf(detallePedido.getSubTotal()), "UTF-8");
-
-                        String url = urldetalle + "?IDRESERVACION=" + idReservacionCodificado + "&IDPRODUCTO=" +
-                                idProductoCodificado + "&CANTIDADDETALLE=" + cantidadDetalleCodificado + "&SUBTOTAL=" + subTotalCodificado;
-
-                        ControladorSevicio.insertarDetalle(url, this);
-                        Log.v("Url Detalle", url);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        idReservacionCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdReservacion()), "UTF-8");
+//                        idProductoCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdProducto()), "UTF-8");
+//                        cantidadDetalleCodificado = URLEncoder.encode(String.valueOf(detallePedido.getCantidadDetalle()), "UTF-8");
+//                        subTotalCodificado = URLEncoder.encode(String.valueOf(detallePedido.getSubTotal()), "UTF-8");
+//
+//                        String url = urldetalle + "?IDRESERVACION=" + idReservacionCodificado + "&IDPRODUCTO=" +
+//                                idProductoCodificado + "&CANTIDADDETALLE=" + cantidadDetalleCodificado + "&SUBTOTAL=" + subTotalCodificado;
+//
+//                        ControladorSevicio.insertarDetalle(url, this);
+//                        Log.v("Url Detalle", url);
+//                    } catch (UnsupportedEncodingException e) {
+//                        e.printStackTrace();
+//                    }
                     // Salir del bucle interno una vez que se ha encontrado y procesado el producto
                     break;
                 }

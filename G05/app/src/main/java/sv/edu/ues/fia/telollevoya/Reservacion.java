@@ -1,6 +1,8 @@
 package sv.edu.ues.fia.telollevoya;
 
-public class Reservacion {
+import java.io.Serializable;
+
+public class Reservacion implements Serializable {
     private int idReservacion;
     private int idCliente;
     private String descripcionReservacion;

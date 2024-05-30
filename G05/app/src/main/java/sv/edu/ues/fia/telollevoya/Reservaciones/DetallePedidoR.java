@@ -1,6 +1,11 @@
 package sv.edu.ues.fia.telollevoya.Reservaciones;
 
-public class DetallePedidoR {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class DetallePedidoR implements Parcelable {
     private int idDetallePedido;
     private int idProducto;
     private int idReservacion;
@@ -18,6 +23,26 @@ public class DetallePedidoR {
         this.cantidadDetalle = cantidadDetalle;
         this.subTotal = subTotal;
     }
+
+    protected DetallePedidoR(Parcel in) {
+        idDetallePedido = in.readInt();
+        idProducto = in.readInt();
+        idReservacion = in.readInt();
+        cantidadDetalle = in.readInt();
+        subTotal = in.readDouble();
+    }
+
+    public static final Creator<DetallePedidoR> CREATOR = new Creator<DetallePedidoR>() {
+        @Override
+        public DetallePedidoR createFromParcel(Parcel in) {
+            return new DetallePedidoR(in);
+        }
+
+        @Override
+        public DetallePedidoR[] newArray(int size) {
+            return new DetallePedidoR[size];
+        }
+    };
 
     public int getIdDetallePedido() {
         return idDetallePedido;
@@ -57,5 +82,19 @@ public class DetallePedidoR {
 
     public void setSubTotal(double subTotal) {
         this.subTotal = subTotal;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(idDetallePedido);
+        dest.writeInt(idProducto);
+        dest.writeInt(idReservacion);
+        dest.writeInt(cantidadDetalle);
+        dest.writeDouble(subTotal);
     }
 }

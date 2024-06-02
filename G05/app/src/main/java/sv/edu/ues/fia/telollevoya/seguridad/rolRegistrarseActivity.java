@@ -134,7 +134,6 @@ public class rolRegistrarseActivity extends AppCompatActivity {
         if ("Repartidor guardado con éxito".equals(resul)){
 
             intent = new Intent(this, IniciarSesionActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("desdeInicioApp", false);
             startActivity(intent);
             finish();

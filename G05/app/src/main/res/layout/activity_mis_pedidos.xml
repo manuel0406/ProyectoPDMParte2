@@ -7,19 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".pedidos.cliente.MisPedidosActivity">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reservar"
-        android:elevation="50dp"
-        android:background="@drawable/circular_button_backgroundorange"
-        android:textColor="@color/white"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@id/floatingActionButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:onClick="irReservacionesConsultar"/>
+    
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"

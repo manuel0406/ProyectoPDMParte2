@@ -212,6 +212,7 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
 
             Intent intent = new Intent(ReservacionInsertarActivity.this, SeleccionPagoActivity.class);
             Bundle extra = new Bundle();
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             extra.putSerializable("reservacion", reservacion);
             intent.putParcelableArrayListExtra("listaDetalle",  listDetalle);
             //intent.putExtra("idNegocio", idNegocio);//parece que no se necesita

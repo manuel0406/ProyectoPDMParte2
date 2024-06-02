@@ -209,6 +209,7 @@ public class CrearPedidoActivity extends AppCompatActivity {
                 //Llamada a la pantalla de Metodos de pago
                 Log.v("TOTAL PREVIO> ", ""+ totPagar);
                 Intent intent = new Intent(CrearPedidoActivity.this, SeleccionPagoActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 Bundle extra = new Bundle();
                 extra.putSerializable("pedido",pedido);
                 intent.putExtras(extra);

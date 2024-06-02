@@ -55,6 +55,8 @@ public class PagoAprobadoPActivity extends AppCompatActivity implements Controla
 //        Toast.makeText(this, "id Factura: "+ factura.getId(), Toast.LENGTH_SHORT).show();
 //        Toast.makeText(this, "tipoPago: "+ factura.getMetodoPago().getTipoPago(), Toast.LENGTH_SHORT).show();
 //        consultarFactura();
+
+
     }
 
     //Metodos para los botones

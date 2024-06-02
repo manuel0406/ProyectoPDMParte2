@@ -108,6 +108,9 @@ public class IniciarSesionActivity extends Activity {
                 finish();
             } else if ("Repartidor".equals(usuario.getRol())) {
                 // Código para la actividad de Repartidor
+                Intent intent = new Intent(this, PedidosDelRepartidorActivity.class);
+                startActivity(intent);
+                finish();
             }
         }
     }

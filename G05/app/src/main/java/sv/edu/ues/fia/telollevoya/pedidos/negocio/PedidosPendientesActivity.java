@@ -186,24 +186,23 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
             fechaPedidoTextView.setText(pedido.getFechaPedido().toString());
             clienteTextView.setText(pedido.getCliente().getIdCliente());
             if(pedido.getRepartidor() != null && pedido.getRepartidor().getNombre() != null)
-                repartidorTextView.setText(pedido.getRepartidor().getNombre());
+                repartidorTextView.setText(pedido.getRepartidor().getNombre() + pedido.getRepartidor().getApellido());
             else
                 repartidorTextView.setText("No asignado");
 
             ArrayAdapter<Repartidor> spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
                     androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, repartidoresList);
             repartidorSpinner.setAdapter(spinnerAdapter);
+            repartidorSpinner.setOnItemSelectedListener(PedidosPendientesActivity.this);
             if(pedido.getRepartidor() != null) {
                 Repartidor repAsignado = pedido.getRepartidor();
-                repartidorSpinner.setSelection(repartidoresList.indexOf(repAsignado), false);
+                repartidorSpinner.setSelection(repartidoresList.indexOf(repAsignado), true);
             }
-            repartidorSpinner.setOnItemSelectedListener(PedidosPendientesActivity.this);
-            repartidorSpinner.setTag(repartidoresList.get(0));
             guardarBtn.setTag(pedido.getId());
             //Guardando cambios de repartidor
             guardarBtn.setOnClickListener(v ->{
                 controlBD.abrir();
-                Repartidor repartidor = (Repartidor) repartidorSpinner.getTag();
+                Repartidor repartidor = (Repartidor) repartidorSpinner.getSelectedView().getTag();
                 int idPedido = (int) v.getTag();
                 String url = URL_ACTUALIZAR_REPARTIDOR_PEDIDO+"?repartidor="+repartidor.getIdRepartidor()+"&pedido="+idPedido;
                 String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
@@ -235,7 +234,6 @@ public class PedidosPendientesActivity extends AppCompatActivity implements Adap
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Repartidor repartidor = repartidoresList.get(position);
             view.setTag(repartidor);
-            Toast.makeText(PedidosPendientesActivity.this, "Repartidor "+repartidor.getIdRepartidor() , Toast.LENGTH_SHORT);
             //método de actualizar repartidor de pedido en la BD
         }
     @Override

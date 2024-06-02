@@ -98,6 +98,13 @@ public class MisPedidosActivity extends Activity {
                         pedido.setRepartidor(rep);
 
                         pedido.setTotalAPagar(Float.parseFloat(jsonObject.getString("TOTALAPAGAR")));
+                        pedido.setDescripcionOrden(jsonObject.getString("DESCRIPCIONORDEN"));
+
+                        //Añadiendo a realizados-cancelados o a Activos
+                        if(pedido.getEstadoOrden().getId() == 1)
+                            pedidosActivosList.add(pedido);
+                        else
+                            pedidosRelizadosList.add(pedido);
 
                         String fechaPed = jsonObject.getString("FECHAPEDIDO");
                         if (fechaPed != null)
@@ -107,17 +114,9 @@ public class MisPedidosActivity extends Activity {
 
                         String fechaEn = jsonObject.getString("FECHAENTREGAP");
                         if (!fechaEn.equalsIgnoreCase("null"))
-                            pedido.setFechaEntrega(Timestamp.valueOf(fechaEn));
+                            pedido.setFechaEntrega(Date.valueOf(fechaEn));
                         else
                             pedido.setFechaEntrega(null);
-
-                        pedido.setDescripcionOrden(jsonObject.getString("DESCRIPCIONORDEN"));
-
-                        //Añadiendo a realizados-cancelados o a Activos
-                        if(pedido.getEstadoOrden().getId() == 1)
-                            pedidosActivosList.add(pedido);
-                        else
-                            pedidosRelizadosList.add(pedido);
                     }
                 }catch (Exception ex){
                     ex.printStackTrace();
@@ -154,7 +153,7 @@ public class MisPedidosActivity extends Activity {
     public boolean cancelarPedido(int idPedido){
         String url = URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO + "pedido=" + idPedido + "&estado="+2;
         String respuesta = ControladorSevicio.obtenerRespuestaPeticion(url, getApplicationContext());
-        return respuesta.equalsIgnoreCase("actualizado");
+        return respuesta.toLowerCase().contains("act");
     }
 
     public void backButton(View v){

@@ -19,6 +19,7 @@ public class Pedido implements Serializable {
     private Date fechaPedido;
     private Date fechaEntrega;
     private String descripcionOrden;
+    private float costoEnvio;
 
     public int getId() {
         return id;
@@ -114,5 +115,13 @@ public class Pedido implements Serializable {
 
     public void setDetallePedidoList(ArrayList<DetallePedido> detallePedidoList) {
         this.detallePedidoList = detallePedidoList;
+    }
+
+    public float getCostoEnvio() {
+        return costoEnvio;
+    }
+
+    public void setCostoEnvio(float costoEnvio) {
+        this.costoEnvio = costoEnvio;
     }
 }

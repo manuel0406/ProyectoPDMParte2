@@ -446,12 +446,13 @@ public class ControladorSevicio {
 
             @Override
             protected void onPostExecute(String json) {
-                int idReservacion=0;
+                Log.v("Respuesta del servidor", json);  // Añadir esta línea para imprimir la respuesta del servidor
+                int idReservacion = 0;
                 try {
                     JSONObject resultado = new JSONObject(json);
                     int respuesta = resultado.getInt("resultado");
-                     idReservacion = resultado.getInt("idReservacion");
-                    Log.v("idReservacionC",String.valueOf( idReservacion));
+                    idReservacion = resultado.getInt("idReservacion");
+                    Log.v("idReservacionC", String.valueOf(idReservacion));
 
                     if (respuesta == 1) {
                         Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
@@ -470,6 +471,7 @@ public class ControladorSevicio {
             }
         }.execute();
     }
+
 
 
 
@@ -585,8 +587,8 @@ public class ControladorSevicio {
     }
 
 
-
-    // ***** Inicio de Funciones para Pagos y Facturas (Michael) ***** //
+    //-----------------------------------------------------------------//
+    // ***** Inicio de Funciones para Pedidos y Factura (Michael) ***** //
 
     public static void insertarFactura(String urlString, Context ctx) {
         String respuesta = obtenerRespuestaPeticion(urlString, ctx);
@@ -714,7 +716,125 @@ public class ControladorSevicio {
         }
     }
 
+    public interface PedidoInsertListener {
+        void onPedidoInserted(int idPedido);
+    }
+
+    public static void insertarPedido(final String peticion, final Context ctx, final PedidoInsertListener listener) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return obtenerRepuestaPeticion(peticion, ctx);
+            }
+
+            @Override
+            protected void onPostExecute(String json) {
+                Log.v("Respuesta del servidor", json);  // Añadir esta línea para imprimir la respuesta del servidor
+                int idPedido = 0;
+                try {
+                    JSONObject resultado = new JSONObject(json);
+                    int respuesta = resultado.getInt("resultado");
+                    idPedido = resultado.getInt("idPedido");
+                    Log.v("idPedidoC", String.valueOf(idPedido));
+
+                    if (respuesta == 1) {
+                        //Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+                    } else {
+                        //Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+                        idPedido = 0; // Reiniciar idPedido en caso de error
+                    }
+                    // Llamar al método de callback con el ID del pedido
+                    listener.onPedidoInserted(idPedido);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    idPedido = 0; // Reiniciar idPedido en caso de error
+                    // Llamar al método de callback con el ID del pedido
+                    listener.onPedidoInserted(idPedido);
+                }
+            }
+        }.execute();
+    }
+
+    public static void insertarDetallePedido(final String peticion, final Context ctx){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return obtenerRepuestaPeticion(peticion, ctx);
+            }
+
+            @Override
+            protected void onPostExecute(String json) {
+
+                try {
+                    JSONObject resultado = new JSONObject(json);
+                    int respuesta = resultado.getInt("resultado");
+//                    idPedido = resultado.getInt("idPedido");
+//                    Log.v("idPedidoC",String.valueOf( idPedido));
+
+                    if (respuesta == 1) {
+                        // Toast.makeText(ctx, "Registro ingresado", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Toast.makeText(ctx, "Error registro duplicado", Toast.LENGTH_LONG).show();
+//                        idPedido = 0; // Reiniciar idPedido en caso de error
+                    }
+                    // Llamar al método de callback con el ID del pedido
+                    //  listener.onPedidoInserted(idPedido);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+
+                }
+            }
+        }.execute();
+    }
+
+    public static void insertarUbicacion(String urlString, Context ctx) {
+        String respuesta = obtenerRespuestaPeticion(urlString, ctx);
+
+        try {
+            JSONObject resultado = new JSONObject(respuesta);
+            if (resultado.has("last_id")) {
+                int lastId = resultado.getInt("last_id");
+                //Toast.makeText(ctx, "Ubicacion insertada correctamente. ID: " + lastId, Toast.LENGTH_LONG).show();
+
+                // Se guarda el ID de la ubicacion insertada en SharedPreferences
+                SharedPreferences sharedPreferences = ctx.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("lastUbicacionId", lastId);
+                editor.apply();
+            } else {
+                String mensajeError = resultado.getString("message");
+                Toast.makeText(ctx, "Error al insertar ubicacion: " + mensajeError, Toast.LENGTH_LONG).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error procesando la respuesta del servidor", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    public static Producto obtenerProductoPorId(String url, Context ctx) {
+        Producto producto = null;
+
+        String respuesta = obtenerRespuestaPeticion(url, ctx);
+
+        try {
+            JSONObject jsonObject = new JSONObject(respuesta);
+            producto = new Producto();
+            producto.setId(jsonObject.getInt("IDPRODUCTO"));
+            producto.setIdNegocio(jsonObject.getInt("IDNEGOCIO"));
+            producto.setNombre(jsonObject.getString("NOMBREPRODUCTO"));
+            producto.setTipo(jsonObject.getString("TIPOPRODUCTO"));
+            producto.setDescripcion(jsonObject.getString("DESCRIPCIONPRODUCTO"));
+            producto.setPrecio((float) jsonObject.getDouble("PRECIOPRODUCTO"));
+            producto.setExistencia(jsonObject.getInt("EXISTENCIAPRODUCTO") == 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error al procesar la respuesta del servidor", Toast.LENGTH_LONG).show();
+            Log.e("Error al obtener producto", e.toString());
+        }
+        return producto;
+    }
+
     // ***** Fin de Funciones para Pagos y Facturas (Michael) ***** //
-
-
+    //-----------------------------------------------------------------//
 }

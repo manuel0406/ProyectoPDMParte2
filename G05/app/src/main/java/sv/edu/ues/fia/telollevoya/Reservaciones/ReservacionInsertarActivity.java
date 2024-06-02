@@ -1,17 +1,13 @@
 package sv.edu.ues.fia.telollevoya.Reservaciones;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.DeadObjectException;
-import android.os.Parcelable;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,27 +22,18 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URLEncoder;
-import java.nio.BufferUnderflowException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -98,7 +85,8 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         Intent intent = new Intent(ReservacionInsertarActivity.this, SeleccionPagoActivity.class);
         Bundle extra = new Bundle();
         extra.putSerializable("reservacion", reservacion);
-        intent.putParcelableArrayListExtra("listaDetalle",  listDetalle);
+        //intent.putParcelableArrayListExtra("listaDetalle",  listDetalle);
+        intent.putExtra("listaDetalle", listDetalle);
         intent.putExtra("idNegocio", idNegocio);
         intent.putExtras(extra);
 
@@ -132,9 +120,9 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         edtAnticipo= (EditText) findViewById(R.id.editTextAnticipo);
 
 
-     helper.abrir();
-        idCliente= helper.consultaUsuario();
-        helper.cerrar();
+    //helper.abrir();
+       // idCliente= helper.consultaUsuario();
+        //helper.cerrar();
         //Toast.makeText(this, String.valueOf(idCliente),Toast.LENGTH_SHORT).show();
         Intent intent= getIntent();
         idNegocio = intent.getIntExtra("idNegocio", 5);
@@ -293,19 +281,19 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
                     contador++;
                     Log.v("Contador", String.valueOf(contador));
 
-                    DetallePedidoR detallePedido = new DetallePedidoR();
-                    detallePedido.setIdProducto(producto.getId());
-                    detallePedido.setIdReservacion(idReservacion);
-                    detallePedido.setCantidadDetalle(cantidad);
-                    detallePedido.setSubTotal(producto.getPrecio() * cantidad);
-                    listDetalle.add(detallePedido);
+                    DetallePedidoR detallePedidoR = new DetallePedidoR();
+                    detallePedidoR.setIdProducto(producto.getId());
+                    detallePedidoR.setIdReservacion(idReservacion);
+                    detallePedidoR.setCantidadDetalle(cantidad);
+                    detallePedidoR.setSubTotal(producto.getPrecio() * cantidad);
+                    listDetalle.add(detallePedidoR);
 
                     String idReservacionCodificado = "", idProductoCodificado = "", cantidadDetalleCodificado = "", subTotalCodificado = "";
 //                    try {
-//                        idReservacionCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdReservacion()), "UTF-8");
-//                        idProductoCodificado = URLEncoder.encode(String.valueOf(detallePedido.getIdProducto()), "UTF-8");
-//                        cantidadDetalleCodificado = URLEncoder.encode(String.valueOf(detallePedido.getCantidadDetalle()), "UTF-8");
-//                        subTotalCodificado = URLEncoder.encode(String.valueOf(detallePedido.getSubTotal()), "UTF-8");
+//                        idReservacionCodificado = URLEncoder.encode(String.valueOf(detallePedidoR.getIdReservacion()), "UTF-8");
+//                        idProductoCodificado = URLEncoder.encode(String.valueOf(detallePedidoR.getIdProducto()), "UTF-8");
+//                        cantidadDetalleCodificado = URLEncoder.encode(String.valueOf(detallePedidoR.getCantidadDetalle()), "UTF-8");
+//                        subTotalCodificado = URLEncoder.encode(String.valueOf(detallePedidoR.getSubTotal()), "UTF-8");
 //
 //                        String url = urldetalle + "?IDRESERVACION=" + idReservacionCodificado + "&IDPRODUCTO=" +
 //                                idProductoCodificado + "&CANTIDADDETALLE=" + cantidadDetalleCodificado + "&SUBTOTAL=" + subTotalCodificado;
@@ -505,7 +493,77 @@ public class ReservacionInsertarActivity extends AppCompatActivity implements Co
         edtPagoMinimo.setText(String.valueOf(pagoCorregido));
     }
 
+    //-------------------------------------------------------------------------------------
+    // ************ METODOS PARA CONECTAR CON EL MODULO DE PAGO *****************//
+    public void irAPago(View view) {
 
+        String fechaEntrega= edtFecha.getText().toString();
+        String horaEntrega=edtHora.getText().toString();
+        double totalReservacion =Double.parseDouble( edtTotal.getText().toString());
+        double Anticipo= Double.parseDouble(edtAnticipo.getText().toString());
+        double pagoMinimo= Double.parseDouble(edtPagoMinimo.getText().toString());
+        String descripcionRe= edtDescripcion.getText().toString();
+
+        if (Anticipo >= pagoMinimo && Anticipo <= totalReservacion){
+            reservacion.setIdCliente(51);
+            reservacion.setDescripcionReservacion(descripcionRe);
+            reservacion.setAnticipoReservacion(Anticipo);
+            reservacion.setMontoPediente(totalReservacion-Anticipo);
+            reservacion.setFechaEntregaR(fechaEntrega);
+            reservacion.setHoraEntrega(horaEntrega);
+            reservacion.setTotalRerservacion(totalReservacion);
+
+            llenarListDetalle();
+
+            Intent intent = new Intent(ReservacionInsertarActivity.this, SeleccionPagoActivity.class);
+            Bundle extra = new Bundle();
+            extra.putSerializable("reservacion", reservacion);
+            intent.putParcelableArrayListExtra("listaDetalle",  listDetalle);
+            //intent.putExtra("idNegocio", idNegocio);//parece que no se necesita
+            intent.putExtras(extra);
+
+            startActivity(intent);
+                limpiarTexto();
+
+        }else{
+            Toast.makeText(this, "El anticipo debe de ser mayor o igual al 50% del costo total, pero no mayor al total",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void llenarListDetalle() {
+        obtenerDatos();
+        int contador = 0;
+
+        // Verificar que las listas estén sincronizadas
+        if (listaSpinner.size() != listaCantidad.size()) {
+            Log.e("insertarDetallePedido", "La cantidad de elementos en listaSpinner y listaCantidad no coinciden");
+            return;
+        }
+
+        for (int i = 0; i < listaSpinner.size(); i++) {
+            String nombreProducto = listaSpinner.get(i);
+            int cantidad = listaCantidad.get(i);
+
+            for (Producto producto : listaproductos) {
+                if (producto.getNombre().equals(nombreProducto)) {
+                    contador++;
+                    Log.v("Contador", String.valueOf(contador));
+
+                    DetallePedidoR detallePedidoR = new DetallePedidoR();
+                    detallePedidoR.setIdProducto(producto.getId());
+                    Log.v("ID DE PRODUCTOS SELECCIONADO>", String.valueOf(producto.getId()));
+                    //detallePedidoR.setIdReservacion(idReservacion); //esto se le asignara en PagoAprobadoRActivity
+                    detallePedidoR.setCantidadDetalle(cantidad);
+                    detallePedidoR.setSubTotal(producto.getPrecio() * cantidad);
+                    listDetalle.add(detallePedidoR);
+
+                    // Salir del bucle interno una vez que se ha encontrado y procesado el producto
+                    break;
+                }
+            }
+        }
+    }
 
 }
 

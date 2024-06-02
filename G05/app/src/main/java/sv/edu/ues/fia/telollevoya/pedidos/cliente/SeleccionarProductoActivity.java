@@ -165,7 +165,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
         String json = ControladorSevicio.obtenerRespuestaPeticion(url,getApplicationContext());
         try {
             JSONArray jsonArray = new JSONArray(json);
-            for(int i = 0; i < jsonArray.length() - 1; i++){
+            for(int i = 0; i < jsonArray.length() ; i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Producto producto = new Producto();
                 producto.setId(jsonObject.getInt("IDPRODUCTO"));

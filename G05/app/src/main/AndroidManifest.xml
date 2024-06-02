@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText"
         tools:targetApi="31">
+        <activity
+            android:name=".pago.FacturaReservacionActivity"
+            android:exported="false" />
         <activity
             android:name=".pedidos.negocio.NegociosOpcionesActivity"
             android:exported="true" />
@@ -106,7 +109,10 @@
             android:name=".pago.SeleccionPagoActivity"
             android:exported="true" />
         <activity
-            android:name=".pago.PagoAprobadoActivity"
+            android:name=".pago.PagoAprobadoRActivity"
+            android:exported="true" />
+        <activity
+            android:name=".pago.PagoAprobadoPActivity"
             android:exported="true" />
 
         <uses-library

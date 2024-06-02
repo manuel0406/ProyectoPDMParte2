@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,22 +21,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import sv.edu.ues.fia.telollevoya.ControlBD;
 import sv.edu.ues.fia.telollevoya.ControladorSevicio;
-import sv.edu.ues.fia.telollevoya.DetallePedido;
 import sv.edu.ues.fia.telollevoya.Factura;
 import sv.edu.ues.fia.telollevoya.Pedido;
 import sv.edu.ues.fia.telollevoya.R;
+import sv.edu.ues.fia.telollevoya.Reservacion;
+import sv.edu.ues.fia.telollevoya.Reservaciones.DetallePedidoR;
 
 public class SeleccionPagoActivity extends AppCompatActivity {
 
@@ -57,6 +55,8 @@ public class SeleccionPagoActivity extends AppCompatActivity {
     private TextView txtDireccionBitcoin;
     private Button btnCopiarDireccion;
     Pedido pedido;
+    Reservacion reservacion;
+    ArrayList<DetallePedidoR> detallesPedidoR;
     Factura factura;
     private String urlFactura = "https://telollevoya.000webhostapp.com/Pago/insertar_factura.php";
 
@@ -84,6 +84,13 @@ public class SeleccionPagoActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             pedido = (Pedido) getIntent().getExtras().getSerializable("pedido");
+            reservacion = (Reservacion) getIntent().getExtras().getSerializable("reservacion");
+            detallesPedidoR = getIntent().getParcelableArrayListExtra("listaDetalle");
+        }
+
+        if(pedido != null) {
+            float totalAPagar = pedido.getTotalAPagar() + pedido.getCostoEnvio();
+            pedido.setTotalAPagar(totalAPagar);
         }
 
         // Configuración de listeners y otros componentes
@@ -188,17 +195,34 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         } else if(!isValidEmail(correoStr)){
             Toast.makeText(this, "Error, ingrese un correo electrónico válido", Toast.LENGTH_SHORT).show();
         } else {
-            //generarFactura(); // Insertar factura en BD SQLite
-            insertarFactura(view); //Insertar factura usando Web Service
 
-            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE); // Recuperar el ID de la factura de SharedPreferences
-            int lastFacturaId = sharedPreferences.getInt("lastFacturaId", -1);
-            factura.setId(lastFacturaId);
-            pedido.setFactura(factura); //se le asigna la factura al pedido
+            if(pedido != null){ //si se trata de un pedido
 
-            Intent intent = new Intent(this, PagoAprobadoActivity.class);
-            intent.putExtra("pedido", pedido);
-            startActivity(intent);
+                //generarFactura(); // Insertar factura en BD SQLite
+                insertarFactura(view); //Insertar factura usando Web Service
+
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE); // Recuperar el ID de la factura de SharedPreferences
+                int lastFacturaId = sharedPreferences.getInt("lastFacturaId", -1);
+                factura.setId(lastFacturaId);
+
+                pedido.setFactura(factura);//se le asigna la factura al pedido
+                Intent intent = new Intent(this, PagoAprobadoPActivity.class);
+                intent.putExtra("pedido", pedido);
+                startActivity(intent);
+
+//                Bundle extra = new Bundle();
+//                extra.putSerializable("reservacion", reservacion);
+//                intent.putParcelableArrayListExtra("listaDetalle",  listDetalle);
+//                intent.putExtra("idNegocio", idNegocio);
+//                intent.putExtras(extra);
+
+            } else{
+                //Entonces se trata de una reservacion
+                Intent intent = new Intent(this, PagoAprobadoRActivity.class);
+                intent.putExtra("reservacion", reservacion);
+                intent.putParcelableArrayListExtra("listaDetalle",  detallesPedidoR);
+                startActivity(intent);
+            }
         }
     }
 
@@ -215,16 +239,16 @@ public class SeleccionPagoActivity extends AppCompatActivity {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    private void generarFactura() { // Generar factura para insertar en BD SQLite
-        factura.setMetodoPago(metodoPago);
-        factura.setTotalPagado(pedido.getTotalAPagar());
-        factura.setFechaEmision(pedido.getFechaEntrega());
-
-        pedido.setFactura(factura);
-        controlBD.abrir();
-        controlBD.insertar(factura, pedido);
-        controlBD.cerrar();
-    }
+//    private void generarFactura() { // Generar factura para insertar en BD SQLite
+//        factura.setMetodoPago(metodoPago);
+//        factura.setTotalPagado(pedido.getTotalAPagar());
+//        factura.setFechaEmision(pedido.getFechaEntrega());
+//
+//        pedido.setFactura(factura);
+//        controlBD.abrir();
+//        controlBD.insertar(factura, pedido);
+//        controlBD.cerrar();
+//    }
 
     public void copiarDireccionBitcoin(View view) {
         String direccionBitcoin = txtDireccionBitcoin.getText().toString().split(": ")[1];
@@ -236,19 +260,37 @@ public class SeleccionPagoActivity extends AppCompatActivity {
 
     public void insertarFactura(View v) {
 
+        String fechaEmision = "";
         Date fechaActual = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        fechaEmision = dateFormat.format(fechaActual);
+
+        if(metodoPago.getId() == 2){ //si el tipo de pago es tarjeta
+            String numeroTarjetaStr = numeroTarjeta.getText().toString();
+            String ultimosCuatroDigitos = numeroTarjetaStr.substring(numeroTarjetaStr.length() - 4);
+            metodoPago.setTipoPago(metodoPago.getTipoPago() + " " + ultimosCuatroDigitos);
+        }
         factura.setMetodoPago(metodoPago);
         factura.setFechaEmision(fechaActual);
+        factura.setTotalPagado(pedido.getTotalAPagar());
 
         String idPago = String.valueOf(factura.getMetodoPago().getId());
-        Date fechaEmision = factura.getFechaEmision();
+        String totalPagado = String.valueOf(factura.getTotalPagado());
 
-        // Convertir la fecha a un formato adecuado (yyyy-MM-dd HH:mm:ss)
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String fechaEmisionStr = dateFormat.format(fechaEmision);
+        String idPagoCodificado = "";
+        String totalPagadoCodificado = "";
+        String fechaEmisionCodificada = "";
 
-        String url = urlFactura + "?idPago=" + idPago + "&fechaEmision=" + fechaEmisionStr;
+        try{
+            idPagoCodificado = URLEncoder.encode(idPago, "UTF-8");
+            totalPagadoCodificado = URLEncoder.encode(totalPagado, "UTF-8");
+            fechaEmisionCodificada = URLEncoder.encode(fechaEmision, "UTF-8");
+        } catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
 
+        String url = urlFactura + "?idPago=" + idPagoCodificado + "&totalPagado="+ totalPagadoCodificado + "&fechaEmision=" + fechaEmisionCodificada;
+        Log.v("URL INSERTAR FACTURA: ", url);
         ControladorSevicio.insertarFactura(url, this);
 
     }

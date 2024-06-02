@@ -6,22 +6,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -189,7 +185,7 @@ public class CrearPedidoActivity extends AppCompatActivity {
                 distrito.setIdDistrito(idLugares[2]);
                 Ubicacion ubicacion = new Ubicacion();
                 ubicacion.setDistrito(distrito);
-                ubicacion.setDescripcion(nombresLugares[0] + ", " + nombresLugares[2] + ", " + nombresLugares[1]);
+                ubicacion.setDescripcion(nombresLugares[2] + ", " + nombresLugares[1] + ", " + nombresLugares[0]);
 
                 Cliente cliente = new Cliente();
                 cliente.setIdCliente(Integer.toString(idCliente));
@@ -199,7 +195,7 @@ public class CrearPedidoActivity extends AppCompatActivity {
                 for(int i = 0; i < detallePedidosList.size(); i++){
                     descripcion = descripcion.concat(detallePedidosList.get(i).getProducto().getNombre() + "," +
                             " ");
-                    totPagar =+ detallePedidosList.get(i).getSubTotal();
+                    totPagar += detallePedidosList.get(i).getSubTotal();
 
                 }
                 pedido.setTotalAPagar(totPagar);
@@ -208,8 +204,10 @@ public class CrearPedidoActivity extends AppCompatActivity {
                 pedido.setUbicacion(ubicacion);
                 pedido.setCliente(cliente);
                 pedido.setFechaPedido(new Date());
+                pedido.setCostoEnvio(1.0f); //un dolar por el momento
 
                 //Llamada a la pantalla de Metodos de pago
+                Log.v("TOTAL PREVIO> ", ""+ totPagar);
                 Intent intent = new Intent(CrearPedidoActivity.this, SeleccionPagoActivity.class);
                 Bundle extra = new Bundle();
                 extra.putSerializable("pedido",pedido);

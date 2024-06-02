@@ -47,7 +47,7 @@ public class MisPedidosActivity extends Activity {
     private int idCliente;
     public String idClienteStr;
     private final String URL_PEDIDOS_CLIENTE_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos/pedidos_cliente.php?cliente=";
-    private final String URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos//actualizar_estado_pedido.php?";
+    private final String URL_ACTUALIZAR_ESTADOPEDIDO_SERVICIO = "https://telollevoya.000webhostapp.com/Pedidos/actualizar_estado_pedido.php?";
 
     ControlBD controlBD;
     @Override

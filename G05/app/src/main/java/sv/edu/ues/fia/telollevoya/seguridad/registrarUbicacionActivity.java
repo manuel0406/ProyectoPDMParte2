@@ -141,12 +141,6 @@ public class registrarUbicacionActivity extends Activity {
         //Obtenemos el idUbicacion
         idUbicacion = (int) idUbicacionL;
 
-//        //Obtenemos el id de la nueva ubicacion
-//        helper.abrir();
-//        idUbicacion = helper.consultarUbicacion(idDistrito);
-//        helper.cerrar();
-
-
         //Relacion de tabla cliente-ubicacion
         helper.abrir();
         helper.insertarSeEncuetra(idCliente, idUbicacion);

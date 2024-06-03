@@ -235,4 +235,34 @@
     <string name="rolAdministrador">Administrador</string>
     <string name="rolCliente">Cliente</string>
     <string name="rolRepartidor">Repartidor</string>
+
+    <!--Vista de Pago -->
+    <string name="app_name2">Te lo llevo ya</string>
+    <string name="select_payment_method">Seleccione método de Pago</string>
+    <string name="cash">Efectivo</string>
+    <string name="card">Tarjeta Crédito/Débito</string>
+    <string name="bitcoin">Bitcoin</string>
+    <string name="enter_card_details">Ingresar Datos de la tarjeta</string>
+    <string name="card_number">Número de Tarjeta</string>
+    <string name="expiration_date">Fecha Expiración</string>
+    <string name="cvc_cvv">CVC/CVV</string>
+    <string name="mm_yy">MM/YY</string>
+    <string name="tres_numerales">###</string>
+    <string name="cardholder_name">Nombre del Titular</string>
+    <string name="scan_qr_code">Escanea el siguiente código QR con tu billetera de Bitcoin:</string>
+    <string name="bitcoin_address">Dirección: bc1q9e7t2px2n3csh4tg4a2czu3lf3ehnm82sh2quxmap6rlm88m62fs55j723</string>
+    <string name="email_for_invoice">Correo electronico para recibir factura</string>
+    <string name="email_hint">tucorreo@gmail.com</string>
+    <string name="confirm_payment">Confirmar Pago</string>
+
+    <string name="quantity">Cant</string>
+    <string name="product_name">Nombre del Producto</string>
+    <string name="price">Precio</string>
+    
+    <string name="revisar_factura">Revisar Factura</string>
+    <string name="ver_estado_orden">Ver Estado de mi orden</string>
+    <string name="pedido_confirmado">¡Pedido confirmado! Gracias por confiar en nosotros, pronto recibirás tu pedido</string>
+    <string name="pago_exito">¡Pago realizado con éxito!</string>
+
+
 </resources>

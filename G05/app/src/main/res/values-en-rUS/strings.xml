@@ -236,4 +236,35 @@
     <string name="rolAdministrador">Administrator</string>
     <string name="rolCliente">Client</string>
     <string name="rolRepartidor">Delivery Person</string>
+
+    <!--Payment View -->
+    <string name="app_name2">Te lo Llevo Ya</string>
+    <string name="select_payment_method">Select Payment Method</string>
+    <string name="cash">Cash</string>
+    <string name="card">Credit/Debit Card</string>
+    <string name="bitcoin">Bitcoin</string>
+    <string name="enter_card_details">Enter Card Details</string>
+    <string name="card_number">Card Number</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="cvc_cvv">CVC/CVV</string>
+    <string name="mm_yy">MM/YY</string>
+    <string name="tres_numerales">###</string>
+    <string name="cardholder_name">Cardholder Name</string>
+    <string name="scan_qr_code">Scan the following QR code with your Bitcoin wallet:</string>
+    <string name="bitcoin_address">Address: bc1q9e7t2px2n3csh4tg4a2czu3lf3ehnm82sh2quxmap6rlm88m62fs55j723</string>
+    <string name="email_for_invoice">Email to receive invoice</string>
+    <string name="email_hint">youremail@gmail.com</string>
+    <string name="confirm_payment">Confirm Payment</string>
+
+    <string name="quantity">Qty</string>
+    <string name="product_name">Product Name</string>
+    <string name="price">Price</string>
+
+    <string name="revisar_factura">Review Invoice</string>
+    <string name="ver_estado_orden">View the status of my order</string>
+    <string name="pedido_confirmado">Order confirmed! Thank you for trusting us, you will soon receive your order</string>
+    <string name="pago_exito">Payment made successfully!</string>
+
+
+
 </resources>

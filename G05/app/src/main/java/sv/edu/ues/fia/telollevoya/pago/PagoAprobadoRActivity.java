@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,6 +26,7 @@ public class PagoAprobadoRActivity extends AppCompatActivity implements Controla
     Button btnVerResumen;
     Reservacion reservacion;
     ArrayList<DetallePedidoR> detallesPedidoR;
+    TextView txAgradecimiento;
     //Factura factura;
     private String urlFactura = "https://telollevoya.000webhostapp.com/Pago/obtener_factura_por_id.php";
     private String urlReservacion="https://telollevoya.000webhostapp.com/Reservaciones/reservacion_insert.php";
@@ -34,14 +36,26 @@ public class PagoAprobadoRActivity extends AppCompatActivity implements Controla
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pago_aprobado);
 
+        Locale currentLocale = getResources().getConfiguration().locale;
+        txAgradecimiento = findViewById(R.id.txtAgradecimiento);
+        btnVerResumen = findViewById(R.id.btnVerResumen);
+
+        if (currentLocale.getLanguage().equals("en")) {
+            txAgradecimiento.setText("Payment approved! Your reservation has been confirmed. Thank you for choosing us!");
+            btnVerResumen.setText("View Reservation Summary");
+        } else {
+            txAgradecimiento.setText("¡Pago aprobado! Tu reservación ha sido confirmada. ¡Gracias por elegirnos!");
+            btnVerResumen.setText("Ver Resumen Reservación");
+        }
+
         reservacion = (Reservacion) getIntent().getSerializableExtra("reservacion");
         detallesPedidoR = getIntent().getParcelableArrayListExtra("listaDetalle");
 
         insertarReservacion();
 
-        //No mostrar opcion de Revisar Factura si se trata de una reservacion
-        btnVerResumen = findViewById(R.id.btnVerFactura);
-        btnVerResumen.setText("Ver Resumen Reservacion");
+
+
+
 
     }
 

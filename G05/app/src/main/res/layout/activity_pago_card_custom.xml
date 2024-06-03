@@ -10,20 +10,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_weight="0.15"
-        android:text="Cant"
+        android:text="@string/quantity"
         android:textSize="17sp" />
     <TextView
         android:id="@+id/nombreProducto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Nombre del Producto"
+        android:text="@string/product_name"
         android:textSize="17sp" />
 
     <TextView
         android:id="@+id/subtotalProducto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Precio"
+        android:text="@string/price"
         android:textSize="17sp" />
 </LinearLayout>

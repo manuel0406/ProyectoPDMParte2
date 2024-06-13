@@ -44,7 +44,7 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
     ProductoCardAdapter adapter;
     ControlBD db;
     private int idNegocio;
-    private final String URL_SERVICIO_PRODUCTOS = "https://telollevoya.000webhostapp.com/Pedidos/productos_negocio.php?negocio=";
+    private final String URL_SERVICIO_PRODUCTOS = "https://telollevoya.000webhostapp.com/Pedidos/productos_negociov2.php?negocio=";
     private final String URL_SERVICIO_HORA = "https://telollevoya.000webhostapp.com/Pedidos/hora.php";
 
 
@@ -168,13 +168,13 @@ public class SeleccionarProductoActivity extends AppCompatActivity implements Ad
             for(int i = 0; i < jsonArray.length() ; i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Producto producto = new Producto();
-                producto.setId(jsonObject.getInt("IDPRODUCTO"));
-                producto.setIdNegocio(jsonObject.getInt("IDNEGOCIO"));
-                producto.setNombre(jsonObject.getString("NOMBREPRODUCTO"));
-                producto.setTipo(jsonObject.getString("TIPOPRODUCTO"));
-                producto.setDescripcion(jsonObject.getString("DESCRIPCIONPRODUCTO"));
-                producto.setPrecio(Float.parseFloat(jsonObject.getString("PRECIOPRODUCTO")));
-                producto.setExistencia(jsonObject.getInt("EXISTENCIAPRODUCTO") > 0);
+                producto.setId(jsonObject.getInt("idProducto"));
+                producto.setIdNegocio(jsonObject.getInt("idNegocio"));
+                producto.setNombre(jsonObject.getString("nombreProducto"));
+                producto.setTipo(jsonObject.getString("tipoProducto"));
+                producto.setDescripcion(jsonObject.getString("descripcionProducto"));
+                producto.setPrecio(Float.parseFloat(jsonObject.getString("precioProducto")));
+                producto.setExistencia(jsonObject.getInt("existenciaProducto") > 0);
                 productos.add(producto);
             }
             adapter = new ProductoCardAdapter(this, productos);
